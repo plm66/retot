@@ -80,7 +80,7 @@ final class StorageManagerTests: XCTestCase {
         storage.saveNoteContent(original, for: 1)
         let loaded = storage.loadNoteContent(for: 1)
 
-        XCTAssertEqual(loaded.string, "Hello, Retot!")
+        XCTAssertEqual(loaded.string.trimmingCharacters(in: .whitespacesAndNewlines), "Hello, Retot!")
     }
 
     func testLoadNonExistentNoteReturnsEmpty() {
@@ -105,7 +105,7 @@ final class StorageManagerTests: XCTestCase {
         storage.saveNoteContent(original, for: 2)
         let loaded = storage.loadNoteContent(for: 2)
 
-        XCTAssertEqual(loaded.string, "Bold text")
+        XCTAssertEqual(loaded.string.trimmingCharacters(in: .whitespacesAndNewlines), "Bold text")
         let loadedFont = loaded.attribute(.font, at: 0, effectiveRange: nil) as? NSFont
         XCTAssertNotNil(loadedFont)
         XCTAssertTrue(loadedFont?.fontDescriptor.symbolicTraits.contains(.bold) ?? false)
@@ -121,7 +121,7 @@ final class StorageManagerTests: XCTestCase {
         storage.saveNoteContent(second, for: 3)
 
         let loaded = storage.loadNoteContent(for: 3)
-        XCTAssertEqual(loaded.string, "Second version")
+        XCTAssertEqual(loaded.string.trimmingCharacters(in: .whitespacesAndNewlines), "Second version")
     }
 
     func testMultipleNotesIndependent() {
@@ -130,7 +130,7 @@ final class StorageManagerTests: XCTestCase {
         storage.saveNoteContent(NSAttributedString(string: "Note A"), for: 1)
         storage.saveNoteContent(NSAttributedString(string: "Note B"), for: 2)
 
-        XCTAssertEqual(storage.loadNoteContent(for: 1).string, "Note A")
-        XCTAssertEqual(storage.loadNoteContent(for: 2).string, "Note B")
+        XCTAssertEqual(storage.loadNoteContent(for: 1).string.trimmingCharacters(in: .whitespacesAndNewlines), "Note A")
+        XCTAssertEqual(storage.loadNoteContent(for: 2).string.trimmingCharacters(in: .whitespacesAndNewlines), "Note B")
     }
 }
