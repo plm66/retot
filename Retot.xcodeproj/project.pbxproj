@@ -1,0 +1,446 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		146836B248C82B5312CC640B /* ExportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D60DA9A12F02D010675B53 /* ExportManager.swift */; };
+		15F8124C23D5164B0F9703FE /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4A642F1C27AF06CDD4F43B2 /* AppState.swift */; };
+		26CFEC491AC1EEC0295C586D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13C2CC8234B08AA67D0E5856 /* Assets.xcassets */; };
+		2BBD37BAFB4DF2C40D4DAA9F /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAD6F0A7271FAF498DEC8C53 /* Note.swift */; };
+		2ED81B35A3937C7E1A3D7308 /* MarkdownExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75277E86F58E09630E8C6813 /* MarkdownExporter.swift */; };
+		2F9F6CC14B25E654833391C5 /* NoteColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418A48AC5E0636A5BDFB0F15 /* NoteColor.swift */; };
+		46C0B45F51E353C5B4CD43BA /* WikiLinkProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9F87842A4C720CCC87D71 /* WikiLinkProcessor.swift */; };
+		52A935660126980C477D1D5F /* RichTextCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540A8AA495BAE06C3E14B25B /* RichTextCoordinator.swift */; };
+		54DBB958384B9675E03D7E7A /* EditorToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16932FC5E5654CA70D288423 /* EditorToolbar.swift */; };
+		6B82BC0E8A0A9D2A1A8FED8D /* DotBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC3148825FE4DB11EEA3356 /* DotBar.swift */; };
+		6D3C95B1D26ACE1543B990B1 /* StorageConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D438D19A385FE31D4DB6D4 /* StorageConstants.swift */; };
+		A35CF4BDE2C9AB412325AB30 /* RichTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A8A44C947DE8628F15FBE5 /* RichTextEditor.swift */; };
+		BD5F636EC3AB1089E3F27E87 /* DotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD9C342856B44E748EE9B68 /* DotView.swift */; };
+		BD90CE46CCCA3D53A1F77473 /* NoteEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8928828050DA0F97CBBA16C3 /* NoteEditorView.swift */; };
+		C281FCC30B43320881DC48AC /* NoteMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5A7E88E20872D98E0DC940 /* NoteMetadata.swift */; };
+		D64FF290AB96703A038343FA /* RetotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29C1660D5418C0FFFD9E6CB /* RetotApp.swift */; };
+		F2E4A8A50E565BCB2B9DD0AE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BD1D1F9344D0128BE022C5 /* ContentView.swift */; };
+		F73D0F9D5D4021615684517E /* NoteSettingsPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA784E03C129A3A7730AD919 /* NoteSettingsPopover.swift */; };
+		FAD883D3426BF76136865E20 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01C84AB7A416DC4969EDC4C /* StorageManager.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		12D60DA9A12F02D010675B53 /* ExportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportManager.swift; sourceTree = "<group>"; };
+		13C2CC8234B08AA67D0E5856 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		16932FC5E5654CA70D288423 /* EditorToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorToolbar.swift; sourceTree = "<group>"; };
+		16BD1D1F9344D0128BE022C5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		18D0FEA38ED9AB3C2205D2AD /* Retot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Retot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A5A7E88E20872D98E0DC940 /* NoteMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteMetadata.swift; sourceTree = "<group>"; };
+		3D24E6969BFBE91C193451B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		418A48AC5E0636A5BDFB0F15 /* NoteColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteColor.swift; sourceTree = "<group>"; };
+		540A8AA495BAE06C3E14B25B /* RichTextCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextCoordinator.swift; sourceTree = "<group>"; };
+		6AD9C342856B44E748EE9B68 /* DotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotView.swift; sourceTree = "<group>"; };
+		75277E86F58E09630E8C6813 /* MarkdownExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownExporter.swift; sourceTree = "<group>"; };
+		84A8A44C947DE8628F15FBE5 /* RichTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextEditor.swift; sourceTree = "<group>"; };
+		8928828050DA0F97CBBA16C3 /* NoteEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteEditorView.swift; sourceTree = "<group>"; };
+		ACC3148825FE4DB11EEA3356 /* DotBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotBar.swift; sourceTree = "<group>"; };
+		B01C84AB7A416DC4969EDC4C /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		B6E9F87842A4C720CCC87D71 /* WikiLinkProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikiLinkProcessor.swift; sourceTree = "<group>"; };
+		BA784E03C129A3A7730AD919 /* NoteSettingsPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteSettingsPopover.swift; sourceTree = "<group>"; };
+		E29C1660D5418C0FFFD9E6CB /* RetotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetotApp.swift; sourceTree = "<group>"; };
+		E4A642F1C27AF06CDD4F43B2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		EAD6F0A7271FAF498DEC8C53 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
+		F6D438D19A385FE31D4DB6D4 /* StorageConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageConstants.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		02FF6ACB0F771F4DA15D514A = {
+			isa = PBXGroup;
+			children = (
+				127539E105BFDFFD6711C53A /* Retot */,
+				4E93229FBC12F7E27E547BCA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		127539E105BFDFFD6711C53A /* Retot */ = {
+			isa = PBXGroup;
+			children = (
+				3D24E6969BFBE91C193451B3 /* Info.plist */,
+				BD38893D656615AB9C29905D /* App */,
+				A88DF3F055111A0DAD9604C7 /* Editor */,
+				BF0A932AA661525B97FF0E06 /* Export */,
+				6A3A2E09CBF97D6E434C3C0F /* Models */,
+				8A898D084CBD44281ACBD1C5 /* Persistence */,
+				D442A1C260BAAA4ED8B1E59E /* Resources */,
+				DF9F4C31432C77A2C9F29DB4 /* Utilities */,
+				E2F865362406347A1420FE4C /* Views */,
+			);
+			path = Retot;
+			sourceTree = "<group>";
+		};
+		4E93229FBC12F7E27E547BCA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				18D0FEA38ED9AB3C2205D2AD /* Retot.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6A3A2E09CBF97D6E434C3C0F /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				EAD6F0A7271FAF498DEC8C53 /* Note.swift */,
+				418A48AC5E0636A5BDFB0F15 /* NoteColor.swift */,
+				1A5A7E88E20872D98E0DC940 /* NoteMetadata.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		8A898D084CBD44281ACBD1C5 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				F6D438D19A385FE31D4DB6D4 /* StorageConstants.swift */,
+				B01C84AB7A416DC4969EDC4C /* StorageManager.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		A88DF3F055111A0DAD9604C7 /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				16932FC5E5654CA70D288423 /* EditorToolbar.swift */,
+				540A8AA495BAE06C3E14B25B /* RichTextCoordinator.swift */,
+				84A8A44C947DE8628F15FBE5 /* RichTextEditor.swift */,
+				B6E9F87842A4C720CCC87D71 /* WikiLinkProcessor.swift */,
+			);
+			path = Editor;
+			sourceTree = "<group>";
+		};
+		BD38893D656615AB9C29905D /* App */ = {
+			isa = PBXGroup;
+			children = (
+				E4A642F1C27AF06CDD4F43B2 /* AppState.swift */,
+				E29C1660D5418C0FFFD9E6CB /* RetotApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		BF0A932AA661525B97FF0E06 /* Export */ = {
+			isa = PBXGroup;
+			children = (
+				12D60DA9A12F02D010675B53 /* ExportManager.swift */,
+				75277E86F58E09630E8C6813 /* MarkdownExporter.swift */,
+			);
+			path = Export;
+			sourceTree = "<group>";
+		};
+		D442A1C260BAAA4ED8B1E59E /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				13C2CC8234B08AA67D0E5856 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		DF9F4C31432C77A2C9F29DB4 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		E2F865362406347A1420FE4C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				16BD1D1F9344D0128BE022C5 /* ContentView.swift */,
+				ACC3148825FE4DB11EEA3356 /* DotBar.swift */,
+				6AD9C342856B44E748EE9B68 /* DotView.swift */,
+				8928828050DA0F97CBBA16C3 /* NoteEditorView.swift */,
+				BA784E03C129A3A7730AD919 /* NoteSettingsPopover.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6E843D69327CB911FE3ED081 /* Retot */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 31AAFA6FD1C1008042B6A71F /* Build configuration list for PBXNativeTarget "Retot" */;
+			buildPhases = (
+				55C5AC130A4F01E9A32244A2 /* Sources */,
+				5E49C5628DCA56724078A7A7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Retot;
+			packageProductDependencies = (
+			);
+			productName = Retot;
+			productReference = 18D0FEA38ED9AB3C2205D2AD /* Retot.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		590FBDA3C1472BA8D8F51C5F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					6E843D69327CB911FE3ED081 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 89B68A69EC9CD6D1526CECDF /* Build configuration list for PBXProject "Retot" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 02FF6ACB0F771F4DA15D514A;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6E843D69327CB911FE3ED081 /* Retot */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5E49C5628DCA56724078A7A7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				26CFEC491AC1EEC0295C586D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		55C5AC130A4F01E9A32244A2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				15F8124C23D5164B0F9703FE /* AppState.swift in Sources */,
+				F2E4A8A50E565BCB2B9DD0AE /* ContentView.swift in Sources */,
+				6B82BC0E8A0A9D2A1A8FED8D /* DotBar.swift in Sources */,
+				BD5F636EC3AB1089E3F27E87 /* DotView.swift in Sources */,
+				54DBB958384B9675E03D7E7A /* EditorToolbar.swift in Sources */,
+				146836B248C82B5312CC640B /* ExportManager.swift in Sources */,
+				2ED81B35A3937C7E1A3D7308 /* MarkdownExporter.swift in Sources */,
+				2BBD37BAFB4DF2C40D4DAA9F /* Note.swift in Sources */,
+				2F9F6CC14B25E654833391C5 /* NoteColor.swift in Sources */,
+				BD90CE46CCCA3D53A1F77473 /* NoteEditorView.swift in Sources */,
+				C281FCC30B43320881DC48AC /* NoteMetadata.swift in Sources */,
+				F73D0F9D5D4021615684517E /* NoteSettingsPopover.swift in Sources */,
+				D64FF290AB96703A038343FA /* RetotApp.swift in Sources */,
+				52A935660126980C477D1D5F /* RichTextCoordinator.swift in Sources */,
+				A35CF4BDE2C9AB412325AB30 /* RichTextEditor.swift in Sources */,
+				6D3C95B1D26ACE1543B990B1 /* StorageConstants.swift in Sources */,
+				FAD883D3426BF76136865E20 /* StorageManager.swift in Sources */,
+				46C0B45F51E353C5B4CD43BA /* WikiLinkProcessor.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		396196D2BFB02AF5E52C1ED7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		6A947F275D5B215242349E81 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Retot/Retot.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Retot/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LS_UI_ELEMENT = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.erasmus.retot;
+				PRODUCT_NAME = Retot;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		8374B76325FD47ED5F5EA70F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		98348B6F3116973A7DCC761A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Retot/Retot.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				INFOPLIST_FILE = Retot/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LS_UI_ELEMENT = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.erasmus.retot;
+				PRODUCT_NAME = Retot;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		31AAFA6FD1C1008042B6A71F /* Build configuration list for PBXNativeTarget "Retot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				98348B6F3116973A7DCC761A /* Debug */,
+				6A947F275D5B215242349E81 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		89B68A69EC9CD6D1526CECDF /* Build configuration list for PBXProject "Retot" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8374B76325FD47ED5F5EA70F /* Debug */,
+				396196D2BFB02AF5E52C1ED7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 590FBDA3C1472BA8D8F51C5F /* Project object */;
+}

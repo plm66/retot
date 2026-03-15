@@ -1,0 +1,35 @@
+name: Retot
+options:
+  bundleIdPrefix: com.erasmus
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "15.0"
+  generateEmptyDirectories: true
+
+targets:
+  Retot:
+    type: application
+    platform: macOS
+    sources:
+      - path: Retot
+        excludes:
+          - "**/*.entitlements"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.erasmus.retot
+        INFOPLIST_FILE: Retot/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Retot/Retot.entitlements
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        SWIFT_VERSION: "5.9"
+        CODE_SIGN_STYLE: Automatic
+        PRODUCT_NAME: Retot
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        LS_UI_ELEMENT: true
+        COMBINE_HIDPI_IMAGES: true
+    info:
+      path: Retot/Info.plist
+      properties:
+        LSUIElement: true
+        CFBundleDisplayName: Retot
+        CFBundleName: Retot
