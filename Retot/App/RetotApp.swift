@@ -2,72 +2,62 @@ import SwiftUI
 
 @main
 struct RetotApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @StateObject private var appState = AppState()
+    @StateObject private var windowManager = WindowManager()
 
     var body: some Scene {
-        Settings {
-            EmptyView()
+        MenuBarExtra("Retot", systemImage: "circle.grid.2x2.fill") {
+            Button("Open Retot") {
+                windowManager.showWindow(appState: appState)
+            }
+            .keyboardShortcut("r", modifiers: [.command, .shift])
+
+            Divider()
+
+            Button("Quit") {
+                appState.saveCurrentNoteContent()
+                NSApp.terminate(nil)
+            }
+            .keyboardShortcut("q")
         }
     }
 }
 
-final class AppDelegate: NSObject, NSApplicationDelegate {
-    private var statusItem: NSStatusItem!
-    private var popoverWindow: RetotPanel?
-    private let appState = AppState()
+final class WindowManager: ObservableObject {
+    private var panel: RetotPanel?
 
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-
-        if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "circle.grid.2x2.fill", accessibilityDescription: "Retot")
-            button.action = #selector(toggleWindow)
-            button.target = self
+    func showWindow(appState: AppState) {
+        if let existing = panel, existing.isVisible {
+            existing.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
         }
-    }
 
-    @objc private func toggleWindow() {
-        if let window = popoverWindow, window.isVisible {
-            window.close()
-        } else {
-            showWindow()
-        }
-    }
-
-    private func showWindow() {
-        if popoverWindow == nil {
+        if panel == nil {
             let contentView = ContentView()
                 .environmentObject(appState)
 
-            let panel = RetotPanel(
+            let newPanel = RetotPanel(
                 contentRect: NSRect(x: 0, y: 0, width: 540, height: 460),
                 styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
                 backing: .buffered,
                 defer: false
             )
-            panel.isMovableByWindowBackground = true
-            panel.titlebarAppearsTransparent = true
-            panel.titleVisibility = .hidden
-            panel.isFloatingPanel = true
-            panel.level = .floating
-            panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-            panel.isReleasedWhenClosed = false
-            panel.contentView = NSHostingView(rootView: contentView)
-            panel.minSize = NSSize(width: 400, height: 300)
+            newPanel.isMovableByWindowBackground = true
+            newPanel.titlebarAppearsTransparent = true
+            newPanel.titleVisibility = .hidden
+            newPanel.isFloatingPanel = true
+            newPanel.level = .floating
+            newPanel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+            newPanel.isReleasedWhenClosed = false
+            newPanel.contentView = NSHostingView(rootView: contentView)
+            newPanel.minSize = NSSize(width: 400, height: 300)
+            newPanel.center()
 
-            popoverWindow = panel
+            panel = newPanel
         }
 
-        // Position near the status item
-        if let button = statusItem.button {
-            let buttonFrame = button.window?.convertToScreen(button.frame) ?? .zero
-            let windowSize = popoverWindow!.frame.size
-            let x = buttonFrame.midX - windowSize.width / 2
-            let y = buttonFrame.minY - windowSize.height - 4
-            popoverWindow?.setFrameOrigin(NSPoint(x: x, y: y))
-        }
-
-        popoverWindow?.makeKeyAndOrderFront(nil)
+        panel?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
 }
