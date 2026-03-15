@@ -13,39 +13,74 @@
 		2BBD37BAFB4DF2C40D4DAA9F /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAD6F0A7271FAF498DEC8C53 /* Note.swift */; };
 		2ED81B35A3937C7E1A3D7308 /* MarkdownExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75277E86F58E09630E8C6813 /* MarkdownExporter.swift */; };
 		2F9F6CC14B25E654833391C5 /* NoteColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418A48AC5E0636A5BDFB0F15 /* NoteColor.swift */; };
+		40CB7341470FD686F2108DEC /* NoteColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8316D1B283B4BCEF165CEB7C /* NoteColorTests.swift */; };
 		46C0B45F51E353C5B4CD43BA /* WikiLinkProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E9F87842A4C720CCC87D71 /* WikiLinkProcessor.swift */; };
+		4938F255ECBF027429B145F2 /* NoteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1906BCA911D2E7DE90BCD1C1 /* NoteTests.swift */; };
 		52A935660126980C477D1D5F /* RichTextCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540A8AA495BAE06C3E14B25B /* RichTextCoordinator.swift */; };
 		54DBB958384B9675E03D7E7A /* EditorToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16932FC5E5654CA70D288423 /* EditorToolbar.swift */; };
+		5EA6CD7089BBBE5BED7A19ED /* MarkdownExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C620FDE8B06EF37B2EBA397C /* MarkdownExporterTests.swift */; };
 		6B82BC0E8A0A9D2A1A8FED8D /* DotBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC3148825FE4DB11EEA3356 /* DotBar.swift */; };
+		6BB4093854E39C16F804686F /* NoteMetadataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A6A8F562EA15DB69DC7BF8 /* NoteMetadataTests.swift */; };
 		6D3C95B1D26ACE1543B990B1 /* StorageConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D438D19A385FE31D4DB6D4 /* StorageConstants.swift */; };
+		8B8D54A15C21AC01B71326D7 /* RetotUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C27592E38E8295E985C9A93E /* RetotUITestsLaunchTests.swift */; };
 		A35CF4BDE2C9AB412325AB30 /* RichTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A8A44C947DE8628F15FBE5 /* RichTextEditor.swift */; };
+		AB0C266C1A8AE0514A17A1B9 /* RetotUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708EDA34B7252C7BACB7EBCE /* RetotUITests.swift */; };
 		BD5F636EC3AB1089E3F27E87 /* DotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD9C342856B44E748EE9B68 /* DotView.swift */; };
 		BD90CE46CCCA3D53A1F77473 /* NoteEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8928828050DA0F97CBBA16C3 /* NoteEditorView.swift */; };
 		C281FCC30B43320881DC48AC /* NoteMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5A7E88E20872D98E0DC940 /* NoteMetadata.swift */; };
 		D64FF290AB96703A038343FA /* RetotApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E29C1660D5418C0FFFD9E6CB /* RetotApp.swift */; };
+		DAB525EA6B2FB4D78B13E39C /* StorageManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 822633A4DB153CA89C0D22EC /* StorageManagerTests.swift */; };
+		DC8DE16B012C8FA486AB1DF1 /* WikiLinkProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1612BAD658B12CA7E45CA737 /* WikiLinkProcessorTests.swift */; };
 		F2E4A8A50E565BCB2B9DD0AE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BD1D1F9344D0128BE022C5 /* ContentView.swift */; };
 		F73D0F9D5D4021615684517E /* NoteSettingsPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA784E03C129A3A7730AD919 /* NoteSettingsPopover.swift */; };
 		FAD883D3426BF76136865E20 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01C84AB7A416DC4969EDC4C /* StorageManager.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		055A318B582E234AE83217BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 590FBDA3C1472BA8D8F51C5F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E843D69327CB911FE3ED081;
+			remoteInfo = Retot;
+		};
+		3D7F1CF643E38E08348B6342 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 590FBDA3C1472BA8D8F51C5F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E843D69327CB911FE3ED081;
+			remoteInfo = Retot;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		12D60DA9A12F02D010675B53 /* ExportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportManager.swift; sourceTree = "<group>"; };
 		13C2CC8234B08AA67D0E5856 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1612BAD658B12CA7E45CA737 /* WikiLinkProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikiLinkProcessorTests.swift; sourceTree = "<group>"; };
 		16932FC5E5654CA70D288423 /* EditorToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorToolbar.swift; sourceTree = "<group>"; };
 		16BD1D1F9344D0128BE022C5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		18D0FEA38ED9AB3C2205D2AD /* Retot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Retot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1906BCA911D2E7DE90BCD1C1 /* NoteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteTests.swift; sourceTree = "<group>"; };
 		1A5A7E88E20872D98E0DC940 /* NoteMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteMetadata.swift; sourceTree = "<group>"; };
 		3D24E6969BFBE91C193451B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		418A48AC5E0636A5BDFB0F15 /* NoteColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteColor.swift; sourceTree = "<group>"; };
 		540A8AA495BAE06C3E14B25B /* RichTextCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextCoordinator.swift; sourceTree = "<group>"; };
+		54A6A8F562EA15DB69DC7BF8 /* NoteMetadataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteMetadataTests.swift; sourceTree = "<group>"; };
+		56F328925D02B472967D19CA /* RetotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RetotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A1BB822BBC4F5EE003D8B6A /* RetotUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RetotUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6AD9C342856B44E748EE9B68 /* DotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotView.swift; sourceTree = "<group>"; };
+		708EDA34B7252C7BACB7EBCE /* RetotUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetotUITests.swift; sourceTree = "<group>"; };
 		75277E86F58E09630E8C6813 /* MarkdownExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownExporter.swift; sourceTree = "<group>"; };
+		822633A4DB153CA89C0D22EC /* StorageManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManagerTests.swift; sourceTree = "<group>"; };
+		8316D1B283B4BCEF165CEB7C /* NoteColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteColorTests.swift; sourceTree = "<group>"; };
 		84A8A44C947DE8628F15FBE5 /* RichTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextEditor.swift; sourceTree = "<group>"; };
 		8928828050DA0F97CBBA16C3 /* NoteEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteEditorView.swift; sourceTree = "<group>"; };
 		ACC3148825FE4DB11EEA3356 /* DotBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotBar.swift; sourceTree = "<group>"; };
 		B01C84AB7A416DC4969EDC4C /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		B6E9F87842A4C720CCC87D71 /* WikiLinkProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikiLinkProcessor.swift; sourceTree = "<group>"; };
 		BA784E03C129A3A7730AD919 /* NoteSettingsPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteSettingsPopover.swift; sourceTree = "<group>"; };
+		C27592E38E8295E985C9A93E /* RetotUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetotUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		C620FDE8B06EF37B2EBA397C /* MarkdownExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownExporterTests.swift; sourceTree = "<group>"; };
 		E29C1660D5418C0FFFD9E6CB /* RetotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetotApp.swift; sourceTree = "<group>"; };
 		E4A642F1C27AF06CDD4F43B2 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		EAD6F0A7271FAF498DEC8C53 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
@@ -57,6 +92,8 @@
 			isa = PBXGroup;
 			children = (
 				127539E105BFDFFD6711C53A /* Retot */,
+				7334127F6F79B6BE30FCA630 /* RetotTests */,
+				8B39B897FA9BFFAD38F22DEC /* RetotUITests */,
 				4E93229FBC12F7E27E547BCA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -81,6 +118,8 @@
 			isa = PBXGroup;
 			children = (
 				18D0FEA38ED9AB3C2205D2AD /* Retot.app */,
+				56F328925D02B472967D19CA /* RetotTests.xctest */,
+				5A1BB822BBC4F5EE003D8B6A /* RetotUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,6 +134,19 @@
 			path = Models;
 			sourceTree = "<group>";
 		};
+		7334127F6F79B6BE30FCA630 /* RetotTests */ = {
+			isa = PBXGroup;
+			children = (
+				C620FDE8B06EF37B2EBA397C /* MarkdownExporterTests.swift */,
+				8316D1B283B4BCEF165CEB7C /* NoteColorTests.swift */,
+				54A6A8F562EA15DB69DC7BF8 /* NoteMetadataTests.swift */,
+				1906BCA911D2E7DE90BCD1C1 /* NoteTests.swift */,
+				822633A4DB153CA89C0D22EC /* StorageManagerTests.swift */,
+				1612BAD658B12CA7E45CA737 /* WikiLinkProcessorTests.swift */,
+			);
+			path = RetotTests;
+			sourceTree = "<group>";
+		};
 		8A898D084CBD44281ACBD1C5 /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
@@ -102,6 +154,15 @@
 				B01C84AB7A416DC4969EDC4C /* StorageManager.swift */,
 			);
 			path = Persistence;
+			sourceTree = "<group>";
+		};
+		8B39B897FA9BFFAD38F22DEC /* RetotUITests */ = {
+			isa = PBXGroup;
+			children = (
+				708EDA34B7252C7BACB7EBCE /* RetotUITests.swift */,
+				C27592E38E8295E985C9A93E /* RetotUITestsLaunchTests.swift */,
+			);
+			path = RetotUITests;
 			sourceTree = "<group>";
 		};
 		A88DF3F055111A0DAD9604C7 /* Editor */ = {
@@ -163,6 +224,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		2CDBA8BF03D43DCD66806CDF /* RetotUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 57AF766A034FF1D76ECE208D /* Build configuration list for PBXNativeTarget "RetotUITests" */;
+			buildPhases = (
+				5B92BFAC10F05FDA3AA138A2 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				618E0BAB56DF7CD6C1CE691A /* PBXTargetDependency */,
+			);
+			name = RetotUITests;
+			packageProductDependencies = (
+			);
+			productName = RetotUITests;
+			productReference = 5A1BB822BBC4F5EE003D8B6A /* RetotUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		6E843D69327CB911FE3ED081 /* Retot */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 31AAFA6FD1C1008042B6A71F /* Build configuration list for PBXNativeTarget "Retot" */;
@@ -181,6 +260,24 @@
 			productReference = 18D0FEA38ED9AB3C2205D2AD /* Retot.app */;
 			productType = "com.apple.product-type.application";
 		};
+		B59B9ED4E3D78D5A3A99D56E /* RetotTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 461DEED6BCEEF20219AAC6D5 /* Build configuration list for PBXNativeTarget "RetotTests" */;
+			buildPhases = (
+				33F2670EA4F1FA40A6311841 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ACD45943EB6A38CA09B763C2 /* PBXTargetDependency */,
+			);
+			name = RetotTests;
+			packageProductDependencies = (
+			);
+			productName = RetotTests;
+			productReference = 56F328925D02B472967D19CA /* RetotTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -190,6 +287,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					2CDBA8BF03D43DCD66806CDF = {
+						TestTargetID = 6E843D69327CB911FE3ED081;
+					};
 					6E843D69327CB911FE3ED081 = {
 						ProvisioningStyle = Automatic;
 					};
@@ -210,6 +310,8 @@
 			projectRoot = "";
 			targets = (
 				6E843D69327CB911FE3ED081 /* Retot */,
+				B59B9ED4E3D78D5A3A99D56E /* RetotTests */,
+				2CDBA8BF03D43DCD66806CDF /* RetotUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -226,6 +328,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		33F2670EA4F1FA40A6311841 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5EA6CD7089BBBE5BED7A19ED /* MarkdownExporterTests.swift in Sources */,
+				40CB7341470FD686F2108DEC /* NoteColorTests.swift in Sources */,
+				6BB4093854E39C16F804686F /* NoteMetadataTests.swift in Sources */,
+				4938F255ECBF027429B145F2 /* NoteTests.swift in Sources */,
+				DAB525EA6B2FB4D78B13E39C /* StorageManagerTests.swift in Sources */,
+				DC8DE16B012C8FA486AB1DF1 /* WikiLinkProcessorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		55C5AC130A4F01E9A32244A2 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -251,7 +366,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5B92BFAC10F05FDA3AA138A2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AB0C266C1A8AE0514A17A1B9 /* RetotUITests.swift in Sources */,
+				8B8D54A15C21AC01B71326D7 /* RetotUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		618E0BAB56DF7CD6C1CE691A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E843D69327CB911FE3ED081 /* Retot */;
+			targetProxy = 3D7F1CF643E38E08348B6342 /* PBXContainerItemProxy */;
+		};
+		ACD45943EB6A38CA09B763C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E843D69327CB911FE3ED081 /* Retot */;
+			targetProxy = 055A318B582E234AE83217BF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		396196D2BFB02AF5E52C1ED7 /* Release */ = {
@@ -396,6 +533,24 @@
 			};
 			name = Debug;
 		};
+		87E9695DFA264AAB49D934B1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.erasmus.retot.uitests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+				TEST_TARGET_NAME = Retot;
+			};
+			name = Release;
+		};
 		98348B6F3116973A7DCC761A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -419,6 +574,60 @@
 			};
 			name = Debug;
 		};
+		AB9C7C47B4BDA57DCFCC2449 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.erasmus.retot.tests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Retot.app/Contents/MacOS/Retot";
+			};
+			name = Debug;
+		};
+		C1761AE20FC79977C775C66B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.erasmus.retot.tests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Retot.app/Contents/MacOS/Retot";
+			};
+			name = Release;
+		};
+		FC9B623D4ADDBA3AC2346E0A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.erasmus.retot.uitests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+				TEST_TARGET_NAME = Retot;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -427,6 +636,24 @@
 			buildConfigurations = (
 				98348B6F3116973A7DCC761A /* Debug */,
 				6A947F275D5B215242349E81 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		461DEED6BCEEF20219AAC6D5 /* Build configuration list for PBXNativeTarget "RetotTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB9C7C47B4BDA57DCFCC2449 /* Debug */,
+				C1761AE20FC79977C775C66B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		57AF766A034FF1D76ECE208D /* Build configuration list for PBXNativeTarget "RetotUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FC9B623D4ADDBA3AC2346E0A /* Debug */,
+				87E9695DFA264AAB49D934B1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

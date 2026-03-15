@@ -33,3 +33,32 @@ targets:
         LSUIElement: true
         CFBundleDisplayName: Retot
         CFBundleName: Retot
+
+  RetotTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: RetotTests
+    dependencies:
+      - target: Retot
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.erasmus.retot.tests
+        SWIFT_VERSION: "5.9"
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Retot.app/Contents/MacOS/Retot"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+
+  RetotUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - path: RetotUITests
+    dependencies:
+      - target: Retot
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.erasmus.retot.uitests
+        SWIFT_VERSION: "5.9"
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        TEST_TARGET_NAME: Retot
