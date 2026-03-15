@@ -6,19 +6,16 @@ struct DotBar: View {
     @State private var showAppSettings = false
 
     var body: some View {
-        HStack(spacing: 4) {
-            HStack(spacing: 6) {
-                ForEach(Array(appState.notes.enumerated()), id: \.element.id) { index, note in
-                    DotView(
-                        note: note,
-                        isSelected: index == appState.selectedNoteIndex,
-                        onTap: { appState.selectNote(index) },
-                        onSettings: { settingsNoteIndex = index }
-                    )
-                }
+        HStack(spacing: 0) {
+            ForEach(Array(appState.notes.enumerated()), id: \.element.id) { index, note in
+                DotView(
+                    note: note,
+                    isSelected: index == appState.selectedNoteIndex,
+                    onTap: { appState.selectNote(index) },
+                    onSettings: { settingsNoteIndex = index }
+                )
+                .frame(maxWidth: .infinity)
             }
-
-            Spacer()
 
             Button(action: { showAppSettings = true }) {
                 Image(systemName: "gearshape")
@@ -27,8 +24,9 @@ struct DotBar: View {
             }
             .buttonStyle(.borderless)
             .help("Settings")
+            .frame(width: 30)
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 8)
         .padding(.vertical, 8)
         .sheet(item: settingsBinding) { wrapper in
             NoteSettingsPopover(
