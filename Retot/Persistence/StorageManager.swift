@@ -51,28 +51,24 @@ final class StorageManager {
         }
     }
 
-    // MARK: - Note Content (RTFD)
+    // MARK: - Note Content (HTML)
 
     func saveNoteContent(_ attributedString: NSAttributedString, for id: Int) {
         let url = StorageConstants.noteURL(for: id)
+        guard attributedString.length > 0 else {
+            // Save empty file for empty notes
+            try? Data().write(to: url, options: .atomic)
+            return
+        }
         do {
-            let wrapper = try attributedString.fileWrapper(
+            let data = try attributedString.data(
                 from: NSRange(location: 0, length: attributedString.length),
-                documentAttributes: [.documentType: NSAttributedString.DocumentType.rtfd]
+                documentAttributes: [
+                    .documentType: NSAttributedString.DocumentType.html,
+                    .characterEncoding: String.Encoding.utf8.rawValue
+                ]
             )
-            // Write to temp location first, then replace atomically
-            let tempURL = url.deletingLastPathComponent()
-                .appendingPathComponent("note-\(id)-temp.rtfd", isDirectory: true)
-            if fileManager.fileExists(atPath: tempURL.path) {
-                try fileManager.removeItem(at: tempURL)
-            }
-            try wrapper.write(to: tempURL, options: .atomic, originalContentsURL: nil)
-            // Replace original with temp
-            if fileManager.fileExists(atPath: url.path) {
-                _ = try fileManager.replaceItemAt(url, withItemAt: tempURL)
-            } else {
-                try fileManager.moveItem(at: tempURL, to: url)
-            }
+            try data.write(to: url, options: .atomic)
         } catch {
             print("Failed to save note \(id): \(error)")
         }
@@ -84,9 +80,16 @@ final class StorageManager {
             return NSAttributedString(string: "")
         }
         do {
+            let data = try Data(contentsOf: url)
+            guard !data.isEmpty else {
+                return NSAttributedString(string: "")
+            }
             let attributedString = try NSAttributedString(
-                url: url,
-                options: [.documentType: NSAttributedString.DocumentType.rtfd],
+                data: data,
+                options: [
+                    .documentType: NSAttributedString.DocumentType.html,
+                    .characterEncoding: String.Encoding.utf8.rawValue
+                ],
                 documentAttributes: nil
             )
             return attributedString

@@ -18,6 +18,6 @@ enum StorageConstants {
     }
 
     static func noteURL(for id: Int) -> URL {
-        notesDirectory.appendingPathComponent("note-\(id).rtfd", isDirectory: true)
+        notesDirectory.appendingPathComponent("note-\(id).html")
     }
 }

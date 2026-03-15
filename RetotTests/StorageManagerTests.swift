@@ -67,7 +67,7 @@ final class StorageManagerTests: XCTestCase {
         XCTAssertEqual(loaded[1].color, .purple)
     }
 
-    // MARK: - Note Content (RTFD)
+    // MARK: - Note Content (HTML)
 
     func testSaveAndLoadNoteContent() {
         storage.ensureDirectoryStructure()
