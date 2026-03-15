@@ -3,17 +3,30 @@ import SwiftUI
 struct DotBar: View {
     @EnvironmentObject var appState: AppState
     @State private var settingsNoteIndex: Int?
+    @State private var showAppSettings = false
 
     var body: some View {
-        HStack(spacing: 6) {
-            ForEach(Array(appState.notes.enumerated()), id: \.element.id) { index, note in
-                DotView(
-                    note: note,
-                    isSelected: index == appState.selectedNoteIndex,
-                    onTap: { appState.selectNote(index) },
-                    onSettings: { settingsNoteIndex = index }
-                )
+        HStack(spacing: 4) {
+            HStack(spacing: 6) {
+                ForEach(Array(appState.notes.enumerated()), id: \.element.id) { index, note in
+                    DotView(
+                        note: note,
+                        isSelected: index == appState.selectedNoteIndex,
+                        onTap: { appState.selectNote(index) },
+                        onSettings: { settingsNoteIndex = index }
+                    )
+                }
             }
+
+            Spacer()
+
+            Button(action: { showAppSettings = true }) {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+            }
+            .buttonStyle(.borderless)
+            .help("Settings")
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -22,6 +35,9 @@ struct DotBar: View {
                 noteIndex: wrapper.index,
                 appState: appState
             )
+        }
+        .sheet(isPresented: $showAppSettings) {
+            SettingsView()
         }
     }
 

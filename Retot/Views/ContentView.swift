@@ -11,6 +11,6 @@ struct ContentView: View {
 
             NoteEditorView()
         }
-        .frame(width: 520, height: 420)
+        .frame(minWidth: 400, minHeight: 300)
     }
 }

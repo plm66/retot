@@ -22,6 +22,7 @@
 		6B82BC0E8A0A9D2A1A8FED8D /* DotBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC3148825FE4DB11EEA3356 /* DotBar.swift */; };
 		6BB4093854E39C16F804686F /* NoteMetadataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A6A8F562EA15DB69DC7BF8 /* NoteMetadataTests.swift */; };
 		6D3C95B1D26ACE1543B990B1 /* StorageConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D438D19A385FE31D4DB6D4 /* StorageConstants.swift */; };
+		784EF0C688416761C863CEF6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B93213AE5DE996CC7C325EE /* SettingsView.swift */; };
 		8B8D54A15C21AC01B71326D7 /* RetotUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C27592E38E8295E985C9A93E /* RetotUITestsLaunchTests.swift */; };
 		A35CF4BDE2C9AB412325AB30 /* RichTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A8A44C947DE8628F15FBE5 /* RichTextEditor.swift */; };
 		AB0C266C1A8AE0514A17A1B9 /* RetotUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708EDA34B7252C7BACB7EBCE /* RetotUITests.swift */; };
@@ -64,6 +65,7 @@
 		1A5A7E88E20872D98E0DC940 /* NoteMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteMetadata.swift; sourceTree = "<group>"; };
 		3D24E6969BFBE91C193451B3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		418A48AC5E0636A5BDFB0F15 /* NoteColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteColor.swift; sourceTree = "<group>"; };
+		4B93213AE5DE996CC7C325EE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		540A8AA495BAE06C3E14B25B /* RichTextCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextCoordinator.swift; sourceTree = "<group>"; };
 		54A6A8F562EA15DB69DC7BF8 /* NoteMetadataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteMetadataTests.swift; sourceTree = "<group>"; };
 		56F328925D02B472967D19CA /* RetotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RetotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -217,6 +219,7 @@
 				6AD9C342856B44E748EE9B68 /* DotView.swift */,
 				8928828050DA0F97CBBA16C3 /* NoteEditorView.swift */,
 				BA784E03C129A3A7730AD919 /* NoteSettingsPopover.swift */,
+				4B93213AE5DE996CC7C325EE /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -360,6 +363,7 @@
 				D64FF290AB96703A038343FA /* RetotApp.swift in Sources */,
 				52A935660126980C477D1D5F /* RichTextCoordinator.swift in Sources */,
 				A35CF4BDE2C9AB412325AB30 /* RichTextEditor.swift in Sources */,
+				784EF0C688416761C863CEF6 /* SettingsView.swift in Sources */,
 				6D3C95B1D26ACE1543B990B1 /* StorageConstants.swift in Sources */,
 				FAD883D3426BF76136865E20 /* StorageManager.swift in Sources */,
 				46C0B45F51E353C5B4CD43BA /* WikiLinkProcessor.swift in Sources */,

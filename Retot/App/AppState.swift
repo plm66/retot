@@ -55,6 +55,77 @@ final class AppState: ObservableObject {
         storage.saveMetadata(notes)
     }
 
+    // MARK: - Tags
+
+    func updateNoteTags(_ index: Int, tags: [String]) {
+        guard index >= 0, index < notes.count else { return }
+        let updated = notes[index].withTags(tags)
+        notes = notes.enumerated().map { i, note in
+            i == index ? updated : note
+        }
+        storage.saveMetadata(notes)
+    }
+
+    func addTag(_ tag: String, toNoteAt index: Int) {
+        guard index >= 0, index < notes.count else { return }
+        let trimmed = tag.trimmingCharacters(in: .whitespaces).lowercased()
+        guard !trimmed.isEmpty, !notes[index].tags.contains(trimmed) else { return }
+        let newTags = notes[index].tags + [trimmed]
+        updateNoteTags(index, tags: newTags)
+    }
+
+    func removeTag(_ tag: String, fromNoteAt index: Int) {
+        guard index >= 0, index < notes.count else { return }
+        let newTags = notes[index].tags.filter { $0 != tag }
+        updateNoteTags(index, tags: newTags)
+    }
+
+    // MARK: - Bulk Export/Import
+
+    func exportAllNotes(to directory: URL) {
+        for note in notes {
+            let content = storage.loadNoteContent(for: note.id)
+            let markdown = MarkdownExporter.convert(content)
+            let fileURL = directory.appendingPathComponent("\(note.label).md")
+            try? markdown.write(to: fileURL, atomically: true, encoding: .utf8)
+        }
+        // Also export metadata
+        let metaURL = directory.appendingPathComponent("retot-metadata.json")
+        let metadata = notes.map(NoteMetadata.from)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = .prettyPrinted
+        if let data = try? encoder.encode(metadata) {
+            try? data.write(to: metaURL, options: .atomic)
+        }
+    }
+
+    func importAllNotes(from directory: URL) {
+        let metaURL = directory.appendingPathComponent("retot-metadata.json")
+        guard let data = try? Data(contentsOf: metaURL) else { return }
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        guard let metadata = try? decoder.decode([NoteMetadata].self, from: data) else { return }
+
+        notes = metadata.map { $0.toNote() }
+        storage.saveMetadata(notes)
+
+        // Import markdown files as plain text content
+        for note in notes {
+            let fileURL = directory.appendingPathComponent("\(note.label).md")
+            if let markdown = try? String(contentsOf: fileURL, encoding: .utf8) {
+                let attributed = NSAttributedString(
+                    string: markdown,
+                    attributes: [.font: NSFont.systemFont(ofSize: 14)]
+                )
+                storage.saveNoteContent(attributed, for: note.id)
+            }
+        }
+
+        // Reload current note
+        currentAttributedText = storage.loadNoteContent(for: notes[selectedNoteIndex].id)
+    }
+
     // MARK: - Content Persistence
 
     func notifyTextChanged() {

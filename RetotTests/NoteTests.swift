@@ -32,7 +32,7 @@ final class NoteTests: XCTestCase {
     // MARK: - Immutable Updates
 
     func testWithLabelReturnsNewInstance() {
-        let note = Note(id: 1, label: "Original", color: .red, lastModified: Date())
+        let note = Note(id: 1, label: "Original", color: .red, tags: [], lastModified: Date())
         let updated = note.withLabel("Updated")
 
         XCTAssertEqual(updated.label, "Updated")
@@ -43,7 +43,7 @@ final class NoteTests: XCTestCase {
     }
 
     func testWithColorReturnsNewInstance() {
-        let note = Note(id: 1, label: "Test", color: .red, lastModified: Date())
+        let note = Note(id: 1, label: "Test", color: .red, tags: [], lastModified: Date())
         let updated = note.withColor(.blue)
 
         XCTAssertEqual(updated.color, .blue)
@@ -55,7 +55,7 @@ final class NoteTests: XCTestCase {
 
     func testWithLabelUpdatesLastModified() {
         let originalDate = Date.distantPast
-        let note = Note(id: 1, label: "Test", color: .red, lastModified: originalDate)
+        let note = Note(id: 1, label: "Test", color: .red, tags: [], lastModified: originalDate)
         let updated = note.withLabel("New")
 
         XCTAssertGreaterThan(updated.lastModified, originalDate)
@@ -63,7 +63,7 @@ final class NoteTests: XCTestCase {
 
     func testWithColorUpdatesLastModified() {
         let originalDate = Date.distantPast
-        let note = Note(id: 1, label: "Test", color: .red, lastModified: originalDate)
+        let note = Note(id: 1, label: "Test", color: .red, tags: [], lastModified: originalDate)
         let updated = note.withColor(.blue)
 
         XCTAssertGreaterThan(updated.lastModified, originalDate)
@@ -71,7 +71,7 @@ final class NoteTests: XCTestCase {
 
     func testWithModifiedNowUpdatesDate() {
         let originalDate = Date.distantPast
-        let note = Note(id: 1, label: "Test", color: .red, lastModified: originalDate)
+        let note = Note(id: 1, label: "Test", color: .red, tags: [], lastModified: originalDate)
         let updated = note.withModifiedNow()
 
         XCTAssertEqual(updated.label, "Test")
@@ -83,22 +83,55 @@ final class NoteTests: XCTestCase {
 
     func testEqualityMatchesAllFields() {
         let date = Date()
-        let a = Note(id: 1, label: "Test", color: .red, lastModified: date)
-        let b = Note(id: 1, label: "Test", color: .red, lastModified: date)
+        let a = Note(id: 1, label: "Test", color: .red, tags: [], lastModified: date)
+        let b = Note(id: 1, label: "Test", color: .red, tags: [], lastModified: date)
         XCTAssertEqual(a, b)
     }
 
     func testInequalityOnLabel() {
         let date = Date()
-        let a = Note(id: 1, label: "A", color: .red, lastModified: date)
-        let b = Note(id: 1, label: "B", color: .red, lastModified: date)
+        let a = Note(id: 1, label: "A", color: .red, tags: [], lastModified: date)
+        let b = Note(id: 1, label: "B", color: .red, tags: [], lastModified: date)
         XCTAssertNotEqual(a, b)
     }
 
     func testInequalityOnColor() {
         let date = Date()
-        let a = Note(id: 1, label: "Test", color: .red, lastModified: date)
-        let b = Note(id: 1, label: "Test", color: .blue, lastModified: date)
+        let a = Note(id: 1, label: "Test", color: .red, tags: [], lastModified: date)
+        let b = Note(id: 1, label: "Test", color: .blue, tags: [], lastModified: date)
+        XCTAssertNotEqual(a, b)
+    }
+
+    // MARK: - Tags
+
+    func testDefaultsHaveEmptyTags() {
+        let notes = Note.defaults()
+        for note in notes {
+            XCTAssertTrue(note.tags.isEmpty)
+        }
+    }
+
+    func testWithTagsReturnsNewInstance() {
+        let note = Note(id: 1, label: "Test", color: .red, tags: [], lastModified: Date())
+        let updated = note.withTags(["urgent", "work"])
+
+        XCTAssertEqual(updated.tags, ["urgent", "work"])
+        XCTAssertTrue(note.tags.isEmpty)
+    }
+
+    func testWithTagsPreservesOtherFields() {
+        let note = Note(id: 5, label: "Shopping", color: .green, tags: ["personal"], lastModified: Date())
+        let updated = note.withTags(["personal", "food"])
+
+        XCTAssertEqual(updated.id, 5)
+        XCTAssertEqual(updated.label, "Shopping")
+        XCTAssertEqual(updated.color, .green)
+    }
+
+    func testInequalityOnTags() {
+        let date = Date()
+        let a = Note(id: 1, label: "Test", color: .red, tags: ["a"], lastModified: date)
+        let b = Note(id: 1, label: "Test", color: .red, tags: ["b"], lastModified: date)
         XCTAssertNotEqual(a, b)
     }
 }
