@@ -6,7 +6,7 @@ struct RetotApp: App {
     @StateObject private var windowManager = WindowManager()
 
     var body: some Scene {
-        MenuBarExtra("Retot", systemImage: "circle.grid.2x2.fill") {
+        MenuBarExtra("Retot", image: "MenuBarIcon") {
             Button("Open Retot") {
                 windowManager.showWindow(appState: appState)
             }
