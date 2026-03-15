@@ -2,37 +2,40 @@ import SwiftUI
 
 @main
 struct RetotApp: App {
-    @StateObject private var appState = AppState()
-    @StateObject private var windowManager = WindowManager()
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
-        MenuBarExtra("Retot", image: "MenuBarIcon") {
-            Button("Open Retot") {
-                windowManager.showWindow(appState: appState)
-            }
-            .keyboardShortcut("r", modifiers: [.command, .shift])
-
-            Divider()
-
-            Button("Quit") {
-                appState.saveCurrentNoteContent()
-                NSApp.terminate(nil)
-            }
-            .keyboardShortcut("q")
+        Settings {
+            EmptyView()
         }
     }
 }
 
-final class WindowManager: ObservableObject {
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    private var statusItem: NSStatusItem!
     private var panel: RetotPanel?
+    private let appState = AppState()
 
-    func showWindow(appState: AppState) {
-        if let existing = panel, existing.isVisible {
-            existing.makeKeyAndOrderFront(nil)
-            NSApp.activate(ignoringOtherApps: true)
-            return
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+
+        if let button = statusItem.button {
+            button.image = NSImage(named: "MenuBarIcon")
+            button.image?.isTemplate = true
+            button.action = #selector(statusItemClicked)
+            button.target = self
         }
+    }
 
+    @objc private func statusItemClicked() {
+        if let existing = panel, existing.isVisible {
+            existing.close()
+        } else {
+            showPanel()
+        }
+    }
+
+    private func showPanel() {
         if panel == nil {
             let contentView = ContentView()
                 .environmentObject(appState)
@@ -52,13 +55,29 @@ final class WindowManager: ObservableObject {
             newPanel.isReleasedWhenClosed = false
             newPanel.contentView = NSHostingView(rootView: contentView)
             newPanel.minSize = NSSize(width: 400, height: 300)
-            newPanel.center()
 
             panel = newPanel
         }
 
+        positionPanelBelowStatusItem()
         panel?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    private func positionPanelBelowStatusItem() {
+        guard let panel = panel,
+              let button = statusItem.button,
+              let buttonWindow = button.window else {
+            panel?.center()
+            return
+        }
+
+        let buttonFrame = buttonWindow.convertToScreen(button.frame)
+        let panelWidth = panel.frame.width
+        let x = buttonFrame.midX - panelWidth / 2
+        let y = buttonFrame.minY - panel.frame.height - 4
+
+        panel.setFrameOrigin(NSPoint(x: x, y: y))
     }
 }
 
