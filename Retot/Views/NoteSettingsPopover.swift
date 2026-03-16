@@ -3,7 +3,7 @@ import SwiftUI
 struct NoteSettingsPopover: View {
     let noteIndex: Int
     @ObservedObject var appState: AppState
-    @Environment(\.dismiss) private var dismiss
+    let onDone: () -> Void
     @State private var editingLabel: String = ""
     @State private var newTag: String = ""
 
@@ -62,12 +62,12 @@ struct NoteSettingsPopover: View {
 
             // Actions
             HStack {
-                Button("Cancel") { dismiss() }
+                Button("Cancel") { onDone() }
                     .keyboardShortcut(.cancelAction)
                 Spacer()
                 Button("Done") {
                     applyLabel()
-                    dismiss()
+                    onDone()
                 }
                 .keyboardShortcut(.defaultAction)
             }

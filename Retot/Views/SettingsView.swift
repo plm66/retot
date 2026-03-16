@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
-    @Environment(\.dismiss) private var dismiss
+    let onDone: () -> Void
 
     var body: some View {
         VStack(spacing: 20) {
@@ -66,7 +66,7 @@ struct SettingsView: View {
 
             Spacer()
 
-            Button("Done") { dismiss() }
+            Button("Done") { onDone() }
                 .keyboardShortcut(.defaultAction)
         }
         .padding(24)
