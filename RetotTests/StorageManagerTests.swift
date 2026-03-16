@@ -12,7 +12,7 @@ final class StorageManagerTests: XCTestCase {
         tempDir = FileManager.default.temporaryDirectory
             .appendingPathComponent("RetotTests-\(UUID().uuidString)", isDirectory: true)
         try? FileManager.default.createDirectory(at: tempDir, withIntermediateDirectories: true)
-        storage = StorageManager()
+        storage = StorageManager(baseDirectory: tempDir)
     }
 
     override func tearDown() {
@@ -25,10 +25,9 @@ final class StorageManagerTests: XCTestCase {
     func testEnsureDirectoryStructureCreatesDirectories() {
         storage.ensureDirectoryStructure()
 
-        let appSupport = StorageConstants.appSupportDirectory
-        let notesDir = StorageConstants.notesDirectory
+        let notesDir = tempDir.appendingPathComponent("notes", isDirectory: true)
 
-        XCTAssertTrue(FileManager.default.fileExists(atPath: appSupport.path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: tempDir.path))
         XCTAssertTrue(FileManager.default.fileExists(atPath: notesDir.path))
     }
 

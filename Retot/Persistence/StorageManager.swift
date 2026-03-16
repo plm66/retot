@@ -3,15 +3,25 @@ import Foundation
 
 final class StorageManager {
     private let fileManager = FileManager.default
+    private let baseDirectory: URL
+    private let notesDirectory: URL
+    private let metadataURL: URL
+
+    init(baseDirectory: URL? = nil) {
+        let base = baseDirectory ?? StorageConstants.appSupportDirectory
+        self.baseDirectory = base
+        self.notesDirectory = base.appendingPathComponent("notes", isDirectory: true)
+        self.metadataURL = base.appendingPathComponent("metadata.json")
+    }
 
     func ensureDirectoryStructure() {
         do {
             try fileManager.createDirectory(
-                at: StorageConstants.appSupportDirectory,
+                at: baseDirectory,
                 withIntermediateDirectories: true
             )
             try fileManager.createDirectory(
-                at: StorageConstants.notesDirectory,
+                at: notesDirectory,
                 withIntermediateDirectories: true
             )
         } catch {
@@ -28,14 +38,14 @@ final class StorageManager {
             encoder.dateEncodingStrategy = .iso8601
             encoder.outputFormatting = .prettyPrinted
             let data = try encoder.encode(metadata)
-            try data.write(to: StorageConstants.metadataURL, options: .atomic)
+            try data.write(to: metadataURL, options: .atomic)
         } catch {
             print("Failed to save metadata: \(error)")
         }
     }
 
     func loadMetadata() -> [Note] {
-        let url = StorageConstants.metadataURL
+        let url = metadataURL
         guard fileManager.fileExists(atPath: url.path) else {
             return Note.defaults()
         }
@@ -54,7 +64,7 @@ final class StorageManager {
     // MARK: - Note Content (HTML)
 
     func saveNoteContent(_ attributedString: NSAttributedString, for id: Int) {
-        let url = StorageConstants.noteURL(for: id)
+        let url = noteURL(for: id)
         guard attributedString.length > 0 else {
             // Save empty file for empty notes
             try? Data().write(to: url, options: .atomic)
@@ -99,8 +109,12 @@ final class StorageManager {
         return NSAttributedString(attributedString: mutable)
     }
 
+    private func noteURL(for id: Int) -> URL {
+        notesDirectory.appendingPathComponent("note-\(id).html")
+    }
+
     func loadNoteContent(for id: Int) -> NSAttributedString {
-        let url = StorageConstants.noteURL(for: id)
+        let url = noteURL(for: id)
         guard fileManager.fileExists(atPath: url.path) else {
             return NSAttributedString(string: "")
         }
