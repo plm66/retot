@@ -20,11 +20,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
 
         if let button = statusItem.button {
-            button.image = NSImage(named: "MenuBarIcon")
-            button.image?.isTemplate = true
+            if let customImage = NSImage(named: "MenuBarIcon") {
+                customImage.isTemplate = true
+                button.image = customImage
+            } else {
+                button.image = NSImage(
+                    systemSymbolName: "circle.grid.2x2.fill",
+                    accessibilityDescription: "Retot"
+                )
+            }
             button.action = #selector(statusItemClicked)
             button.target = self
         }
+    }
+
+    func applicationWillTerminate(_ notification: Notification) {
+        appState.saveCurrentNoteContent()
     }
 
     @objc private func statusItemClicked() {
@@ -73,8 +84,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         let buttonFrame = buttonWindow.convertToScreen(button.frame)
-        let panelWidth = panel.frame.width
-        let x = buttonFrame.midX - panelWidth / 2
+        let x = buttonFrame.midX - panel.frame.width / 2
         let y = buttonFrame.minY - panel.frame.height - 4
 
         panel.setFrameOrigin(NSPoint(x: x, y: y))
