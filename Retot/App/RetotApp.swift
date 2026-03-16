@@ -2,96 +2,14 @@ import SwiftUI
 
 @main
 struct RetotApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @StateObject private var appState = AppState()
 
     var body: some Scene {
-        Settings {
-            EmptyView()
-        }
-    }
-}
-
-final class AppDelegate: NSObject, NSApplicationDelegate {
-    private var statusItem: NSStatusItem!
-    private var panel: RetotPanel?
-    private let appState = AppState()
-
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-
-        if let button = statusItem.button {
-            if let customImage = NSImage(named: "MenuBarIcon") {
-                customImage.isTemplate = true
-                button.image = customImage
-            } else {
-                button.image = NSImage(
-                    systemSymbolName: "circle.grid.2x2.fill",
-                    accessibilityDescription: "Retot"
-                )
-            }
-            button.action = #selector(statusItemClicked)
-            button.target = self
-        }
-    }
-
-    func applicationWillTerminate(_ notification: Notification) {
-        appState.saveCurrentNoteContent()
-    }
-
-    @objc private func statusItemClicked() {
-        if let existing = panel, existing.isVisible {
-            existing.close()
-        } else {
-            showPanel()
-        }
-    }
-
-    private func showPanel() {
-        if panel == nil {
-            let contentView = ContentView()
+        MenuBarExtra("Retot", systemImage: "circle.grid.2x2.fill") {
+            ContentView()
                 .environmentObject(appState)
-
-            let newPanel = RetotPanel(
-                contentRect: NSRect(x: 0, y: 0, width: 540, height: 460),
-                styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
-                backing: .buffered,
-                defer: false
-            )
-            newPanel.isMovableByWindowBackground = true
-            newPanel.titlebarAppearsTransparent = true
-            newPanel.titleVisibility = .hidden
-            newPanel.isFloatingPanel = true
-            newPanel.level = .floating
-            newPanel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-            newPanel.isReleasedWhenClosed = false
-            newPanel.contentView = NSHostingView(rootView: contentView)
-            newPanel.minSize = NSSize(width: 400, height: 300)
-
-            panel = newPanel
+                .frame(width: 540, height: 460)
         }
-
-        positionPanelBelowStatusItem()
-        panel?.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
+        .menuBarExtraStyle(.window)
     }
-
-    private func positionPanelBelowStatusItem() {
-        guard let panel = panel,
-              let button = statusItem.button,
-              let buttonWindow = button.window else {
-            panel?.center()
-            return
-        }
-
-        let buttonFrame = buttonWindow.convertToScreen(button.frame)
-        let x = buttonFrame.midX - panel.frame.width / 2
-        let y = buttonFrame.minY - panel.frame.height - 4
-
-        panel.setFrameOrigin(NSPoint(x: x, y: y))
-    }
-}
-
-final class RetotPanel: NSPanel {
-    override var canBecomeKey: Bool { true }
-    override var canBecomeMain: Bool { true }
 }
