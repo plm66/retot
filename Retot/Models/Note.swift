@@ -5,30 +5,84 @@ struct Note: Identifiable, Equatable {
     let label: String
     let color: NoteColor
     let tags: [String]
+    let fontColorHex: String?
+    let backgroundColorHex: String?
     let lastModified: Date
+
+    init(
+        id: Int,
+        label: String,
+        color: NoteColor,
+        tags: [String],
+        fontColorHex: String? = nil,
+        backgroundColorHex: String? = nil,
+        lastModified: Date
+    ) {
+        self.id = id
+        self.label = label
+        self.color = color
+        self.tags = tags
+        self.fontColorHex = fontColorHex
+        self.backgroundColorHex = backgroundColorHex
+        self.lastModified = lastModified
+    }
 
     static func == (lhs: Note, rhs: Note) -> Bool {
         lhs.id == rhs.id
             && lhs.label == rhs.label
             && lhs.color == rhs.color
             && lhs.tags == rhs.tags
+            && lhs.fontColorHex == rhs.fontColorHex
+            && lhs.backgroundColorHex == rhs.backgroundColorHex
             && lhs.lastModified == rhs.lastModified
     }
 
     func withLabel(_ newLabel: String) -> Note {
-        Note(id: id, label: newLabel, color: color, tags: tags, lastModified: Date())
+        Note(
+            id: id, label: newLabel, color: color, tags: tags,
+            fontColorHex: fontColorHex, backgroundColorHex: backgroundColorHex,
+            lastModified: Date()
+        )
     }
 
     func withColor(_ newColor: NoteColor) -> Note {
-        Note(id: id, label: label, color: newColor, tags: tags, lastModified: Date())
+        Note(
+            id: id, label: label, color: newColor, tags: tags,
+            fontColorHex: fontColorHex, backgroundColorHex: backgroundColorHex,
+            lastModified: Date()
+        )
     }
 
     func withTags(_ newTags: [String]) -> Note {
-        Note(id: id, label: label, color: color, tags: newTags, lastModified: Date())
+        Note(
+            id: id, label: label, color: color, tags: newTags,
+            fontColorHex: fontColorHex, backgroundColorHex: backgroundColorHex,
+            lastModified: Date()
+        )
+    }
+
+    func withFontColor(_ hex: String?) -> Note {
+        Note(
+            id: id, label: label, color: color, tags: tags,
+            fontColorHex: hex, backgroundColorHex: backgroundColorHex,
+            lastModified: Date()
+        )
+    }
+
+    func withBackgroundColor(_ hex: String?) -> Note {
+        Note(
+            id: id, label: label, color: color, tags: tags,
+            fontColorHex: fontColorHex, backgroundColorHex: hex,
+            lastModified: Date()
+        )
     }
 
     func withModifiedNow() -> Note {
-        Note(id: id, label: label, color: color, tags: tags, lastModified: Date())
+        Note(
+            id: id, label: label, color: color, tags: tags,
+            fontColorHex: fontColorHex, backgroundColorHex: backgroundColorHex,
+            lastModified: Date()
+        )
     }
 
     static func defaults() -> [Note] {

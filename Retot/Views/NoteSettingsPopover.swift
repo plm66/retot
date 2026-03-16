@@ -7,6 +7,10 @@ struct NoteSettingsPopover: View {
     @State private var editingLabel: String = ""
     @State private var newTag: String = ""
 
+    private var currentNote: Note {
+        appState.notes[noteIndex]
+    }
+
     var body: some View {
         VStack(spacing: 16) {
             Text("Note Settings")
@@ -17,7 +21,7 @@ struct NoteSettingsPopover: View {
                 .textFieldStyle(.roundedBorder)
                 .onSubmit { applyLabel() }
 
-            // Color picker
+            // Dot color picker
             Text("Color")
                 .font(.subheadline)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -36,6 +40,30 @@ struct NoteSettingsPopover: View {
                         }
                 }
             }
+
+            // Font Color
+            Divider()
+
+            Text("Font Color")
+                .font(.subheadline)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            EditorColorPickerGrid(
+                selectedHex: currentNote.fontColorHex,
+                onSelect: { hex in appState.updateNoteFontColor(noteIndex, hex: hex) }
+            )
+
+            // Background Color
+            Divider()
+
+            Text("Background Color")
+                .font(.subheadline)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            EditorColorPickerGrid(
+                selectedHex: currentNote.backgroundColorHex,
+                onSelect: { hex in appState.updateNoteBackgroundColor(noteIndex, hex: hex) }
+            )
 
             // Tags
             Divider()
@@ -94,6 +122,63 @@ struct NoteSettingsPopover: View {
         guard !trimmed.isEmpty else { return }
         appState.addTag(trimmed, toNoteAt: noteIndex)
         newTag = ""
+    }
+}
+
+// MARK: - Editor Color Picker Grid
+
+struct EditorColorPickerGrid: View {
+    let selectedHex: String?
+    let onSelect: (String?) -> Void
+
+    var body: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.fixed(28)), count: 7), spacing: 6) {
+            // Default button
+            Circle()
+                .fill(Color.clear)
+                .frame(width: 24, height: 24)
+                .overlay(
+                    ZStack {
+                        Circle().stroke(Color.secondary, lineWidth: 1)
+                        if selectedHex == nil {
+                            Image(systemName: "checkmark")
+                                .font(.caption2.bold())
+                                .foregroundColor(.primary)
+                        } else {
+                            Text("D")
+                                .font(.caption2.bold())
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                )
+                .onTapGesture { onSelect(nil) }
+
+            // Color swatches
+            ForEach(EditorColorPalette.editorPalette, id: \.hex) { entry in
+                Circle()
+                    .fill(Color(hex: entry.hex) ?? Color.clear)
+                    .frame(width: 24, height: 24)
+                    .overlay(
+                        ZStack {
+                            Circle()
+                                .stroke(Color.primary.opacity(0.3), lineWidth: 0.5)
+                            if selectedHex?.uppercased() == entry.hex.uppercased() {
+                                Image(systemName: "checkmark")
+                                    .font(.caption2.bold())
+                                    .foregroundColor(checkmarkColor(for: entry.hex))
+                            }
+                        }
+                    )
+                    .onTapGesture { onSelect(entry.hex) }
+                    .help(entry.name)
+            }
+        }
+    }
+
+    private func checkmarkColor(for hex: String) -> Color {
+        // Use white checkmark on dark colors, black on light colors
+        let darkHexes = ["000000", "333333", "E53535", "6658E4", "1A1A3E"]
+        return darkHexes.contains(hex.uppercased()) ? .white : .black
     }
 }
 

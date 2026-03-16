@@ -26,6 +26,7 @@
 		8B8D54A15C21AC01B71326D7 /* RetotUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C27592E38E8295E985C9A93E /* RetotUITestsLaunchTests.swift */; };
 		A35CF4BDE2C9AB412325AB30 /* RichTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84A8A44C947DE8628F15FBE5 /* RichTextEditor.swift */; };
 		AB0C266C1A8AE0514A17A1B9 /* RetotUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 708EDA34B7252C7BACB7EBCE /* RetotUITests.swift */; };
+		B73B3B14B14FE97208E4B00D /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76196A474E234A177BCD8AED /* ColorExtensions.swift */; };
 		BD5F636EC3AB1089E3F27E87 /* DotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD9C342856B44E748EE9B68 /* DotView.swift */; };
 		BD90CE46CCCA3D53A1F77473 /* NoteEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8928828050DA0F97CBBA16C3 /* NoteEditorView.swift */; };
 		C281FCC30B43320881DC48AC /* NoteMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A5A7E88E20872D98E0DC940 /* NoteMetadata.swift */; };
@@ -73,6 +74,7 @@
 		6AD9C342856B44E748EE9B68 /* DotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotView.swift; sourceTree = "<group>"; };
 		708EDA34B7252C7BACB7EBCE /* RetotUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetotUITests.swift; sourceTree = "<group>"; };
 		75277E86F58E09630E8C6813 /* MarkdownExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownExporter.swift; sourceTree = "<group>"; };
+		76196A474E234A177BCD8AED /* ColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtensions.swift; sourceTree = "<group>"; };
 		822633A4DB153CA89C0D22EC /* StorageManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManagerTests.swift; sourceTree = "<group>"; };
 		8316D1B283B4BCEF165CEB7C /* NoteColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteColorTests.swift; sourceTree = "<group>"; };
 		84A8A44C947DE8628F15FBE5 /* RichTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextEditor.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 		6A3A2E09CBF97D6E434C3C0F /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				76196A474E234A177BCD8AED /* ColorExtensions.swift */,
 				EAD6F0A7271FAF498DEC8C53 /* Note.swift */,
 				418A48AC5E0636A5BDFB0F15 /* NoteColor.swift */,
 				1A5A7E88E20872D98E0DC940 /* NoteMetadata.swift */,
@@ -349,6 +352,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				15F8124C23D5164B0F9703FE /* AppState.swift in Sources */,
+				B73B3B14B14FE97208E4B00D /* ColorExtensions.swift in Sources */,
 				F2E4A8A50E565BCB2B9DD0AE /* ContentView.swift in Sources */,
 				6B82BC0E8A0A9D2A1A8FED8D /* DotBar.swift in Sources */,
 				BD5F636EC3AB1089E3F27E87 /* DotView.swift in Sources */,

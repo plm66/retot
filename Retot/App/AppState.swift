@@ -55,6 +55,26 @@ final class AppState: ObservableObject {
         storage.saveMetadata(notes)
     }
 
+    // MARK: - Font & Background Colors
+
+    func updateNoteFontColor(_ index: Int, hex: String?) {
+        guard index >= 0, index < notes.count else { return }
+        let updated = notes[index].withFontColor(hex)
+        notes = notes.enumerated().map { i, note in
+            i == index ? updated : note
+        }
+        storage.saveMetadata(notes)
+    }
+
+    func updateNoteBackgroundColor(_ index: Int, hex: String?) {
+        guard index >= 0, index < notes.count else { return }
+        let updated = notes[index].withBackgroundColor(hex)
+        notes = notes.enumerated().map { i, note in
+            i == index ? updated : note
+        }
+        storage.saveMetadata(notes)
+    }
+
     // MARK: - Tags
 
     func updateNoteTags(_ index: Int, tags: [String]) {
