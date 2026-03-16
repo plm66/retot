@@ -74,6 +74,31 @@ final class StorageManager {
         }
     }
 
+    /// Replace hardcoded black/white text colors with the system dynamic color.
+    /// This ensures text stays readable when switching between Light and Dark mode.
+    private static func replaceDefaultTextColors(in attributedString: NSAttributedString) -> NSAttributedString {
+        let mutable = NSMutableAttributedString(attributedString: attributedString)
+        let fullRange = NSRange(location: 0, length: mutable.length)
+
+        mutable.enumerateAttribute(.foregroundColor, in: fullRange) { value, range, _ in
+            guard let color = value as? NSColor else {
+                // No explicit color → set to system textColor
+                mutable.addAttribute(.foregroundColor, value: NSColor.textColor, range: range)
+                return
+            }
+            // Convert to sRGB to compare
+            guard let rgb = color.usingColorSpace(.sRGB) else { return }
+            let brightness = rgb.redComponent * 0.299 + rgb.greenComponent * 0.587 + rgb.blueComponent * 0.114
+
+            // Replace near-black or near-white (default text colors) with dynamic textColor
+            if brightness < 0.1 || brightness > 0.9 {
+                mutable.addAttribute(.foregroundColor, value: NSColor.textColor, range: range)
+            }
+        }
+
+        return NSAttributedString(attributedString: mutable)
+    }
+
     func loadNoteContent(for id: Int) -> NSAttributedString {
         let url = StorageConstants.noteURL(for: id)
         guard fileManager.fileExists(atPath: url.path) else {
@@ -92,7 +117,7 @@ final class StorageManager {
                 ],
                 documentAttributes: nil
             )
-            return attributedString
+            return Self.replaceDefaultTextColors(in: attributedString)
         } catch {
             print("Failed to load note \(id): \(error)")
             return NSAttributedString(string: "")
