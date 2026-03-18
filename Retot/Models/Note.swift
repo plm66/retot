@@ -97,3 +97,34 @@ struct Note: Identifiable, Equatable {
         }
     }
 }
+
+// MARK: - Block Model
+
+struct Block: Identifiable, Equatable, Codable {
+    let id: UUID
+    let type: BlockType
+    let htmlContent: String
+
+    enum BlockType: String, Codable {
+        case freeText
+        case pastille
+    }
+
+    init(id: UUID = UUID(), type: BlockType, htmlContent: String) {
+        self.id = id
+        self.type = type
+        self.htmlContent = htmlContent
+    }
+
+    func withContent(_ newHtml: String) -> Block {
+        Block(id: id, type: type, htmlContent: newHtml)
+    }
+
+    func toPastille() -> Block {
+        Block(id: id, type: .pastille, htmlContent: htmlContent)
+    }
+
+    func toFreeText() -> Block {
+        Block(id: id, type: .freeText, htmlContent: htmlContent)
+    }
+}

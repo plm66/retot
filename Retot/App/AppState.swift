@@ -109,7 +109,6 @@ final class AppState: ObservableObject {
             let fileURL = directory.appendingPathComponent("\(note.label).md")
             try? markdown.write(to: fileURL, atomically: true, encoding: .utf8)
         }
-        // Also export metadata
         let metaURL = directory.appendingPathComponent("retot-metadata.json")
         let metadata = notes.map(NoteMetadata.from)
         let encoder = JSONEncoder()
@@ -130,7 +129,6 @@ final class AppState: ObservableObject {
         notes = metadata.map { $0.toNote() }
         storage.saveMetadata(notes)
 
-        // Import markdown files as plain text content
         for note in notes {
             let fileURL = directory.appendingPathComponent("\(note.label).md")
             if let markdown = try? String(contentsOf: fileURL, encoding: .utf8) {
@@ -142,7 +140,6 @@ final class AppState: ObservableObject {
             }
         }
 
-        // Reload current note
         currentAttributedText = storage.loadNoteContent(for: notes[selectedNoteIndex].id)
     }
 
@@ -160,6 +157,19 @@ final class AppState: ObservableObject {
             i == selectedNoteIndex ? updated : note
         }
         storage.saveMetadata(notes)
+    }
+
+    // MARK: - Memory Management
+
+    func releaseMemory() {
+        currentAttributedText = NSAttributedString(string: "")
+        currentTextView = nil
+    }
+
+    func reloadCurrentNote() {
+        if currentAttributedText.length == 0 {
+            currentAttributedText = storage.loadNoteContent(for: notes[selectedNoteIndex].id)
+        }
     }
 
     // MARK: - Wiki Link Navigation

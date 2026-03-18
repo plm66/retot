@@ -27,6 +27,12 @@ struct ContentView: View {
                 NoteEditorView()
             }
         }
-        .frame(minWidth: 400, minHeight: 300)
+        .onDisappear {
+            appState.saveCurrentNoteContent()
+            appState.releaseMemory()
+        }
+        .onAppear {
+            appState.reloadCurrentNote()
+        }
     }
 }
