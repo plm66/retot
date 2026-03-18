@@ -1,10 +1,13 @@
+import AppKit
 import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
     let onDone: () -> Void
+    @State private var ramUsage: String = "..."
 
     var body: some View {
+        ScrollView {
         VStack(spacing: 20) {
             Text("Settings")
                 .font(.title2.bold())
@@ -64,16 +67,44 @@ struct SettingsView: View {
                 .padding(8)
             }
 
+            GroupBox("System") {
+                VStack(spacing: 12) {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("RAM Usage (Retot)")
+                                .font(.body)
+                            Text(ramUsage)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        Spacer()
+                        Button("Refresh") { updateRAMUsage() }
+                    }
+                }
+                .padding(8)
+            }
+
             Spacer()
 
-            Button("Done") { onDone() }
-                .keyboardShortcut(.defaultAction)
+            HStack {
+                Button("Quit Retot") {
+                    NSApplication.shared.terminate(nil)
+                }
+                .foregroundColor(.red)
+
+                Spacer()
+
+                Button("Done") { onDone() }
+                    .keyboardShortcut(.defaultAction)
+            }
         }
         .padding(24)
-        .frame(width: 400, height: 320)
+        } // ScrollView
+        .onAppear { updateRAMUsage() }
     }
 
     private func exportAll() {
+        NSApp.activate(ignoringOtherApps: true)
         let panel = NSOpenPanel()
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
@@ -81,22 +112,37 @@ struct SettingsView: View {
         panel.prompt = "Export Here"
         panel.message = "Choose a folder to export all notes"
 
-        panel.begin { response in
-            guard response == .OK, let url = panel.url else { return }
-            appState.exportAllNotes(to: url)
+        let response = panel.runModal()
+        guard response == .OK, let url = panel.url else { return }
+        appState.exportAllNotes(to: url)
+    }
+
+    private func updateRAMUsage() {
+        var info = mach_task_basic_info()
+        var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size) / 4
+        let result = withUnsafeMutablePointer(to: &info) {
+            $0.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
+                task_info(mach_task_self_, task_flavor_t(MACH_TASK_BASIC_INFO), $0, &count)
+            }
+        }
+        if result == KERN_SUCCESS {
+            let usedMB = Double(info.resident_size) / 1_048_576.0
+            ramUsage = String(format: "%.1f MB", usedMB)
+        } else {
+            ramUsage = "N/A"
         }
     }
 
     private func importAll() {
+        NSApp.activate(ignoringOtherApps: true)
         let panel = NSOpenPanel()
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.prompt = "Import"
         panel.message = "Choose a folder containing retot-metadata.json"
 
-        panel.begin { response in
-            guard response == .OK, let url = panel.url else { return }
-            appState.importAllNotes(from: url)
-        }
+        let response = panel.runModal()
+        guard response == .OK, let url = panel.url else { return }
+        appState.importAllNotes(from: url)
     }
 }

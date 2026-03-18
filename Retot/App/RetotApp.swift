@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 @main
@@ -8,7 +9,7 @@ struct RetotApp: App {
         MenuBarExtra("Retot", systemImage: "circle.grid.2x2.fill") {
             ContentView()
                 .environmentObject(appState)
-                .frame(width: 540, height: 460)
+                .frame(width: 680, height: 580)
         }
         .menuBarExtraStyle(.window)
     }
