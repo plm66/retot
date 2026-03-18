@@ -23,6 +23,7 @@ final class AppState: ObservableObject {
         currentAttributedText = storage.loadNoteContent(for: notes[0].id)
         setupAutoSave()
         setupTerminationObserver()
+        setupSearchShortcut()
     }
 
     // MARK: - Note Selection
@@ -159,6 +160,70 @@ final class AppState: ObservableObject {
         storage.saveMetadata(notes)
     }
 
+    // MARK: - Global Search
+
+    struct SearchResult: Identifiable {
+        let id = UUID()
+        let noteIndex: Int
+        let noteLabel: String
+        let noteColor: NoteColor
+        let excerpt: String
+        let matchRange: Range<String.Index>
+    }
+
+    @Published var isSearching = false
+    @Published var searchQuery = ""
+    @Published var searchResults: [SearchResult] = []
+
+    func performSearch(_ query: String) {
+        searchQuery = query
+        let trimmed = query.trimmingCharacters(in: .whitespaces).lowercased()
+        guard trimmed.count >= 2 else {
+            searchResults = []
+            return
+        }
+
+        var results: [SearchResult] = []
+        for (index, note) in notes.enumerated() {
+            let content: String
+            if index == selectedNoteIndex {
+                content = currentAttributedText.string
+            } else {
+                content = storage.loadNoteContent(for: note.id).string
+            }
+
+            let lower = content.lowercased()
+            var searchStart = lower.startIndex
+            while let range = lower.range(of: trimmed, range: searchStart..<lower.endIndex) {
+                // Extract excerpt: 40 chars before and after
+                let excerptStart = content.index(range.lowerBound, offsetBy: -40, limitedBy: content.startIndex) ?? content.startIndex
+                let excerptEnd = content.index(range.upperBound, offsetBy: 40, limitedBy: content.endIndex) ?? content.endIndex
+                let excerpt = String(content[excerptStart..<excerptEnd])
+                    .replacingOccurrences(of: "\n", with: " ")
+
+                results.append(SearchResult(
+                    noteIndex: index,
+                    noteLabel: note.label,
+                    noteColor: note.color,
+                    excerpt: excerpt,
+                    matchRange: range
+                ))
+
+                searchStart = range.upperBound
+                // Limit to 5 results per note
+                if results.filter({ $0.noteIndex == index }).count >= 5 { break }
+            }
+        }
+        searchResults = results
+    }
+
+    func navigateToSearchResult(_ result: SearchResult) {
+        selectNote(result.noteIndex)
+        isSearching = false
+        searchQuery = ""
+        searchResults = []
+    }
+
     // MARK: - Memory Management
 
     func releaseMemory() {
@@ -191,6 +256,20 @@ final class AppState: ObservableObject {
             .sink { [weak self] in
                 self?.saveCurrentNoteContent()
             }
+    }
+
+    private func setupSearchShortcut() {
+        NotificationCenter.default.addObserver(
+            forName: .retotToggleSearch,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.isSearching.toggle()
+            if self?.isSearching == false {
+                self?.searchQuery = ""
+                self?.searchResults = []
+            }
+        }
     }
 
     private func setupTerminationObserver() {
