@@ -12,83 +12,92 @@ struct NoteSettingsPopover: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
-            Text("Note Settings")
-                .font(.headline)
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(spacing: 16) {
+                    Text("Note Settings")
+                        .font(.title2.bold())
 
-            // Label
-            TextField("Label", text: $editingLabel)
-                .textFieldStyle(.roundedBorder)
-                .onSubmit { applyLabel() }
+                    // Label
+                    TextField("Label", text: $editingLabel)
+                        .textFieldStyle(.roundedBorder)
+                        .onSubmit { applyLabel() }
 
-            // Dot color picker
-            Text("Color")
-                .font(.subheadline)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                    // Dot color picker
+                    Text("Color")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
-            LazyVGrid(columns: Array(repeating: GridItem(.fixed(32)), count: 5), spacing: 8) {
-                ForEach(NoteColor.allCases) { color in
-                    Circle()
-                        .fill(color.swiftUIColor)
-                        .frame(width: 28, height: 28)
-                        .overlay(
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 5), spacing: 12) {
+                        ForEach(NoteColor.allCases) { color in
                             Circle()
-                                .stroke(Color.primary, lineWidth: isCurrentColor(color) ? 2 : 0)
-                        )
-                        .onTapGesture {
-                            appState.updateNoteColor(noteIndex, color: color)
+                                .fill(color.swiftUIColor)
+                                .frame(width: 32, height: 32)
+                                .overlay(
+                                    Circle()
+                                        .stroke(Color.primary, lineWidth: isCurrentColor(color) ? 2 : 0)
+                                )
+                                .onTapGesture {
+                                    appState.updateNoteColor(noteIndex, color: color)
+                                }
                         }
+                    }
+
+                    // Font Color
+                    Divider()
+
+                    Text("Font Color")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    EditorColorPickerGrid(
+                        selectedHex: currentNote.fontColorHex,
+                        onSelect: { hex in appState.updateNoteFontColor(noteIndex, hex: hex) }
+                    )
+
+                    // Background Color
+                    Divider()
+
+                    Text("Background Color")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    EditorColorPickerGrid(
+                        selectedHex: currentNote.backgroundColorHex,
+                        onSelect: { hex in appState.updateNoteBackgroundColor(noteIndex, hex: hex) }
+                    )
+
+                    // Tags
+                    Divider()
+
+                    Text("Tags")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    TagsView(
+                        tags: appState.notes[noteIndex].tags,
+                        onRemove: { tag in appState.removeTag(tag, fromNoteAt: noteIndex) }
+                    )
+
+                    HStack {
+                        TextField("Add tag...", text: $newTag)
+                            .textFieldStyle(.roundedBorder)
+                            .onSubmit { addTag() }
+                        Button(action: addTag) {
+                            Image(systemName: "plus.circle.fill")
+                        }
+                        .buttonStyle(.borderless)
+                        .disabled(newTag.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
                 }
+                .padding(.top, 20)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 12)
             }
 
-            // Font Color
             Divider()
 
-            Text("Font Color")
-                .font(.subheadline)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            EditorColorPickerGrid(
-                selectedHex: currentNote.fontColorHex,
-                onSelect: { hex in appState.updateNoteFontColor(noteIndex, hex: hex) }
-            )
-
-            // Background Color
-            Divider()
-
-            Text("Background Color")
-                .font(.subheadline)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            EditorColorPickerGrid(
-                selectedHex: currentNote.backgroundColorHex,
-                onSelect: { hex in appState.updateNoteBackgroundColor(noteIndex, hex: hex) }
-            )
-
-            // Tags
-            Divider()
-
-            Text("Tags")
-                .font(.subheadline)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            TagsView(
-                tags: appState.notes[noteIndex].tags,
-                onRemove: { tag in appState.removeTag(tag, fromNoteAt: noteIndex) }
-            )
-
-            HStack {
-                TextField("Add tag...", text: $newTag)
-                    .textFieldStyle(.roundedBorder)
-                    .onSubmit { addTag() }
-                Button(action: addTag) {
-                    Image(systemName: "plus.circle.fill")
-                }
-                .buttonStyle(.borderless)
-                .disabled(newTag.trimmingCharacters(in: .whitespaces).isEmpty)
-            }
-
-            // Actions
+            // Actions pinned at bottom
             HStack {
                 Button("Cancel") { onDone() }
                     .keyboardShortcut(.cancelAction)
@@ -99,9 +108,10 @@ struct NoteSettingsPopover: View {
                 }
                 .keyboardShortcut(.defaultAction)
             }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
         }
-        .padding(20)
-        .frame(width: 280)
+        .frame(maxHeight: 500)
         .onAppear {
             editingLabel = appState.notes[noteIndex].label
         }
@@ -132,21 +142,21 @@ struct EditorColorPickerGrid: View {
     let onSelect: (String?) -> Void
 
     var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.fixed(28)), count: 7), spacing: 6) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 8) {
             // Default button
             Circle()
                 .fill(Color.clear)
-                .frame(width: 24, height: 24)
+                .frame(width: 32, height: 32)
                 .overlay(
                     ZStack {
                         Circle().stroke(Color.secondary, lineWidth: 1)
                         if selectedHex == nil {
                             Image(systemName: "checkmark")
-                                .font(.caption2.bold())
+                                .font(.body.bold())
                                 .foregroundColor(.primary)
                         } else {
                             Text("D")
-                                .font(.caption2.bold())
+                                .font(.body.bold())
                                 .foregroundColor(.secondary)
                         }
                     }
@@ -157,14 +167,14 @@ struct EditorColorPickerGrid: View {
             ForEach(EditorColorPalette.editorPalette, id: \.hex) { entry in
                 Circle()
                     .fill(Color(hex: entry.hex) ?? Color.clear)
-                    .frame(width: 24, height: 24)
+                    .frame(width: 32, height: 32)
                     .overlay(
                         ZStack {
                             Circle()
                                 .stroke(Color.primary.opacity(0.3), lineWidth: 0.5)
                             if selectedHex?.uppercased() == entry.hex.uppercased() {
                                 Image(systemName: "checkmark")
-                                    .font(.caption2.bold())
+                                    .font(.body.bold())
                                     .foregroundColor(checkmarkColor(for: entry.hex))
                             }
                         }
@@ -189,11 +199,11 @@ struct TagsView: View {
     var body: some View {
         if tags.isEmpty {
             Text("No tags")
-                .font(.caption)
+                .font(.body)
                 .foregroundColor(.secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
         } else {
-            FlowLayout(spacing: 4) {
+            FlowLayout(spacing: 6) {
                 ForEach(tags, id: \.self) { tag in
                     TagChip(tag: tag, onRemove: { onRemove(tag) })
                 }
@@ -209,22 +219,22 @@ struct TagChip: View {
     var body: some View {
         HStack(spacing: 4) {
             Text(tag)
-                .font(.caption)
+                .font(.body)
             Button(action: onRemove) {
                 Image(systemName: "xmark.circle.fill")
-                    .font(.caption2)
+                    .font(.caption)
             }
             .buttonStyle(.borderless)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 3)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 5)
         .background(Color.accentColor.opacity(0.15))
         .cornerRadius(10)
     }
 }
 
 struct FlowLayout: Layout {
-    var spacing: CGFloat = 4
+    var spacing: CGFloat = 6
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let result = computeLayout(proposal: proposal, subviews: subviews)
