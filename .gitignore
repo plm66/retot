@@ -23,3 +23,12 @@ Package.resolved
 
 # OMC
 .omc/
+
+# Claude Code
+.claude/
+
+# Profiling
+*.profraw
+
+# Externals
+externals/
