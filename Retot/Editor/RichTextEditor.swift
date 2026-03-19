@@ -411,7 +411,89 @@ class RetotTextView: NSTextView {
             }
         }
 
+        // Image context menu
+        if let attachment = imageAttachment(at: charIndex) {
+            menu.insertItem(.separator(), at: 0)
+
+            let sizes: [(String, CGFloat)] = [
+                ("Small (128px)", 128),
+                ("Medium (256px)", 256),
+                ("Large (512px)", 512),
+                ("Extra Large (768px)", 768),
+                ("Original Size", 0)
+            ]
+
+            let resizeItem = NSMenuItem(title: "Resize Image", action: nil, keyEquivalent: "")
+            let resizeMenu = NSMenu()
+            for (label, width) in sizes {
+                let item = NSMenuItem(
+                    title: label,
+                    action: #selector(resizeImageAction(_:)),
+                    keyEquivalent: ""
+                )
+                item.tag = Int(width)
+                item.representedObject = charIndex
+                item.target = self
+                resizeMenu.addItem(item)
+            }
+            resizeItem.submenu = resizeMenu
+            menu.insertItem(resizeItem, at: 0)
+
+            let deleteImgItem = NSMenuItem(
+                title: "Delete Image",
+                action: #selector(deleteImageAction(_:)),
+                keyEquivalent: ""
+            )
+            deleteImgItem.representedObject = charIndex
+            deleteImgItem.target = self
+            menu.insertItem(deleteImgItem, at: 0)
+        }
+
         return menu
+    }
+
+    // MARK: - Image Helpers
+
+    private func imageAttachment(at charIndex: Int) -> NSTextAttachment? {
+        guard let textStorage = self.textStorage,
+              charIndex >= 0, charIndex < textStorage.length else { return nil }
+        return textStorage.attribute(.attachment, at: charIndex, effectiveRange: nil) as? NSTextAttachment
+    }
+
+    @objc private func resizeImageAction(_ sender: NSMenuItem) {
+        guard let charIndex = sender.representedObject as? Int,
+              let textStorage = self.textStorage,
+              charIndex >= 0, charIndex < textStorage.length,
+              let attachment = textStorage.attribute(.attachment, at: charIndex, effectiveRange: nil) as? NSTextAttachment else { return }
+
+        let targetWidth = CGFloat(sender.tag)
+
+        if targetWidth == 0 {
+            // Original size: reset bounds
+            attachment.bounds = .zero
+        } else if let image = attachment.image {
+            let aspect = image.size.height / image.size.width
+            attachment.bounds = CGRect(x: 0, y: 0, width: targetWidth, height: targetWidth * aspect)
+        } else {
+            attachment.bounds = CGRect(x: 0, y: 0, width: targetWidth, height: targetWidth * 0.75)
+        }
+
+        // Force layout refresh
+        let range = NSRange(location: charIndex, length: 1)
+        textStorage.beginEditing()
+        textStorage.edited(.editedAttributes, range: range, changeInLength: 0)
+        textStorage.endEditing()
+        didChangeText()
+    }
+
+    @objc private func deleteImageAction(_ sender: NSMenuItem) {
+        guard let charIndex = sender.representedObject as? Int,
+              let textStorage = self.textStorage,
+              charIndex >= 0, charIndex < textStorage.length else { return }
+        textStorage.beginEditing()
+        textStorage.deleteCharacters(in: NSRange(location: charIndex, length: 1))
+        textStorage.endEditing()
+        didChangeText()
     }
 
     @objc private func deleteTableAction(_ sender: NSMenuItem) {
