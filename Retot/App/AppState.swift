@@ -174,6 +174,7 @@ final class AppState: ObservableObject {
     }
 
     @Published var isPinnedOnTop = false
+    @Published var savedIndicator = false
     @Published var isSearching = false
     @Published var searchQuery = ""
     @Published var searchResults: [SearchResult] = []
@@ -225,6 +226,15 @@ final class AppState: ObservableObject {
         isSearching = false
         searchQuery = ""
         searchResults = []
+    }
+
+    // MARK: - Save Feedback
+
+    func showSavedFeedback() {
+        savedIndicator = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
+            self?.savedIndicator = false
+        }
     }
 
     // MARK: - Clear & Duplicate

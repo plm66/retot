@@ -4,6 +4,7 @@ import SwiftUI
 struct EditorToolbar: View {
     @EnvironmentObject var appState: AppState
     let onExport: () -> Void
+    @State private var showClearConfirm = false
 
     var body: some View {
         HStack(spacing: 4) {
@@ -75,7 +76,15 @@ struct EditorToolbar: View {
             }
 
             toolbarButton("Clear note", systemImage: "trash") {
-                appState.clearNote(appState.selectedNoteIndex)
+                showClearConfirm = true
+            }
+            .alert("Clear this note?", isPresented: $showClearConfirm) {
+                Button("Cancel", role: .cancel) {}
+                Button("Clear", role: .destructive) {
+                    appState.clearNote(appState.selectedNoteIndex)
+                }
+            } message: {
+                Text("All content in \"\(appState.notes[appState.selectedNoteIndex].label)\" will be deleted. This cannot be undone.")
             }
 
             toolbarButton("Export as Markdown", systemImage: "square.and.arrow.up") {

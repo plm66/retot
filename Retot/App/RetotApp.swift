@@ -31,15 +31,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     // MARK: - Status Item (Menu Bar Icon)
 
     private func setupStatusItem() {
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
             button.image = NSImage(
                 systemSymbolName: "circle.grid.2x2.fill",
                 accessibilityDescription: "Retot"
             )
+            button.imagePosition = .imageLeading
             button.action = #selector(toggleWindow)
             button.target = self
+            updateStatusItemBadge()
         }
+    }
+
+    func updateStatusItemBadge() {
+        guard let button = statusItem?.button else { return }
+        let note = appState.notes[appState.selectedNoteIndex]
+        button.title = " \(note.id)"
     }
 
     // MARK: - Window
@@ -86,6 +94,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             case "8": self.appState.selectNote(7); return nil
             case "9": self.appState.selectNote(8); return nil
             case "0": self.appState.selectNote(9); return nil
+            case "s":
+                self.appState.saveCurrentNoteContent()
+                self.appState.showSavedFeedback()
+                return nil
             case "w":
                 self.window.orderOut(nil)
                 self.appState.saveCurrentNoteContent()
@@ -149,6 +161,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.updateWindowTitle()
+                self?.updateStatusItemBadge()
             }
             .store(in: &cancellables)
     }

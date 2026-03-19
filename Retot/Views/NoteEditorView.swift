@@ -126,8 +126,20 @@ struct NoteFooterView: View {
             }
 
             Spacer()
+
+            if appState.savedIndicator {
+                Text("Saved")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.green)
+                    .transition(.opacity)
+            } else {
+                Text("Auto-save")
+                    .font(.system(size: 10))
+                    .foregroundColor(.secondary.opacity(0.4))
+            }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 5)
+        .animation(.easeInOut(duration: 0.3), value: appState.savedIndicator)
     }
 }

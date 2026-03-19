@@ -26,7 +26,7 @@ struct DotView: View {
                 Circle()
                     .fill(note.color.swiftUIColor)
                     .frame(width: dotSize, height: dotSize)
-                    .opacity(hasContent ? 1.0 : 0.4)
+                    .opacity(hasContent ? 1.0 : 0.25)
                     .shadow(
                         color: isSelected ? note.color.swiftUIColor.opacity(0.6) : .clear,
                         radius: 4
@@ -54,9 +54,9 @@ struct DotView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
             } else {
-                Text(note.label)
+                Text(hasContent ? note.label : "(empty)")
                     .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
-                    .foregroundColor(isSelected ? .primary : .secondary)
+                    .foregroundColor(isSelected ? .primary : (hasContent ? .secondary : .secondary.opacity(0.4)))
                     .lineLimit(1)
                     .truncationMode(.tail)
                     .frame(maxWidth: .infinity)
