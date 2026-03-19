@@ -245,6 +245,8 @@ final class AppState: ObservableObject {
         storage.saveNoteContent(empty, for: notes[index].id)
         if index == selectedNoteIndex {
             currentAttributedText = empty
+            // Also clear the NSTextView directly to prevent auto-save restoring old content
+            currentTextView?.textStorage?.setAttributedString(empty)
         }
     }
 
