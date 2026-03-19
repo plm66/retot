@@ -224,6 +224,29 @@ final class AppState: ObservableObject {
         searchResults = []
     }
 
+    // MARK: - Pastille Move
+
+    func receivePastille(_ attributedString: NSAttributedString, inNoteAt targetIndex: Int) {
+        guard targetIndex >= 0, targetIndex < notes.count else { return }
+
+        // Save current note first (pastille already removed from textStorage)
+        saveCurrentNoteContent()
+
+        // Load target note content
+        let targetContent = storage.loadNoteContent(for: notes[targetIndex].id)
+
+        // Insert pastille at the beginning of target note
+        let combined = NSMutableAttributedString()
+        combined.append(attributedString)
+        if !attributedString.string.hasSuffix("\n") {
+            combined.append(NSAttributedString(string: "\n"))
+        }
+        combined.append(targetContent)
+
+        // Save target note
+        storage.saveNoteContent(combined, for: notes[targetIndex].id)
+    }
+
     // MARK: - Memory Management
 
     func releaseMemory() {

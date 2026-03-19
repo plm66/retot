@@ -40,6 +40,13 @@ struct EditorToolbar: View {
             Divider()
                 .frame(height: 16)
 
+            toolbarButton("pastille", systemImage: "rectangle.on.rectangle") {
+                createPastille()
+            }
+
+            Divider()
+                .frame(height: 16)
+
             toolbarButton("decrease font", systemImage: "minus.magnifyingglass") {
                 adjustFontSize(by: -2)
             }
@@ -233,6 +240,13 @@ struct EditorToolbar: View {
         // Place cursor after the table
         let newPosition = insertionPoint + tableString.length
         textView.setSelectedRange(NSRange(location: newPosition, length: 0))
+    }
+
+    private func createPastille() {
+        guard let textView = appState.currentTextView as? RetotTextView else { return }
+        let range = textView.selectedRange()
+        guard range.length > 0 else { return }
+        textView.createPastille(in: range)
     }
 
     private func adjustFontSize(by delta: CGFloat) {
