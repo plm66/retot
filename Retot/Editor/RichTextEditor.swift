@@ -5,6 +5,44 @@ class RetotTextView: NSTextView {
 
     weak var appState: AppState?
 
+    // MARK: - Print
+
+    override func printView(_ sender: Any?) {
+        // Create a temporary copy with print-friendly colors
+        guard let textStorage = self.textStorage else {
+            super.printView(sender)
+            return
+        }
+
+        let printContent = NSMutableAttributedString(attributedString: textStorage)
+        let fullRange = NSRange(location: 0, length: printContent.length)
+
+        // Force black text for printing
+        printContent.enumerateAttribute(.foregroundColor, in: fullRange) { value, range, _ in
+            if let color = value as? NSColor {
+                let brightness = color.usingColorSpace(.sRGB).map {
+                    $0.redComponent * 0.299 + $0.greenComponent * 0.587 + $0.blueComponent * 0.114
+                } ?? 0.5
+                // Light text (designed for dark background) → make it black
+                if brightness > 0.7 {
+                    printContent.addAttribute(.foregroundColor, value: NSColor.black, range: range)
+                }
+            }
+        }
+
+        // Create a temporary text view for printing
+        let printView = NSTextView(frame: NSRect(x: 0, y: 0, width: 612, height: 792))
+        printView.textStorage?.setAttributedString(printContent)
+        printView.backgroundColor = .white
+        printView.textContainerInset = NSSize(width: 36, height: 36)
+        printView.isEditable = false
+
+        let printOp = NSPrintOperation(view: printView)
+        printOp.printInfo.isHorizontallyCentered = false
+        printOp.printInfo.isVerticallyCentered = false
+        printOp.runModal(for: self.window!, delegate: nil, didRun: nil, contextInfo: nil)
+    }
+
     // MARK: - Paste
 
     override func paste(_ sender: Any?) {
