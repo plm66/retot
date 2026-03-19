@@ -59,6 +59,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         window.minSize = NSSize(width: 480, height: 400)
         window.maxSize = NSSize(width: 1400, height: 1000)
         window.isReleasedWhenClosed = false
+        window.hidesOnDeactivate = false
         window.delegate = self
         window.center()
 

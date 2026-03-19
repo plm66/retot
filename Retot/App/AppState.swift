@@ -285,8 +285,16 @@ final class AppState: ObservableObject {
 
     func togglePinOnTop() {
         isPinnedOnTop.toggle()
-        if let window = NSApp.windows.first(where: { $0.title == "Retot" }) {
-            window.level = isPinnedOnTop ? .floating : .normal
+        if let window = NSApp.windows.first(where: { $0.title.hasPrefix("Retot") }) {
+            if isPinnedOnTop {
+                window.level = .floating
+                window.hidesOnDeactivate = false
+                window.collectionBehavior.insert(.canJoinAllSpaces)
+            } else {
+                window.level = .normal
+                window.hidesOnDeactivate = true
+                window.collectionBehavior.remove(.canJoinAllSpaces)
+            }
         }
     }
 
