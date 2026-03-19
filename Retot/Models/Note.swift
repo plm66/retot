@@ -85,12 +85,13 @@ struct Note: Identifiable, Equatable {
         )
     }
 
-    static func defaults() -> [Note] {
-        NoteColor.defaultPalette.enumerated().map { index, color in
+    static func defaults(count: Int = 10) -> [Note] {
+        let palette = NoteColor.defaultPalette
+        return (0..<count).map { index in
             Note(
                 id: index + 1,
                 label: "Note \(index + 1)",
-                color: color,
+                color: palette[index % palette.count],
                 tags: [],
                 lastModified: Date()
             )

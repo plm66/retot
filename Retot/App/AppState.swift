@@ -18,7 +18,8 @@ final class AppState: ObservableObject {
         storage.ensureDirectoryStructure()
         notes = storage.loadMetadata()
         if notes.isEmpty {
-            notes = Note.defaults()
+            let count = UserDefaults.standard.integer(forKey: "retotNoteCount")
+            notes = Note.defaults(count: count > 0 ? count : 10)
             storage.saveMetadata(notes)
             createOnboardingContent()
         }
@@ -227,6 +228,38 @@ final class AppState: ObservableObject {
         isSearching = false
         searchQuery = ""
         searchResults = []
+    }
+
+    // MARK: - Note Count
+
+    func setNoteCount(_ newCount: Int) {
+        guard newCount >= 3, newCount <= 30 else { return }
+        saveCurrentNoteContent()
+
+        let currentCount = notes.count
+        if newCount > currentCount {
+            // Add new notes
+            let palette = NoteColor.defaultPalette
+            let newNotes = (currentCount..<newCount).map { index in
+                Note(
+                    id: index + 1,
+                    label: "Note \(index + 1)",
+                    color: palette[index % palette.count],
+                    tags: [],
+                    lastModified: Date()
+                )
+            }
+            notes = notes + newNotes
+        } else if newCount < currentCount {
+            // Remove excess notes (from the end)
+            notes = Array(notes.prefix(newCount))
+            if selectedNoteIndex >= newCount {
+                selectedNoteIndex = newCount - 1
+                currentAttributedText = storage.loadNoteContent(for: notes[selectedNoteIndex].id)
+            }
+        }
+        storage.saveMetadata(notes)
+        UserDefaults.standard.set(newCount, forKey: "retotNoteCount")
     }
 
     // MARK: - Save Feedback

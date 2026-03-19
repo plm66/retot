@@ -6,12 +6,31 @@ struct SettingsView: View {
     let onDone: () -> Void
     @State private var ramUsage: String = "..."
     @AppStorage("retotAppearance") private var appearance: String = "system"
+    @State private var noteCount: Double = 10
 
     var body: some View {
         ScrollView {
         VStack(spacing: 20) {
             Text("Settings")
                 .font(.title2.bold())
+
+            GroupBox("Notes") {
+                VStack(spacing: 12) {
+                    HStack {
+                        Text("Number of notes")
+                            .font(.body)
+                        Spacer()
+                        Text("\(Int(noteCount))")
+                            .font(.body.monospacedDigit().bold())
+                            .frame(width: 30)
+                    }
+                    Slider(value: $noteCount, in: 3...30, step: 1)
+                        .onChange(of: noteCount) { newValue in
+                            appState.setNoteCount(Int(newValue))
+                        }
+                }
+                .padding(8)
+            }
 
             GroupBox("Appearance") {
                 VStack(spacing: 12) {
@@ -174,6 +193,7 @@ struct SettingsView: View {
         .padding(24)
         } // ScrollView
         .onAppear {
+            noteCount = Double(appState.notes.count)
             updateRAMUsage()
             applyAppearance(appearance)
         }
