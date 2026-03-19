@@ -87,6 +87,10 @@ struct EditorToolbar: View {
                 Text("All content in \"\(appState.notes[appState.selectedNoteIndex].label)\" will be deleted. This cannot be undone.")
             }
 
+            toolbarButton("Print / Save as PDF", systemImage: "printer") {
+                appState.currentTextView?.printView(nil)
+            }
+
             toolbarButton("Export as Markdown", systemImage: "square.and.arrow.up") {
                 onExport()
             }

@@ -102,6 +102,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                 self.appState.saveCurrentNoteContent()
                 self.appState.showSavedFeedback()
                 return nil
+            case "p":
+                self.appState.currentTextView?.printView(nil)
+                return nil
             case "w":
                 self.window.orderOut(nil)
                 self.appState.saveCurrentNoteContent()
