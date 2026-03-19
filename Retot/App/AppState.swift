@@ -173,6 +173,7 @@ final class AppState: ObservableObject {
         let matchRange: Range<String.Index>
     }
 
+    @Published var isPinnedOnTop = false
     @Published var isSearching = false
     @Published var searchQuery = ""
     @Published var searchResults: [SearchResult] = []
@@ -224,6 +225,25 @@ final class AppState: ObservableObject {
         isSearching = false
         searchQuery = ""
         searchResults = []
+    }
+
+    // MARK: - Pin on Top
+
+    func togglePinOnTop() {
+        isPinnedOnTop.toggle()
+        if let window = NSApp.windows.first(where: { $0.title == "Retot" }) {
+            window.level = isPinnedOnTop ? .floating : .normal
+        }
+    }
+
+    // MARK: - Content Check
+
+    func noteHasContent(_ index: Int) -> Bool {
+        guard index >= 0, index < notes.count else { return false }
+        if index == selectedNoteIndex {
+            return currentAttributedText.length > 0
+        }
+        return storage.loadNoteContent(for: notes[index].id).length > 0
     }
 
     // MARK: - Pastille Move

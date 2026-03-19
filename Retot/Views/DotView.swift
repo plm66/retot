@@ -3,6 +3,7 @@ import SwiftUI
 struct DotView: View {
     let note: Note
     let isSelected: Bool
+    let hasContent: Bool
     let onTap: () -> Void
     let onSettings: () -> Void
 
@@ -20,6 +21,7 @@ struct DotView: View {
                 Circle()
                     .fill(note.color.swiftUIColor)
                     .frame(width: dotSize, height: dotSize)
+                    .opacity(hasContent ? 1.0 : 0.4)
                     .shadow(
                         color: isSelected ? note.color.swiftUIColor.opacity(0.6) : .clear,
                         radius: 4

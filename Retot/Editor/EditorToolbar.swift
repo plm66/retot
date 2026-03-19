@@ -7,6 +7,16 @@ struct EditorToolbar: View {
 
     var body: some View {
         HStack(spacing: 4) {
+            toolbarButton("undo", systemImage: "arrow.uturn.backward") {
+                appState.currentTextView?.undoManager?.undo()
+            }
+            toolbarButton("redo", systemImage: "arrow.uturn.forward") {
+                appState.currentTextView?.undoManager?.redo()
+            }
+
+            Divider()
+                .frame(height: 16)
+
             toolbarButton("bold", systemImage: "bold") {
                 applyFontTrait(.boldFontMask)
             }
@@ -55,6 +65,10 @@ struct EditorToolbar: View {
             }
 
             Spacer()
+
+            toolbarButton("pin", systemImage: appState.isPinnedOnTop ? "pin.fill" : "pin") {
+                appState.togglePinOnTop()
+            }
 
             toolbarButton("search", systemImage: "magnifyingglass") {
                 appState.isSearching = true

@@ -11,6 +11,7 @@ struct DotBar: View {
                 DotView(
                     note: note,
                     isSelected: index == appState.selectedNoteIndex,
+                    hasContent: appState.noteHasContent(index),
                     onTap: { appState.selectNote(index) },
                     onSettings: { settingsNoteIndex = index }
                 )
