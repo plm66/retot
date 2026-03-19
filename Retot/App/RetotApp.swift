@@ -183,7 +183,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         appState.saveCurrentNoteContent()
 
         let note = appState.notes[noteIndex]
-        let content = storage.loadNoteContent(for: note.id)
 
         // Create NSTextView
         let scrollView = NSScrollView()
@@ -192,7 +191,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         scrollView.autohidesScrollers = true
         scrollView.borderType = .noBorder
 
-        let textView = RetotTextView()
+        let textContainer = NSTextContainer()
+        textContainer.widthTracksTextView = true
+        textContainer.containerSize = NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+
+        let layoutManager = NSLayoutManager()
+        layoutManager.addTextContainer(textContainer)
+
+        // Share textStorage if this is the currently selected note
+        if noteIndex == appState.selectedNoteIndex,
+           let mainTextStorage = appState.currentTextView?.textStorage {
+            mainTextStorage.addLayoutManager(layoutManager)
+        } else {
+            let content = storage.loadNoteContent(for: note.id)
+            let textStorage = NSTextStorage(attributedString: content)
+            textStorage.addLayoutManager(layoutManager)
+        }
+
+        let textView = RetotTextView(frame: .zero, textContainer: textContainer)
         textView.appState = appState
         textView.isRichText = true
         textView.allowsImageEditing = true
@@ -203,12 +219,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         textView.isAutomaticQuoteSubstitutionEnabled = false
         textView.isAutomaticDashSubstitutionEnabled = false
         textView.textContainerInset = NSSize(width: 12, height: 12)
-        textView.textContainer?.widthTracksTextView = true
-        textView.textContainer?.containerSize = NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
         textView.isVerticallyResizable = true
         textView.isHorizontallyResizable = false
         textView.font = NSFont.systemFont(ofSize: 14)
-        textView.textStorage?.setAttributedString(content)
 
         // Apply note colors
         if let bgHex = note.backgroundColorHex, let bgColor = NSColor.fromHex(bgHex) {
@@ -266,15 +279,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         guard let textView = floatingTextViews[noteIndex],
               let textStorage = textView.textStorage else { return }
 
-        // Save content
-        let content = NSAttributedString(attributedString: textStorage)
-        let noteId = appState.notes[noteIndex].id
-        storage.saveNoteContent(content, for: noteId)
-
-        // If the main window is showing this note, reload
-        if appState.selectedNoteIndex == noteIndex {
-            appState.currentAttributedText = content
-            appState.currentTextView?.textStorage?.setAttributedString(content)
+        // If shared storage (same note as main window), just remove layout manager
+        if noteIndex == appState.selectedNoteIndex {
+            if let layoutManager = textView.layoutManager {
+                textStorage.removeLayoutManager(layoutManager)
+            }
+        } else {
+            // Independent storage: save content
+            let content = NSAttributedString(attributedString: textStorage)
+            let noteId = appState.notes[noteIndex].id
+            storage.saveNoteContent(content, for: noteId)
         }
 
         // Clean up
