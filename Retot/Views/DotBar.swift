@@ -17,15 +17,6 @@ struct DotBar: View {
                 .frame(maxWidth: .infinity)
             }
 
-            Button(action: { appState.isSearching = true }) {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
-            }
-            .buttonStyle(.borderless)
-            .help("Search all notes (Cmd+Shift+F)")
-            .frame(width: 26)
-
             Button(action: { showAppSettings = true }) {
                 Image(systemName: "gearshape")
                     .font(.system(size: 14))

@@ -56,6 +56,10 @@ struct EditorToolbar: View {
 
             Spacer()
 
+            toolbarButton("search", systemImage: "magnifyingglass") {
+                appState.isSearching = true
+            }
+
             toolbarButton("export", systemImage: "square.and.arrow.up") {
                 onExport()
             }
