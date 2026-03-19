@@ -7,74 +7,74 @@ struct EditorToolbar: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            toolbarButton("undo", systemImage: "arrow.uturn.backward") {
+            toolbarButton("Undo", systemImage: "arrow.uturn.backward") {
                 appState.currentTextView?.undoManager?.undo()
             }
-            toolbarButton("redo", systemImage: "arrow.uturn.forward") {
+            toolbarButton("Redo", systemImage: "arrow.uturn.forward") {
                 appState.currentTextView?.undoManager?.redo()
             }
 
             Divider()
                 .frame(height: 16)
 
-            toolbarButton("bold", systemImage: "bold") {
+            toolbarButton("Bold", systemImage: "bold") {
                 applyFontTrait(.boldFontMask)
             }
-            toolbarButton("italic", systemImage: "italic") {
+            toolbarButton("Italic", systemImage: "italic") {
                 applyFontTrait(.italicFontMask)
             }
-            toolbarButton("underline", systemImage: "underline") {
+            toolbarButton("Underline", systemImage: "underline") {
                 applyUnderline()
             }
-            toolbarButton("strikethrough", systemImage: "strikethrough") {
+            toolbarButton("Strikethrough", systemImage: "strikethrough") {
                 applyStrikethrough()
             }
 
             Divider()
                 .frame(height: 16)
 
-            toolbarButton("heading", systemImage: "textformat.size.larger") {
+            toolbarButton("Heading", systemImage: "textformat.size.larger") {
                 applyHeading()
             }
-            toolbarButton("list", systemImage: "list.bullet") {
+            toolbarButton("Bullet list", systemImage: "list.bullet") {
                 applyBulletList()
             }
 
             Divider()
                 .frame(height: 16)
 
-            toolbarButton("table", systemImage: "tablecells") {
+            toolbarButton("Insert table", systemImage: "tablecells") {
                 insertTable()
             }
 
             Divider()
                 .frame(height: 16)
 
-            toolbarButton("pastille", systemImage: "rectangle.on.rectangle") {
+            toolbarButton("Create pastille", systemImage: "rectangle.on.rectangle") {
                 createPastille()
             }
 
             Divider()
                 .frame(height: 16)
 
-            toolbarButton("decrease font", systemImage: "minus.magnifyingglass") {
+            toolbarButton("Decrease font size", systemImage: "minus.magnifyingglass") {
                 adjustFontSize(by: -2)
             }
-            toolbarButton("increase font", systemImage: "plus.magnifyingglass") {
+            toolbarButton("Increase font size", systemImage: "plus.magnifyingglass") {
                 adjustFontSize(by: 2)
             }
 
             Spacer()
 
-            toolbarButton("pin", systemImage: appState.isPinnedOnTop ? "pin.fill" : "pin") {
+            toolbarButton(appState.isPinnedOnTop ? "Unpin window" : "Pin on top", systemImage: appState.isPinnedOnTop ? "pin.fill" : "pin") {
                 appState.togglePinOnTop()
             }
 
-            toolbarButton("search", systemImage: "magnifyingglass") {
+            toolbarButton("Search all notes", systemImage: "magnifyingglass") {
                 appState.isSearching = true
             }
 
-            toolbarButton("export", systemImage: "square.and.arrow.up") {
+            toolbarButton("Export as Markdown", systemImage: "square.and.arrow.up") {
                 onExport()
             }
         }
@@ -93,6 +93,7 @@ struct EditorToolbar: View {
         }
         .buttonStyle(.borderless)
         .accessibilityLabel(label)
+        .help(label)
     }
 
     private func applyFontTrait(_ trait: NSFontTraitMask) {

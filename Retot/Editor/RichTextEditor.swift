@@ -274,6 +274,48 @@ class RetotTextView: NSTextView {
         didChangeText()
     }
 
+    // MARK: - Table Helpers
+
+    func isTable(at charIndex: Int) -> Bool {
+        guard let textStorage = self.textStorage,
+              charIndex >= 0, charIndex < textStorage.length else { return false }
+        guard let paraStyle = textStorage.attribute(
+            .paragraphStyle, at: charIndex, effectiveRange: nil
+        ) as? NSParagraphStyle else { return false }
+        return paraStyle.textBlocks.contains { $0 is NSTextTableBlock }
+    }
+
+    func tableRange(at charIndex: Int) -> NSRange? {
+        guard isTable(at: charIndex),
+              let textStorage = self.textStorage else { return nil }
+        let string = textStorage.string as NSString
+        let length = string.length
+
+        let paraRange = string.paragraphRange(for: NSRange(location: charIndex, length: 0))
+
+        var start = paraRange.location
+        while start > 0 {
+            let prevParaRange = string.paragraphRange(for: NSRange(location: start - 1, length: 0))
+            if isTable(at: prevParaRange.location) {
+                start = prevParaRange.location
+            } else {
+                break
+            }
+        }
+
+        var end = NSMaxRange(paraRange)
+        while end < length {
+            if isTable(at: end) {
+                let nextParaRange = string.paragraphRange(for: NSRange(location: end, length: 0))
+                end = NSMaxRange(nextParaRange)
+            } else {
+                break
+            }
+        }
+
+        return NSRange(location: start, length: end - start)
+    }
+
     // MARK: - Context Menu
 
     override func menu(for event: NSEvent) -> NSMenu? {
@@ -282,10 +324,24 @@ class RetotTextView: NSTextView {
         let point = convert(event.locationInWindow, from: nil)
         let charIndex = characterIndexForInsertion(at: point)
 
+        // Table context menu
+        if isTable(at: charIndex) {
+            menu.insertItem(.separator(), at: 0)
+
+            let deleteTableItem = NSMenuItem(
+                title: "Delete Table",
+                action: #selector(deleteTableAction(_:)),
+                keyEquivalent: ""
+            )
+            deleteTableItem.representedObject = charIndex
+            deleteTableItem.target = self
+            menu.insertItem(deleteTableItem, at: 0)
+        }
+
+        // Pastille context menu
         if isPastille(at: charIndex) {
             menu.insertItem(.separator(), at: 0)
 
-            // Remove pastille
             let removeItem = NSMenuItem(
                 title: "Remove Pastille",
                 action: #selector(removePastilleAction(_:)),
@@ -295,7 +351,6 @@ class RetotTextView: NSTextView {
             removeItem.target = self
             menu.insertItem(removeItem, at: 0)
 
-            // Move to submenu
             if let notes = appState?.notes,
                let selectedIndex = appState?.selectedNoteIndex {
                 let moveItem = NSMenuItem(title: "Move to...", action: nil, keyEquivalent: "")
@@ -319,6 +374,16 @@ class RetotTextView: NSTextView {
         }
 
         return menu
+    }
+
+    @objc private func deleteTableAction(_ sender: NSMenuItem) {
+        guard let charIndex = sender.representedObject as? Int,
+              let range = tableRange(at: charIndex),
+              let textStorage = self.textStorage else { return }
+        textStorage.beginEditing()
+        textStorage.deleteCharacters(in: range)
+        textStorage.endEditing()
+        didChangeText()
     }
 
     @objc private func removePastilleAction(_ sender: NSMenuItem) {
