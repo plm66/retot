@@ -74,6 +74,10 @@ struct EditorToolbar: View {
                 appState.isSearching = true
             }
 
+            toolbarButton("Clear note", systemImage: "trash") {
+                appState.clearNote(appState.selectedNoteIndex)
+            }
+
             toolbarButton("Export as Markdown", systemImage: "square.and.arrow.up") {
                 onExport()
             }
