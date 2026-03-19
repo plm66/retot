@@ -20,6 +20,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusItem()
         setupWindow()
+        setupKeyboardShortcuts()
 
         // Menu bar app: hide from Dock by default
         NSApp.setActivationPolicy(.accessory)
@@ -60,6 +61,40 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         // Restore last window position
         window.setFrameAutosaveName("RetotMainWindow")
+    }
+
+    private func setupKeyboardShortcuts() {
+        // Cmd+1 through Cmd+9 for dots 1-9, Cmd+0 for dot 10
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard event.modifierFlags.contains(.command),
+                  !event.modifierFlags.contains(.shift),
+                  let chars = event.charactersIgnoringModifiers,
+                  let self = self else { return event }
+
+            switch chars {
+            case "1": self.appState.selectNote(0); return nil
+            case "2": self.appState.selectNote(1); return nil
+            case "3": self.appState.selectNote(2); return nil
+            case "4": self.appState.selectNote(3); return nil
+            case "5": self.appState.selectNote(4); return nil
+            case "6": self.appState.selectNote(5); return nil
+            case "7": self.appState.selectNote(6); return nil
+            case "8": self.appState.selectNote(7); return nil
+            case "9": self.appState.selectNote(8); return nil
+            case "0": self.appState.selectNote(9); return nil
+            case "f":
+                if event.modifierFlags.contains(.shift) {
+                    self.appState.isSearching.toggle()
+                    if !self.appState.isSearching {
+                        self.appState.searchQuery = ""
+                        self.appState.searchResults = []
+                    }
+                    return nil
+                }
+                return event
+            default: return event
+            }
+        }
     }
 
     @objc private func toggleWindow() {

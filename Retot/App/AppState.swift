@@ -19,6 +19,8 @@ final class AppState: ObservableObject {
         notes = storage.loadMetadata()
         if notes.isEmpty {
             notes = Note.defaults()
+            storage.saveMetadata(notes)
+            createOnboardingContent()
         }
         currentAttributedText = storage.loadNoteContent(for: notes[0].id)
         setupAutoSave()
@@ -269,6 +271,62 @@ final class AppState: ObservableObject {
             return
         }
         selectNote(index)
+    }
+
+    // MARK: - Onboarding
+
+    private func createOnboardingContent() {
+        let html = """
+        <!DOCTYPE html>
+        <html><head>
+        <meta charset="utf-8">
+        <style>
+        body { font-family: -apple-system, sans-serif; font-size: 14px; }
+        h1 { font-size: 20px; font-weight: bold; }
+        h2 { font-size: 16px; font-weight: bold; margin-top: 14px; }
+        table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+        th { background-color: rgba(0,122,255,0.08); font-weight: 600; text-align: left; padding: 6px; border: 1px solid #888; }
+        td { padding: 6px; border: 1px solid #888; }
+        </style>
+        </head><body>
+        <h1>Welcome to Retot</h1>
+        <p>Your scratch pad for ideas, passwords, snippets, and everything in between.</p>
+
+        <h2>Quick Start</h2>
+        <table>
+        <tr><th>Action</th><th>How</th></tr>
+        <tr><td>Switch notes</td><td>Click a colored dot, or Cmd+1 to Cmd+0</td></tr>
+        <tr><td>Search all notes</td><td>Click the magnifying glass, or Cmd+Shift+F</td></tr>
+        <tr><td>Format text</td><td>Select text, then use the toolbar (Bold, Italic, Heading...)</td></tr>
+        <tr><td>Insert a table</td><td>Click the table icon in the toolbar</td></tr>
+        <tr><td>Paste a table</td><td>Copy a markdown or HTML table and Cmd+V</td></tr>
+        <tr><td>Change font size</td><td>Select text, then use the magnifying glass +/- buttons</td></tr>
+        <tr><td>Create a pastille</td><td>Select text, click the pastille icon (overlapping rectangles)</td></tr>
+        <tr><td>Move a pastille</td><td>Right-click on a pastille, then Move to... Dot N</td></tr>
+        <tr><td>Note settings</td><td>Right-click on a dot for rename, color, tags</td></tr>
+        <tr><td>App settings</td><td>Click the gear icon</td></tr>
+        </table>
+
+        <h2>Tips</h2>
+        <p>&#8226; Use <b>[[Note Name]]</b> to create wiki links between notes</p>
+        <p>&#8226; Each note has its own font color and background color (in Note Settings)</p>
+        <p>&#8226; Your notes are saved automatically as you type</p>
+        <p>&#8226; Close the window with the red button — the app stays in the menu bar</p>
+        <p>&#8226; This note is yours — edit or delete it anytime!</p>
+        </body></html>
+        """
+
+        guard let data = html.data(using: .utf8),
+              let attributed = try? NSAttributedString(
+                data: data,
+                options: [
+                    .documentType: NSAttributedString.DocumentType.html,
+                    .characterEncoding: String.Encoding.utf8.rawValue
+                ],
+                documentAttributes: nil
+              ) else { return }
+
+        storage.saveNoteContent(attributed, for: notes[0].id)
     }
 
     // MARK: - Private
