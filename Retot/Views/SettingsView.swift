@@ -34,6 +34,43 @@ struct SettingsView: View {
                 .padding(8)
             }
 
+            GroupBox("Keyboard Shortcuts") {
+                VStack(spacing: 6) {
+                    shortcutRow("Cmd+1 — Cmd+0", "Switch to Dot 1–10")
+                    shortcutRow("Cmd+Shift+F", "Search all notes")
+                    shortcutRow("Cmd+W", "Hide window")
+                    shortcutRow("Cmd+N", "Jump to first empty note")
+                    shortcutRow("Cmd+Z / Cmd+Shift+Z", "Undo / Redo")
+                    shortcutRow("Cmd+B / Cmd+I / Cmd+U", "Bold / Italic / Underline")
+                }
+                .padding(8)
+            }
+
+            GroupBox("Toolbar Guide") {
+                VStack(spacing: 6) {
+                    shortcutRow("↩ ↪", "Undo / Redo")
+                    shortcutRow("B I U S", "Bold, Italic, Underline, Strikethrough")
+                    shortcutRow("H", "Toggle heading")
+                    shortcutRow("•", "Bullet list")
+                    shortcutRow("⊞", "Insert table")
+                    shortcutRow("▢▢", "Create pastille (select text first)")
+                    shortcutRow("A- A+", "Decrease / Increase font size")
+                    shortcutRow("📌", "Pin window on top")
+                    shortcutRow("🔍", "Search all notes")
+                    shortcutRow("↑", "Export as Markdown")
+                }
+                .padding(8)
+            }
+
+            GroupBox("Right-Click Actions") {
+                VStack(spacing: 6) {
+                    shortcutRow("On a dot", "Rename, Change Color, Copy, Duplicate, Clear")
+                    shortcutRow("On a pastille", "Move to Dot N, Remove Pastille")
+                    shortcutRow("On a table", "Delete Table")
+                }
+                .padding(8)
+            }
+
             GroupBox("Bulk Operations") {
                 VStack(spacing: 12) {
                     HStack {
@@ -125,6 +162,19 @@ struct SettingsView: View {
         .onAppear {
             updateRAMUsage()
             applyAppearance(appearance)
+        }
+    }
+
+    private func shortcutRow(_ shortcut: String, _ description: String) -> some View {
+        HStack {
+            Text(shortcut)
+                .font(.system(size: 12, weight: .medium, design: .monospaced))
+                .foregroundColor(.primary)
+                .frame(width: 180, alignment: .leading)
+            Text(description)
+                .font(.system(size: 12))
+                .foregroundColor(.secondary)
+            Spacer()
         }
     }
 
