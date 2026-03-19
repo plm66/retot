@@ -24,17 +24,6 @@ struct DotBar: View {
                 .frame(maxWidth: .infinity)
             }
 
-            Button(action: {
-                appState.detachNoteIndex = appState.selectedNoteIndex
-            }) {
-                Image(systemName: "macwindow.badge.plus")
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
-            }
-            .buttonStyle(.borderless)
-            .help("Detach current note as floating window")
-            .frame(width: 26)
-
             Button(action: { showAppSettings = true }) {
                 Image(systemName: "gearshape")
                     .font(.system(size: 14))

@@ -51,13 +51,6 @@ struct EditorToolbar: View {
             Divider()
                 .frame(height: 16)
 
-            toolbarButton("Create pastille", systemImage: "rectangle.on.rectangle") {
-                createPastille()
-            }
-
-            Divider()
-                .frame(height: 16)
-
             toolbarButton("Decrease font size", systemImage: "minus.magnifyingglass") {
                 adjustFontSize(by: -2)
             }
@@ -66,6 +59,24 @@ struct EditorToolbar: View {
             }
 
             Spacer()
+
+            Button(action: { createPastille() }) {
+                Text("Pastille")
+                    .font(.system(size: 11, weight: .medium))
+            }
+            .buttonStyle(.borderless)
+            .help("Create a pastille — a movable content block (select text first)")
+
+            Button(action: { appState.detachNoteIndex = appState.selectedNoteIndex }) {
+                Text("Float")
+                    .font(.system(size: 11, weight: .medium))
+            }
+            .buttonStyle(.borderless)
+            .help("Detach current note as a floating window")
+
+            Divider()
+                .frame(height: 16)
+
 
             toolbarButton(appState.isPinnedOnTop ? "Unpin window" : "Pin on top", systemImage: appState.isPinnedOnTop ? "pin.fill" : "pin") {
                 appState.togglePinOnTop()
