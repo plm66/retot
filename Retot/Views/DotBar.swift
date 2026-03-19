@@ -18,13 +18,22 @@ struct DotBar: View {
                     onCopy: { appState.copyNoteContent(index) },
                     onDuplicate: { targetIndex in appState.duplicateNote(from: index, to: targetIndex) },
                     onDetach: {
-                        if let delegate = NSApp.delegate as? AppDelegate {
-                            delegate.openFloatingNote(index)
-                        }
+                        appState.detachNoteIndex = index
                     }
                 )
                 .frame(maxWidth: .infinity)
             }
+
+            Button(action: {
+                appState.detachNoteIndex = appState.selectedNoteIndex
+            }) {
+                Image(systemName: "macwindow.badge.plus")
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+            }
+            .buttonStyle(.borderless)
+            .help("Detach current note as floating window")
+            .frame(width: 26)
 
             Button(action: { showAppSettings = true }) {
                 Image(systemName: "gearshape")

@@ -175,6 +175,7 @@ final class AppState: ObservableObject {
 
     @Published var isPinnedOnTop = false
     @Published var savedIndicator = false
+    @Published var detachNoteIndex: Int? = nil
     @Published var isSearching = false
     @Published var searchQuery = ""
     @Published var searchResults: [SearchResult] = []

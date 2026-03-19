@@ -26,6 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         setupWindow()
         setupKeyboardShortcuts()
         applyStoredAppearance()
+        setupDetachObserver()
 
         // Menu bar app: hide from Dock by default
         NSApp.setActivationPolicy(.accessory)
@@ -154,6 +155,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
         // Floating panels: allow close (triggers willCloseNotification for save)
         return true
+    }
+
+    private func setupDetachObserver() {
+        appState.$detachNoteIndex
+            .compactMap { $0 }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] index in
+                self?.appState.detachNoteIndex = nil
+                self?.openFloatingNote(index)
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Floating Notes

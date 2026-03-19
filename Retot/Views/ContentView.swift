@@ -171,4 +171,5 @@ class SearchKeyView: NSView {
 
 extension Notification.Name {
     static let retotToggleSearch = Notification.Name("retotToggleSearch")
+    static let retotDetachNote = Notification.Name("retotDetachNote")
 }

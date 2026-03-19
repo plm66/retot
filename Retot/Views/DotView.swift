@@ -91,7 +91,11 @@ struct DotView: View {
 
             Divider()
 
-            Button("Open in floating window") { onDetach() }
+            Button("Open in floating window") {
+                if let noteIndex = appState.notes.firstIndex(where: { $0.id == note.id }) {
+                    appState.detachNoteIndex = noteIndex
+                }
+            }
 
             Divider()
 
