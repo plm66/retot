@@ -1,5 +1,27 @@
 # Changelog
 
+## v0.5 — Floating Notes & Print (2026-03-19)
+
+### Features
+- **Floating notes** — Detach any note as an independent floating window (button in DotBar or right-click)
+- **Real-time sync** — Floating window shares NSTextStorage with main window, edits appear in both instantly
+- **Print / PDF** — Cmd+P or printer icon, with print-friendly white background regardless of note theme
+- **Multiple floats** — Open several notes as floating windows simultaneously
+
+### Fixes
+- Print forces white background + dark text (no more black page printing)
+- Clear note now also clears the NSTextView directly (prevents auto-save ghost content)
+
+### Documentation
+- Updated Settings: all shortcuts, toolbar guide, DotBar actions, right-click reference
+- CHANGELOG maintained per version
+
+### Roadmap (V2)
+- Image resize with drag handles
+- iCloud sync (Mac + iPhone)
+- Minimap for long notes
+- Configurable number of notes (5/10/15)
+
 ## v0.4 — UX Polish (2026-03-19)
 
 ### Features

@@ -37,9 +37,11 @@ struct SettingsView: View {
             GroupBox("Keyboard Shortcuts") {
                 VStack(spacing: 6) {
                     shortcutRow("Cmd+1 — Cmd+0", "Switch to Dot 1–10")
-                    shortcutRow("Cmd+Shift+F", "Search all notes")
+                    shortcutRow("Cmd+S", "Save note")
+                    shortcutRow("Cmd+P", "Print / Save as PDF")
                     shortcutRow("Cmd+W", "Hide window")
                     shortcutRow("Cmd+N", "Jump to first empty note")
+                    shortcutRow("Cmd+Shift+F", "Search all notes")
                     shortcutRow("Cmd+Z / Cmd+Shift+Z", "Undo / Redo")
                     shortcutRow("Cmd+B / Cmd+I / Cmd+U", "Bold / Italic / Underline")
                 }
@@ -57,14 +59,26 @@ struct SettingsView: View {
                     shortcutRow("A- A+", "Decrease / Increase font size")
                     shortcutRow("📌", "Pin window on top")
                     shortcutRow("🔍", "Search all notes")
+                    shortcutRow("🗑", "Clear note (with confirmation)")
+                    shortcutRow("🖨", "Print / Save as PDF")
                     shortcutRow("↑", "Export as Markdown")
+                }
+                .padding(8)
+            }
+
+            GroupBox("DotBar Actions") {
+                VStack(spacing: 6) {
+                    shortcutRow("Click dot", "Select note")
+                    shortcutRow("Double-click label", "Rename note inline")
+                    shortcutRow("⊞+ button", "Detach note as floating window")
+                    shortcutRow("⚙ button", "Open app settings")
                 }
                 .padding(8)
             }
 
             GroupBox("Right-Click Actions") {
                 VStack(spacing: 6) {
-                    shortcutRow("On a dot", "Rename, Change Color, Copy, Duplicate, Clear")
+                    shortcutRow("On a dot", "Rename, Color, Detach, Copy, Duplicate, Clear")
                     shortcutRow("On a pastille", "Move to Dot N, Remove Pastille")
                     shortcutRow("On a table", "Delete Table")
                 }
