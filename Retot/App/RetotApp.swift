@@ -17,6 +17,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var statusItem: NSStatusItem!
     var window: NSWindow!
     let appState = AppState()
+    var floatingWindows: [Int: NSPanel] = [:]
+    var floatingTextViews: [Int: NSTextView] = [:]
+    private let storage = StorageManager()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusItem()
@@ -144,9 +147,131 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
-        // Hide the window instead of closing the app
-        sender.orderOut(nil)
-        return false
+        if sender == window {
+            // Main window: hide instead of close
+            sender.orderOut(nil)
+            return false
+        }
+        // Floating panels: allow close (triggers willCloseNotification for save)
+        return true
+    }
+
+    // MARK: - Floating Notes
+
+    func openFloatingNote(_ noteIndex: Int) {
+        guard noteIndex >= 0, noteIndex < appState.notes.count else { return }
+
+        // If already floating, bring to front
+        if let existing = floatingWindows[noteIndex] {
+            existing.makeKeyAndOrderFront(nil)
+            return
+        }
+
+        // Save main window note first
+        appState.saveCurrentNoteContent()
+
+        let note = appState.notes[noteIndex]
+        let content = storage.loadNoteContent(for: note.id)
+
+        // Create NSTextView
+        let scrollView = NSScrollView()
+        scrollView.hasVerticalScroller = true
+        scrollView.hasHorizontalScroller = false
+        scrollView.autohidesScrollers = true
+        scrollView.borderType = .noBorder
+
+        let textView = RetotTextView()
+        textView.appState = appState
+        textView.isRichText = true
+        textView.allowsImageEditing = true
+        textView.importsGraphics = true
+        textView.isEditable = true
+        textView.isSelectable = true
+        textView.allowsUndo = true
+        textView.isAutomaticQuoteSubstitutionEnabled = false
+        textView.isAutomaticDashSubstitutionEnabled = false
+        textView.textContainerInset = NSSize(width: 12, height: 12)
+        textView.textContainer?.widthTracksTextView = true
+        textView.textContainer?.containerSize = NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        textView.isVerticallyResizable = true
+        textView.isHorizontallyResizable = false
+        textView.font = NSFont.systemFont(ofSize: 14)
+        textView.textStorage?.setAttributedString(content)
+
+        // Apply note colors
+        if let bgHex = note.backgroundColorHex, let bgColor = NSColor.fromHex(bgHex) {
+            textView.backgroundColor = bgColor
+        }
+        if let fgHex = note.fontColorHex, let fgColor = NSColor.fromHex(fgHex) {
+            textView.textColor = fgColor
+        }
+
+        scrollView.documentView = textView
+
+        // Create floating panel
+        let panel = NSPanel(
+            contentRect: NSRect(x: 0, y: 0, width: 400, height: 350),
+            styleMask: [.titled, .closable, .resizable, .utilityWindow, .nonactivatingPanel],
+            backing: .buffered,
+            defer: false
+        )
+        panel.contentView = scrollView
+        panel.title = "\(note.label) (Dot \(note.id))"
+        panel.minSize = NSSize(width: 250, height: 200)
+        panel.level = .floating
+        panel.hidesOnDeactivate = false
+        panel.isReleasedWhenClosed = false
+        panel.collectionBehavior.insert(.canJoinAllSpaces)
+
+        // Position near main window but offset
+        let offset = CGFloat(floatingWindows.count) * 30
+        if let mainFrame = window?.frame {
+            panel.setFrameOrigin(NSPoint(
+                x: mainFrame.maxX + 20 + offset,
+                y: mainFrame.maxY - 350 - offset
+            ))
+        } else {
+            panel.center()
+        }
+
+        // Track for cleanup
+        floatingWindows[noteIndex] = panel
+        floatingTextViews[noteIndex] = textView
+
+        // Handle close: save content and clean up
+        NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: panel,
+            queue: .main
+        ) { [weak self] _ in
+            self?.closeFloatingNote(noteIndex)
+        }
+
+        panel.makeKeyAndOrderFront(nil)
+    }
+
+    private func closeFloatingNote(_ noteIndex: Int) {
+        guard let textView = floatingTextViews[noteIndex],
+              let textStorage = textView.textStorage else { return }
+
+        // Save content
+        let content = NSAttributedString(attributedString: textStorage)
+        let noteId = appState.notes[noteIndex].id
+        storage.saveNoteContent(content, for: noteId)
+
+        // If the main window is showing this note, reload
+        if appState.selectedNoteIndex == noteIndex {
+            appState.currentAttributedText = content
+            appState.currentTextView?.textStorage?.setAttributedString(content)
+        }
+
+        // Clean up
+        floatingWindows.removeValue(forKey: noteIndex)
+        floatingTextViews.removeValue(forKey: noteIndex)
+    }
+
+    func isNoteFloating(_ noteIndex: Int) -> Bool {
+        floatingWindows[noteIndex]?.isVisible == true
     }
 
     // MARK: - Window Title

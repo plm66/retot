@@ -9,6 +9,7 @@ struct DotView: View {
     let onClear: () -> Void
     let onCopy: () -> Void
     let onDuplicate: (Int) -> Void
+    let onDetach: () -> Void
     @EnvironmentObject var appState: AppState
 
     @State private var isHovering = false
@@ -87,6 +88,10 @@ struct DotView: View {
         .contextMenu {
             Button("Rename...") { onSettings() }
             Button("Change Color...") { onSettings() }
+
+            Divider()
+
+            Button("Open in floating window") { onDetach() }
 
             Divider()
 

@@ -16,7 +16,12 @@ struct DotBar: View {
                     onSettings: { settingsNoteIndex = index },
                     onClear: { appState.clearNote(index) },
                     onCopy: { appState.copyNoteContent(index) },
-                    onDuplicate: { targetIndex in appState.duplicateNote(from: index, to: targetIndex) }
+                    onDuplicate: { targetIndex in appState.duplicateNote(from: index, to: targetIndex) },
+                    onDetach: {
+                        if let delegate = NSApp.delegate as? AppDelegate {
+                            delegate.openFloatingNote(index)
+                        }
+                    }
                 )
                 .frame(maxWidth: .infinity)
             }
