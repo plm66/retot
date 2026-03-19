@@ -12,11 +12,12 @@ struct DotView: View {
     @EnvironmentObject var appState: AppState
 
     @State private var isHovering = false
+    @State private var isEditing = false
+    @State private var editingLabel = ""
 
     var body: some View {
         VStack(spacing: 4) {
             ZStack {
-                // White ring around selected dot
                 Circle()
                     .stroke(Color.white, lineWidth: isSelected ? 3 : 0)
                     .frame(width: dotSize + 6, height: dotSize + 6)
@@ -38,12 +39,32 @@ struct DotView: View {
             }
             .frame(width: dotSize + 8, height: dotSize + 8)
 
-            Text(note.label)
-                .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
-                .foregroundColor(isSelected ? .primary : .secondary)
-                .lineLimit(1)
-                .truncationMode(.tail)
+            if isEditing {
+                TextField("", text: $editingLabel, onCommit: {
+                    let trimmed = editingLabel.trimmingCharacters(in: .whitespaces)
+                    if !trimmed.isEmpty {
+                        if let index = appState.notes.firstIndex(where: { $0.id == note.id }) {
+                            appState.updateNoteLabel(index, label: trimmed)
+                        }
+                    }
+                    isEditing = false
+                })
+                .font(.system(size: 11))
+                .textFieldStyle(.plain)
+                .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
+            } else {
+                Text(note.label)
+                    .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
+                    .foregroundColor(isSelected ? .primary : .secondary)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .frame(maxWidth: .infinity)
+                    .onTapGesture(count: 2) {
+                        editingLabel = note.label
+                        isEditing = true
+                    }
+            }
         }
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.15)) {
