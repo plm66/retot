@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import SwiftUI
 
 @main
@@ -53,7 +54,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             defer: false
         )
         window.contentView = NSHostingView(rootView: contentView)
-        window.title = "Retot"
+        updateWindowTitle()
+        setupTitleObserver()
         window.minSize = NSSize(width: 480, height: 400)
         window.maxSize = NSSize(width: 1400, height: 1000)
         window.isReleasedWhenClosed = false
@@ -83,6 +85,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             case "8": self.appState.selectNote(7); return nil
             case "9": self.appState.selectNote(8); return nil
             case "0": self.appState.selectNote(9); return nil
+            case "w":
+                self.window.orderOut(nil)
+                self.appState.saveCurrentNoteContent()
+                return nil
+            case "n":
+                // Go to first empty note
+                if let emptyIndex = self.appState.notes.firstIndex(where: { note in
+                    !self.appState.noteHasContent(self.appState.notes.firstIndex(where: { $0.id == note.id }) ?? 0)
+                }) {
+                    self.appState.selectNote(emptyIndex)
+                }
+                return nil
             case "f":
                 if event.modifierFlags.contains(.shift) {
                     self.appState.isSearching.toggle()
@@ -121,6 +135,24 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         sender.orderOut(nil)
         return false
     }
+
+    // MARK: - Window Title
+
+    private func updateWindowTitle() {
+        let note = appState.notes[appState.selectedNoteIndex]
+        window.title = "Retot — \(note.label) (Dot \(note.id))"
+    }
+
+    private func setupTitleObserver() {
+        appState.$selectedNoteIndex
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.updateWindowTitle()
+            }
+            .store(in: &cancellables)
+    }
+
+    private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Appearance
 

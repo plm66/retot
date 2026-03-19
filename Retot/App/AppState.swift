@@ -227,6 +227,60 @@ final class AppState: ObservableObject {
         searchResults = []
     }
 
+    // MARK: - Clear & Duplicate
+
+    func clearNote(_ index: Int) {
+        guard index >= 0, index < notes.count else { return }
+        let empty = NSAttributedString(string: "")
+        storage.saveNoteContent(empty, for: notes[index].id)
+        if index == selectedNoteIndex {
+            currentAttributedText = empty
+        }
+    }
+
+    func duplicateNote(from sourceIndex: Int, to targetIndex: Int) {
+        guard sourceIndex >= 0, sourceIndex < notes.count,
+              targetIndex >= 0, targetIndex < notes.count else { return }
+
+        let sourceContent: NSAttributedString
+        if sourceIndex == selectedNoteIndex {
+            saveCurrentNoteContent()
+            sourceContent = currentAttributedText
+        } else {
+            sourceContent = storage.loadNoteContent(for: notes[sourceIndex].id)
+        }
+
+        // Prepend to target note
+        let targetContent = storage.loadNoteContent(for: notes[targetIndex].id)
+        let combined = NSMutableAttributedString()
+        combined.append(sourceContent)
+        if !sourceContent.string.hasSuffix("\n") {
+            combined.append(NSAttributedString(string: "\n"))
+        }
+        combined.append(targetContent)
+        storage.saveNoteContent(combined, for: notes[targetIndex].id)
+
+        // Reload if viewing target
+        if targetIndex == selectedNoteIndex {
+            currentAttributedText = combined
+        }
+    }
+
+    // MARK: - Copy Note
+
+    func copyNoteContent(_ index: Int) {
+        guard index >= 0, index < notes.count else { return }
+        let content: NSAttributedString
+        if index == selectedNoteIndex {
+            content = currentAttributedText
+        } else {
+            content = storage.loadNoteContent(for: notes[index].id)
+        }
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.writeObjects([content])
+    }
+
     // MARK: - Pin on Top
 
     func togglePinOnTop() {

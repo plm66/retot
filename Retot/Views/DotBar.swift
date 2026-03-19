@@ -13,7 +13,10 @@ struct DotBar: View {
                     isSelected: index == appState.selectedNoteIndex,
                     hasContent: appState.noteHasContent(index),
                     onTap: { appState.selectNote(index) },
-                    onSettings: { settingsNoteIndex = index }
+                    onSettings: { settingsNoteIndex = index },
+                    onClear: { appState.clearNote(index) },
+                    onCopy: { appState.copyNoteContent(index) },
+                    onDuplicate: { targetIndex in appState.duplicateNote(from: index, to: targetIndex) }
                 )
                 .frame(maxWidth: .infinity)
             }

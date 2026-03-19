@@ -6,6 +6,10 @@ struct DotView: View {
     let hasContent: Bool
     let onTap: () -> Void
     let onSettings: () -> Void
+    let onClear: () -> Void
+    let onCopy: () -> Void
+    let onDuplicate: (Int) -> Void
+    @EnvironmentObject var appState: AppState
 
     @State private var isHovering = false
 
@@ -52,6 +56,24 @@ struct DotView: View {
         .contextMenu {
             Button("Rename...") { onSettings() }
             Button("Change Color...") { onSettings() }
+
+            Divider()
+
+            Button("Copy Note Content") { onCopy() }
+
+            Menu("Duplicate to...") {
+                ForEach(Array(appState.notes.enumerated()), id: \.element.id) { index, targetNote in
+                    if targetNote.id != note.id {
+                        Button("\(targetNote.label) (Dot \(targetNote.id))") {
+                            onDuplicate(index)
+                        }
+                    }
+                }
+            }
+
+            Divider()
+
+            Button("Clear Note", role: .destructive) { onClear() }
         }
         .accessibilityLabel("Note \(note.id): \(note.label)")
     }
