@@ -17,13 +17,13 @@ struct DotView: View {
 
     var body: some View {
         VStack(spacing: 4) {
-            ZStack {
-                Circle()
-                    .stroke(Color.white, lineWidth: isSelected ? 3 : 0)
-                    .frame(width: dotSize + 6, height: dotSize + 6)
-                    .opacity(isSelected ? 1 : 0)
+            ZStack(alignment: .top) {
+                ZStack {
+                    Circle()
+                        .stroke(Color.white, lineWidth: isSelected ? 3 : 0)
+                        .frame(width: dotSize + 6, height: dotSize + 6)
+                        .opacity(isSelected ? 1 : 0)
 
-                if hasContent {
                     Circle()
                         .fill(note.color.swiftUIColor)
                         .frame(width: dotSize, height: dotSize)
@@ -32,20 +32,20 @@ struct DotView: View {
                             radius: 4
                         )
                         .scaleEffect(isHovering ? 1.1 : 1.0)
-                } else {
-                    Circle()
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: dotSize, height: dotSize)
-                        .overlay(
-                            Circle()
-                                .stroke(Color.gray.opacity(0.5), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
-                        )
-                        .scaleEffect(isHovering ? 1.1 : 1.0)
+
+                    Text("\(note.id)")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundColor(.white)
                 }
 
-                Text("\(note.id)")
-                    .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(hasContent ? .white : .gray)
+                // Green dot = free slot
+                if !hasContent {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 7, height: 7)
+                        .shadow(color: .green.opacity(0.8), radius: 3)
+                        .offset(x: 10, y: 0)
+                }
             }
             .frame(width: dotSize + 8, height: dotSize + 8)
 
@@ -64,9 +64,9 @@ struct DotView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
             } else {
-                Text(hasContent ? note.label : "(empty)")
+                Text(note.label)
                     .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
-                    .foregroundColor(isSelected ? .primary : (hasContent ? .secondary : .secondary.opacity(0.4)))
+                    .foregroundColor(isSelected ? .primary : .secondary)
                     .lineLimit(1)
                     .truncationMode(.tail)
                     .frame(maxWidth: .infinity)
