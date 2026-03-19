@@ -5,6 +5,7 @@ struct EditorToolbar: View {
     @EnvironmentObject var appState: AppState
     let onExport: () -> Void
     @State private var showClearConfirm = false
+    @State private var fontSizeText: String = "14"
 
     var body: some View {
         HStack(spacing: 4) {
@@ -51,12 +52,32 @@ struct EditorToolbar: View {
             Divider()
                 .frame(height: 16)
 
-            toolbarButton("Decrease font size", systemImage: "minus.magnifyingglass") {
-                adjustFontSize(by: -2)
+            HStack(spacing: 2) {
+                Button(action: { adjustFontSize(by: -2); updateFontSizeText() }) {
+                    Text("−")
+                        .font(.system(size: 16, weight: .medium))
+                        .frame(width: 20, height: 20)
+                }
+                .buttonStyle(.borderless)
+                .help("Decrease font size")
+
+                TextField("", text: $fontSizeText)
+                    .font(.system(size: 11, weight: .medium, design: .monospaced))
+                    .multilineTextAlignment(.center)
+                    .frame(width: 34, height: 20)
+                    .textFieldStyle(.roundedBorder)
+                    .onSubmit { applyDirectFontSize() }
+                    .help("Type a font size (8–72) and press Enter")
+
+                Button(action: { adjustFontSize(by: 2); updateFontSizeText() }) {
+                    Text("+")
+                        .font(.system(size: 16, weight: .medium))
+                        .frame(width: 20, height: 20)
+                }
+                .buttonStyle(.borderless)
+                .help("Increase font size")
             }
-            toolbarButton("Increase font size", systemImage: "plus.magnifyingglass") {
-                adjustFontSize(by: 2)
-            }
+            .onAppear { updateFontSizeText() }
 
             Spacer()
 
@@ -300,6 +321,44 @@ struct EditorToolbar: View {
         let range = textView.selectedRange()
         guard range.length > 0 else { return }
         textView.createPastille(in: range)
+    }
+
+    private func updateFontSizeText() {
+        guard let textView = appState.currentTextView else { return }
+        let range = textView.selectedRange()
+        let index = range.location
+        guard let textStorage = textView.textStorage, index < textStorage.length else {
+            let font = textView.typingAttributes[.font] as? NSFont ?? NSFont.systemFont(ofSize: 14)
+            fontSizeText = "\(Int(font.pointSize))"
+            return
+        }
+        let font = textStorage.attribute(.font, at: max(0, index > 0 ? index - 1 : 0), effectiveRange: nil) as? NSFont ?? NSFont.systemFont(ofSize: 14)
+        fontSizeText = "\(Int(font.pointSize))"
+    }
+
+    private func applyDirectFontSize() {
+        guard let size = Double(fontSizeText),
+              size >= 8, size <= 72,
+              let textView = appState.currentTextView,
+              let textStorage = textView.textStorage else { return }
+
+        let targetSize = CGFloat(size)
+        let range = textView.selectedRange()
+
+        if range.length == 0 {
+            var attrs = textView.typingAttributes
+            let currentFont = attrs[.font] as? NSFont ?? NSFont.systemFont(ofSize: 14)
+            attrs[.font] = NSFontManager.shared.convert(currentFont, toSize: targetSize)
+            textView.typingAttributes = attrs
+        } else {
+            textStorage.beginEditing()
+            textStorage.enumerateAttribute(.font, in: range) { value, attrRange, _ in
+                guard let currentFont = value as? NSFont else { return }
+                let newFont = NSFontManager.shared.convert(currentFont, toSize: targetSize)
+                textStorage.addAttribute(.font, value: newFont, range: attrRange)
+            }
+            textStorage.endEditing()
+        }
     }
 
     private func adjustFontSize(by delta: CGFloat) {
