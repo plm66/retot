@@ -1,5 +1,34 @@
 # Changelog
 
+## v0.4 — UX Polish (2026-03-19)
+
+### Features
+- **Undo/Redo buttons** — Toolbar arrows for visual undo/redo
+- **Pin to top** — Keep Retot above all windows (works across app switches)
+- **Clear note with confirmation** — Trash icon + "Are you sure?" dialog
+- **Copy note content** — Right-click dot to copy rich text to clipboard
+- **Duplicate to...** — Right-click dot to duplicate content to another note
+- **Dynamic window title** — Shows "Retot — Note Label (Dot N)"
+- **Cmd+S manual save** — With "Saved" green feedback in footer
+- **Cmd+W** hides window, **Cmd+N** jumps to first empty note
+- **Menu bar badge** — Shows active dot number next to icon
+- **Double-click rename** — Double-click a dot label to edit inline
+- **Delete Table** — Right-click on any table to remove it
+- **Tooltips** — All toolbar icons show descriptive tooltip on hover
+- **Shortcuts reference** — Full keyboard/toolbar/right-click guide in Settings
+- **RTFD storage** — Images now persist (screenshots, pasted images)
+
+### Fixes
+- Pin-to-top stays visible when switching apps (hidesOnDeactivate fix)
+- Clear note removes both RTFD and legacy HTML (no more ghost content)
+- Empty notes show green LED indicator (visible in dark mode)
+
+### Roadmap (V2)
+- **Floating notes** — Detach any dot as an independent floating window
+- **iCloud sync** — Cross-device note synchronization
+- **Minimap** — Sublime Text-style content overview for long notes
+- **Drag & drop dots** — Reorder or copy notes by dragging dots
+
 ## v0.3 — Pastilles & Polish (2026-03-19)
 
 ### Features
