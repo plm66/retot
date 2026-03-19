@@ -61,26 +61,27 @@ final class StorageManager {
         }
     }
 
-    // MARK: - Note Content (HTML)
+    // MARK: - Note Content (RTFD with HTML fallback)
 
     func saveNoteContent(_ attributedString: NSAttributedString, for id: Int) {
-        let url = noteURL(for: id)
+        let url = rtfdURL(for: id)
         guard attributedString.length > 0 else {
-            // Save empty file for empty notes
-            try? Data().write(to: url, options: .atomic)
+            // Remove RTFD bundle for empty notes
+            try? fileManager.removeItem(at: url)
             return
         }
         do {
-            let data = try attributedString.data(
+            let wrapper = try attributedString.fileWrapper(
                 from: NSRange(location: 0, length: attributedString.length),
                 documentAttributes: [
-                    .documentType: NSAttributedString.DocumentType.html,
-                    .characterEncoding: String.Encoding.utf8.rawValue
+                    .documentType: NSAttributedString.DocumentType.rtfd
                 ]
             )
-            try data.write(to: url, options: .atomic)
+            // Remove old bundle first (atomic replace not supported for directories)
+            try? fileManager.removeItem(at: url)
+            try wrapper.write(to: url, options: .atomic, originalContentsURL: nil)
         } catch {
-            print("Failed to save note \(id): \(error)")
+            print("Failed to save note \(id) as RTFD: \(error)")
         }
     }
 
@@ -109,17 +110,37 @@ final class StorageManager {
         return NSAttributedString(attributedString: mutable)
     }
 
-    private func noteURL(for id: Int) -> URL {
+    private func rtfdURL(for id: Int) -> URL {
+        notesDirectory.appendingPathComponent("note-\(id).rtfd")
+    }
+
+    private func htmlURL(for id: Int) -> URL {
         notesDirectory.appendingPathComponent("note-\(id).html")
     }
 
     func loadNoteContent(for id: Int) -> NSAttributedString {
-        let url = noteURL(for: id)
-        guard fileManager.fileExists(atPath: url.path) else {
+        // Try RTFD first (new format, supports images)
+        let rtfdPath = rtfdURL(for: id)
+        if fileManager.fileExists(atPath: rtfdPath.path) {
+            do {
+                let attributedString = try NSAttributedString(
+                    url: rtfdPath,
+                    options: [.documentType: NSAttributedString.DocumentType.rtfd],
+                    documentAttributes: nil
+                )
+                return Self.replaceDefaultTextColors(in: attributedString)
+            } catch {
+                print("Failed to load RTFD for note \(id): \(error)")
+            }
+        }
+
+        // Fallback to HTML (old format, no images)
+        let htmlPath = htmlURL(for: id)
+        guard fileManager.fileExists(atPath: htmlPath.path) else {
             return NSAttributedString(string: "")
         }
         do {
-            let data = try Data(contentsOf: url)
+            let data = try Data(contentsOf: htmlPath)
             guard !data.isEmpty else {
                 return NSAttributedString(string: "")
             }
@@ -133,7 +154,7 @@ final class StorageManager {
             )
             return Self.replaceDefaultTextColors(in: attributedString)
         } catch {
-            print("Failed to load note \(id): \(error)")
+            print("Failed to load HTML for note \(id): \(error)")
             return NSAttributedString(string: "")
         }
     }
