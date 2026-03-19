@@ -36,7 +36,8 @@ struct DotView: View {
                 .font(.system(size: 11, weight: isSelected ? .semibold : .regular))
                 .foregroundColor(isSelected ? .primary : .secondary)
                 .lineLimit(1)
-                .frame(maxWidth: 52)
+                .truncationMode(.tail)
+                .frame(maxWidth: .infinity)
         }
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.15)) {

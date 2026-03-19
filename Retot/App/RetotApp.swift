@@ -21,6 +21,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         setupStatusItem()
         setupWindow()
         setupKeyboardShortcuts()
+        applyStoredAppearance()
 
         // Menu bar app: hide from Dock by default
         NSApp.setActivationPolicy(.accessory)
@@ -119,5 +120,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         // Hide the window instead of closing the app
         sender.orderOut(nil)
         return false
+    }
+
+    // MARK: - Appearance
+
+    private func applyStoredAppearance() {
+        let mode = UserDefaults.standard.string(forKey: "retotAppearance") ?? "system"
+        switch mode {
+        case "light": NSApp.appearance = NSAppearance(named: .aqua)
+        case "dark": NSApp.appearance = NSAppearance(named: .darkAqua)
+        default: NSApp.appearance = nil
+        }
     }
 }

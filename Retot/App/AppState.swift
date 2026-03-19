@@ -326,7 +326,27 @@ final class AppState: ObservableObject {
                 documentAttributes: nil
               ) else { return }
 
-        storage.saveNoteContent(attributed, for: notes[0].id)
+        // Build final content: logo + HTML text
+        let finalContent = NSMutableAttributedString()
+
+        // Center paragraph style for logo
+        let centerStyle = NSMutableParagraphStyle()
+        centerStyle.alignment = .center
+
+        // Add app icon as inline image
+        if let appIcon = NSImage(named: "AppIcon") {
+            let logoSize: CGFloat = 128
+            appIcon.size = NSSize(width: logoSize, height: logoSize)
+            let attachment = NSTextAttachment()
+            attachment.image = appIcon
+            let iconString = NSMutableAttributedString(attachment: attachment)
+            iconString.addAttribute(.paragraphStyle, value: centerStyle, range: NSRange(location: 0, length: iconString.length))
+            finalContent.append(iconString)
+            finalContent.append(NSAttributedString(string: "\n\n"))
+        }
+
+        finalContent.append(attributed)
+        storage.saveNoteContent(finalContent, for: notes[0].id)
     }
 
     // MARK: - Private

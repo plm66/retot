@@ -5,12 +5,34 @@ struct SettingsView: View {
     @EnvironmentObject var appState: AppState
     let onDone: () -> Void
     @State private var ramUsage: String = "..."
+    @AppStorage("retotAppearance") private var appearance: String = "system"
 
     var body: some View {
         ScrollView {
         VStack(spacing: 20) {
             Text("Settings")
                 .font(.title2.bold())
+
+            GroupBox("Appearance") {
+                VStack(spacing: 12) {
+                    HStack {
+                        Text("Theme")
+                            .font(.body)
+                        Spacer()
+                        Picker("", selection: $appearance) {
+                            Text("System").tag("system")
+                            Text("Light").tag("light")
+                            Text("Dark").tag("dark")
+                        }
+                        .pickerStyle(.segmented)
+                        .frame(width: 200)
+                        .onChange(of: appearance) { newValue in
+                            applyAppearance(newValue)
+                        }
+                    }
+                }
+                .padding(8)
+            }
 
             GroupBox("Bulk Operations") {
                 VStack(spacing: 12) {
@@ -100,7 +122,21 @@ struct SettingsView: View {
         }
         .padding(24)
         } // ScrollView
-        .onAppear { updateRAMUsage() }
+        .onAppear {
+            updateRAMUsage()
+            applyAppearance(appearance)
+        }
+    }
+
+    private func applyAppearance(_ mode: String) {
+        switch mode {
+        case "light":
+            NSApp.appearance = NSAppearance(named: .aqua)
+        case "dark":
+            NSApp.appearance = NSAppearance(named: .darkAqua)
+        default:
+            NSApp.appearance = nil // Follow system
+        }
     }
 
     private func exportAll() {
