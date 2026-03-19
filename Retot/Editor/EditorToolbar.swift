@@ -60,29 +60,25 @@ struct EditorToolbar: View {
 
             Spacer()
 
-            HStack(spacing: 1) {
-                Button(action: { createPastille() }) {
-                    Text("Pastille")
-                        .font(.system(size: 11, weight: .medium))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                }
-                .buttonStyle(.borderless)
-                .help("Create a pastille — a movable content block (select text first)")
-
-                Rectangle()
-                    .fill(Color.primary.opacity(0.15))
-                    .frame(width: 1, height: 16)
-
-                Button(action: { appState.detachNoteIndex = appState.selectedNoteIndex }) {
-                    Text("Float")
-                        .font(.system(size: 11, weight: .medium))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                }
-                .buttonStyle(.borderless)
-                .help("Detach current note as a floating window")
+            Button(action: { createPastille() }) {
+                Text("Pastille")
+                    .font(.system(size: 11, weight: .medium))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
             }
+            .buttonStyle(.borderless)
+            .help("Create a pastille — a movable content block (select text first)")
+            .background(Color.primary.opacity(0.06))
+            .cornerRadius(6)
+
+            Button(action: { appState.detachNoteIndex = appState.selectedNoteIndex }) {
+                Text("Float")
+                    .font(.system(size: 11, weight: .medium))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+            }
+            .buttonStyle(.borderless)
+            .help("Detach current note as a floating window")
             .background(Color.primary.opacity(0.06))
             .cornerRadius(6)
 
