@@ -23,19 +23,29 @@ struct DotView: View {
                     .frame(width: dotSize + 6, height: dotSize + 6)
                     .opacity(isSelected ? 1 : 0)
 
-                Circle()
-                    .fill(note.color.swiftUIColor)
-                    .frame(width: dotSize, height: dotSize)
-                    .opacity(hasContent ? 1.0 : 0.25)
-                    .shadow(
-                        color: isSelected ? note.color.swiftUIColor.opacity(0.6) : .clear,
-                        radius: 4
-                    )
-                    .scaleEffect(isHovering ? 1.1 : 1.0)
+                if hasContent {
+                    Circle()
+                        .fill(note.color.swiftUIColor)
+                        .frame(width: dotSize, height: dotSize)
+                        .shadow(
+                            color: isSelected ? note.color.swiftUIColor.opacity(0.6) : .clear,
+                            radius: 4
+                        )
+                        .scaleEffect(isHovering ? 1.1 : 1.0)
+                } else {
+                    Circle()
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: dotSize, height: dotSize)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.gray.opacity(0.5), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
+                        )
+                        .scaleEffect(isHovering ? 1.1 : 1.0)
+                }
 
                 Text("\(note.id)")
                     .font(.system(size: 11, weight: .bold))
-                    .foregroundColor(.white)
+                    .foregroundColor(hasContent ? .white : .gray)
             }
             .frame(width: dotSize + 8, height: dotSize + 8)
 
