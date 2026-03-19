@@ -8,7 +8,6 @@ struct EditorToolbar: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            // Left: formatting icons
             toolbarButton("Undo", systemImage: "arrow.uturn.backward") {
                 appState.currentTextView?.undoManager?.undo()
             }
@@ -41,9 +40,17 @@ struct EditorToolbar: View {
             toolbarButton("Bullet list", systemImage: "list.bullet") {
                 applyBulletList()
             }
+
+            Divider()
+                .frame(height: 16)
+
             toolbarButton("Insert table", systemImage: "tablecells") {
                 insertTable()
             }
+
+            Divider()
+                .frame(height: 16)
+
             toolbarButton("Create pastille", systemImage: "rectangle.on.rectangle") {
                 createPastille()
             }
@@ -60,31 +67,32 @@ struct EditorToolbar: View {
 
             Spacer()
 
-            // Right: text action buttons
-            HStack(spacing: 6) {
-                textButton(appState.isPinnedOnTop ? "Unpin" : "Pin") {
-                    appState.togglePinOnTop()
+            toolbarButton(appState.isPinnedOnTop ? "Unpin window" : "Pin on top", systemImage: appState.isPinnedOnTop ? "pin.fill" : "pin") {
+                appState.togglePinOnTop()
+            }
+
+            toolbarButton("Search all notes", systemImage: "magnifyingglass") {
+                appState.isSearching = true
+            }
+
+            toolbarButton("Clear note", systemImage: "trash") {
+                showClearConfirm = true
+            }
+            .alert("Clear this note?", isPresented: $showClearConfirm) {
+                Button("Cancel", role: .cancel) {}
+                Button("Clear", role: .destructive) {
+                    appState.clearNote(appState.selectedNoteIndex)
                 }
-                textButton("Search") {
-                    appState.isSearching = true
-                }
-                textButton("Print") {
-                    appState.currentTextView?.printView(nil)
-                }
-                textButton("Export") {
-                    onExport()
-                }
-                textButton("Clear") {
-                    showClearConfirm = true
-                }
-                .alert("Clear this note?", isPresented: $showClearConfirm) {
-                    Button("Cancel", role: .cancel) {}
-                    Button("Clear", role: .destructive) {
-                        appState.clearNote(appState.selectedNoteIndex)
-                    }
-                } message: {
-                    Text("All content in \"\(appState.notes[appState.selectedNoteIndex].label)\" will be deleted. This cannot be undone.")
-                }
+            } message: {
+                Text("All content in \"\(appState.notes[appState.selectedNoteIndex].label)\" will be deleted. This cannot be undone.")
+            }
+
+            toolbarButton("Print / Save as PDF", systemImage: "printer") {
+                appState.currentTextView?.printView(nil)
+            }
+
+            toolbarButton("Export as Markdown", systemImage: "square.and.arrow.up") {
+                onExport()
             }
         }
         .padding(.horizontal, 12)
@@ -102,18 +110,6 @@ struct EditorToolbar: View {
         }
         .buttonStyle(.borderless)
         .accessibilityLabel(label)
-        .help(label)
-    }
-
-    private func textButton(
-        _ label: String,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            Text(label)
-                .font(.system(size: 11, weight: .medium))
-        }
-        .buttonStyle(.borderless)
         .help(label)
     }
 
