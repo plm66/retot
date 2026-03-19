@@ -66,8 +66,9 @@ final class StorageManager {
     func saveNoteContent(_ attributedString: NSAttributedString, for id: Int) {
         let url = rtfdURL(for: id)
         guard attributedString.length > 0 else {
-            // Remove RTFD bundle for empty notes
+            // Remove both RTFD and legacy HTML for empty notes
             try? fileManager.removeItem(at: url)
+            try? fileManager.removeItem(at: htmlURL(for: id))
             return
         }
         do {
@@ -77,8 +78,9 @@ final class StorageManager {
                     .documentType: NSAttributedString.DocumentType.rtfd
                 ]
             )
-            // Remove old bundle first (atomic replace not supported for directories)
+            // Remove old RTFD bundle + legacy HTML
             try? fileManager.removeItem(at: url)
+            try? fileManager.removeItem(at: htmlURL(for: id))
             try wrapper.write(to: url, options: .atomic, originalContentsURL: nil)
         } catch {
             print("Failed to save note \(id) as RTFD: \(error)")
