@@ -226,6 +226,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         textView.isHorizontallyResizable = false
         textView.font = NSFont.systemFont(ofSize: 14)
 
+        if #available(macOS 15.0, *) {
+            textView.writingToolsBehavior = .complete
+        }
+
         // Apply note colors
         if let bgHex = note.backgroundColorHex, let bgColor = NSColor.fromHex(bgHex) {
             textView.backgroundColor = bgColor
