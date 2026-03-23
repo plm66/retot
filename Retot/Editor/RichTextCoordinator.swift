@@ -32,6 +32,15 @@ final class RichTextCoordinator: NSObject, NSTextViewDelegate {
         }
     }
 
+    func textViewDidChangeSelection(_ notification: Notification) {
+        guard let textView = notification.object as? NSTextView else { return }
+        let range = textView.selectedRange()
+        // Only update if there's an actual selection — don't overwrite when focus is lost
+        if range.length > 0 {
+            appState?.lastSelectedRange = range
+        }
+    }
+
     func textView(_ textView: NSTextView, clickedOnLink link: Any, at charIndex: Int) -> Bool {
         guard let url = link as? URL,
               url.scheme == "retot",

@@ -6,6 +6,8 @@ struct EditorToolbar: View {
     let onExport: () -> Void
     @State private var showClearConfirm = false
     @State private var fontSizeText: String = "14"
+    @State private var textColor: Color = .primary
+    @State private var showColorPicker = false
 
     var body: some View {
         HStack(spacing: 4) {
@@ -30,6 +32,46 @@ struct EditorToolbar: View {
             }
             toolbarButton("Strikethrough", systemImage: "strikethrough") {
                 applyStrikethrough()
+            }
+
+            Divider()
+                .frame(height: 16)
+
+            Button(action: {
+                showColorPicker.toggle()
+            }) {
+                VStack(spacing: 1) {
+                    Image(systemName: "a.square.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(.primary)
+                    RoundedRectangle(cornerRadius: 1)
+                        .fill(textColor)
+                        .frame(width: 14, height: 3)
+                }
+                .frame(width: 24, height: 24)
+            }
+            .buttonStyle(.borderless)
+            .help("Text color")
+            .popover(isPresented: $showColorPicker) {
+                TextColorGrid(selectedColor: $textColor) { color in
+                    applyTextColor(NSColor(color))
+                    showColorPicker = false
+                }
+            }
+
+            toolbarButton("Format Painter", systemImage: "paintbrush.pointed") {
+                if appState.formatPainterActive {
+                    appState.formatPainterActive = false
+                    appState.capturedAttributes = nil
+                } else {
+                    appState.captureFormat()
+                }
+            }
+            .background(appState.formatPainterActive ? Color.accentColor.opacity(0.3) : Color.clear)
+            .cornerRadius(4)
+
+            toolbarButton("Clear formatting", systemImage: "textformat.alt") {
+                resetTextColors()
             }
 
             Divider()
@@ -118,10 +160,6 @@ struct EditorToolbar: View {
 
             Spacer()
 
-            toolbarButton("Reset text colors", systemImage: "paintbrush") {
-                resetTextColors()
-            }
-
             toolbarButton(appState.isPinnedOnTop ? "Unpin window" : "Pin on top", systemImage: appState.isPinnedOnTop ? "pin.fill" : "pin") {
                 appState.togglePinOnTop()
             }
@@ -166,6 +204,20 @@ struct EditorToolbar: View {
         .buttonStyle(.borderless)
         .accessibilityLabel(label)
         .help(label)
+    }
+
+    private func applyTextColor(_ color: NSColor) {
+        guard let textView = appState.currentTextView,
+              let textStorage = textView.textStorage else { return }
+
+        let range = appState.lastSelectedRange
+        guard range.length > 0,
+              range.location + range.length <= textStorage.length else { return }
+
+        textStorage.beginEditing()
+        textStorage.addAttribute(.foregroundColor, value: color, range: range)
+        textStorage.endEditing()
+        textView.didChangeText()
     }
 
     private func applyFontTrait(_ trait: NSFontTraitMask) {
@@ -443,5 +495,44 @@ struct EditorToolbar: View {
             textStorage.replaceCharacters(in: lineRange, with: "• \(lineText)")
         }
         textStorage.endEditing()
+    }
+}
+
+// MARK: - Text Color Grid
+
+struct TextColorGrid: View {
+    @Binding var selectedColor: Color
+    let onSelect: (Color) -> Void
+
+    private let colors: [[Color]] = [
+        [.black, .gray, .white, .red, .orange],
+        [.yellow, .green, .mint, .cyan, .blue],
+        [.indigo, .purple, .pink, .brown, .primary],
+    ]
+
+    var body: some View {
+        VStack(spacing: 6) {
+            ForEach(0..<colors.count, id: \.self) { row in
+                HStack(spacing: 6) {
+                    ForEach(0..<colors[row].count, id: \.self) { col in
+                        let color = colors[row][col]
+                        Button(action: {
+                            selectedColor = color
+                            onSelect(color)
+                        }) {
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(color)
+                                .frame(width: 22, height: 22)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 3)
+                                        .stroke(Color.primary.opacity(0.3), lineWidth: 0.5)
+                                )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+        .padding(10)
     }
 }

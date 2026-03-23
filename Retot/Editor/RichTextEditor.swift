@@ -5,6 +5,15 @@ class RetotTextView: NSTextView {
 
     weak var appState: AppState?
 
+    // MARK: - Format Painter
+
+    override func mouseUp(with event: NSEvent) {
+        super.mouseUp(with: event)
+        if appState?.formatPainterActive == true && selectedRange().length > 0 {
+            appState?.applyFormat()
+        }
+    }
+
     // MARK: - Print
 
     override func printView(_ sender: Any?) {
@@ -927,7 +936,11 @@ struct RichTextEditor: NSViewRepresentable {
         } else {
             fontColor = .textColor
         }
-        textView.textColor = fontColor
+        // Only set typing attributes for new text — don't override per-range colors
+        textView.insertionPointColor = fontColor
+        var attrs = textView.typingAttributes
+        attrs[.foregroundColor] = fontColor
+        textView.typingAttributes = attrs
     }
 
     private func loadContent(into textView: NSTextView, noteIndex: Int) {
