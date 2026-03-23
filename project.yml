@@ -2,7 +2,7 @@ name: Retot
 options:
   bundleIdPrefix: com.erasmus
   deploymentTarget:
-    macOS: "13.0"
+    macOS: "15.0"
   xcodeVersion: "15.0"
   generateEmptyDirectories: true
 
@@ -19,7 +19,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.erasmus.retot
         INFOPLIST_FILE: Retot/Info.plist
         CODE_SIGN_ENTITLEMENTS: Retot/Retot.entitlements
-        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        MACOSX_DEPLOYMENT_TARGET: "15.0"
         SWIFT_VERSION: "5.9"
         CODE_SIGN_STYLE: Automatic
         PRODUCT_NAME: Retot
@@ -45,7 +45,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.erasmus.retot.tests
         SWIFT_VERSION: "5.9"
-        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        MACOSX_DEPLOYMENT_TARGET: "15.0"
         GENERATE_INFOPLIST_FILE: true
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Retot.app/Contents/MacOS/Retot"
         BUNDLE_LOADER: "$(TEST_HOST)"
@@ -61,6 +61,6 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.erasmus.retot.uitests
         SWIFT_VERSION: "5.9"
-        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        MACOSX_DEPLOYMENT_TARGET: "15.0"
         GENERATE_INFOPLIST_FILE: true
         TEST_TARGET_NAME: Retot
