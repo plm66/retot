@@ -9,10 +9,11 @@ struct SettingsView: View {
     @State private var noteCount: Double = 10
 
     var body: some View {
-        ScrollView {
-        VStack(spacing: 20) {
-            Text("Settings")
-                .font(.title2.bold())
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(spacing: 20) {
+                    Text("Settings")
+                        .font(.title2.bold())
 
             GroupBox("Notes") {
                 VStack(spacing: 12) {
@@ -53,55 +54,64 @@ struct SettingsView: View {
                 .padding(8)
             }
 
-            GroupBox("Keyboard Shortcuts") {
-                VStack(spacing: 6) {
-                    shortcutRow("Cmd+1 — Cmd+0", "Switch to Dot 1–10")
-                    shortcutRow("Cmd+S", "Save note")
-                    shortcutRow("Cmd+P", "Print / Save as PDF")
-                    shortcutRow("Cmd+W", "Hide window")
-                    shortcutRow("Cmd+N", "Jump to first empty note")
-                    shortcutRow("Cmd+Shift+F", "Search all notes")
-                    shortcutRow("Cmd+Z / Cmd+Shift+Z", "Undo / Redo")
-                    shortcutRow("Cmd+B / Cmd+I / Cmd+U", "Bold / Italic / Underline")
+            // Reference - 2x2 grid
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                GroupBox {
+                    DisclosureGroup("Keyboard Shortcuts") {
+                        VStack(alignment: .leading, spacing: 4) {
+                            shortcutRow("Cmd+1–0", "Switch Dot 1–10")
+                            shortcutRow("Cmd+S", "Save")
+                            shortcutRow("Cmd+P", "Print / PDF")
+                            shortcutRow("Cmd+W", "Hide window")
+                            shortcutRow("Cmd+N", "First empty note")
+                            shortcutRow("Cmd+⇧+F", "Search all")
+                            shortcutRow("Cmd+Z/⇧+Z", "Undo / Redo")
+                            shortcutRow("Cmd+B/I/U", "Bold / Italic / Underline")
+                        }
+                        .padding(.top, 4)
+                    }
                 }
-                .padding(8)
-            }
 
-            GroupBox("Toolbar Guide") {
-                VStack(spacing: 6) {
-                    shortcutRow("↩ ↪", "Undo / Redo")
-                    shortcutRow("B I U S", "Bold, Italic, Underline, Strikethrough")
-                    shortcutRow("H", "Toggle heading")
-                    shortcutRow("•", "Bullet list")
-                    shortcutRow("⊞", "Insert table")
-                    shortcutRow("▢▢", "Create pastille (select text first)")
-                    shortcutRow("A- A+", "Decrease / Increase font size")
-                    shortcutRow("📌", "Pin window on top")
-                    shortcutRow("🔍", "Search all notes")
-                    shortcutRow("🗑", "Clear note (with confirmation)")
-                    shortcutRow("🖨", "Print / Save as PDF")
-                    shortcutRow("↑", "Export as Markdown")
+                GroupBox {
+                    DisclosureGroup("Toolbar") {
+                        VStack(alignment: .leading, spacing: 4) {
+                            shortcutRow("↩ ↪", "Undo / Redo")
+                            shortcutRow("B I U S", "Bold, Italic, Underline, Strike")
+                            shortcutRow("H", "Heading")
+                            shortcutRow("•", "Bullet list")
+                            shortcutRow("⊞", "Insert table")
+                            shortcutRow("✨", "AI Assistant")
+                            shortcutRow("📌", "Pin on top")
+                            shortcutRow("🔍", "Search")
+                            shortcutRow("🖨", "Print / PDF")
+                            shortcutRow("↑", "Export Markdown")
+                        }
+                        .padding(.top, 4)
+                    }
                 }
-                .padding(8)
-            }
 
-            GroupBox("DotBar Actions") {
-                VStack(spacing: 6) {
-                    shortcutRow("Click dot", "Select note")
-                    shortcutRow("Double-click label", "Rename note inline")
-                    shortcutRow("⊞+ button", "Detach note as floating window")
-                    shortcutRow("⚙ button", "Open app settings")
+                GroupBox {
+                    DisclosureGroup("DotBar") {
+                        VStack(alignment: .leading, spacing: 4) {
+                            shortcutRow("Click", "Select note")
+                            shortcutRow("Double-click", "Rename inline")
+                            shortcutRow("⊞+ button", "Detach floating")
+                            shortcutRow("⚙ button", "App settings")
+                        }
+                        .padding(.top, 4)
+                    }
                 }
-                .padding(8)
-            }
 
-            GroupBox("Right-Click Actions") {
-                VStack(spacing: 6) {
-                    shortcutRow("On a dot", "Rename, Color, Detach, Copy, Duplicate, Clear")
-                    shortcutRow("On a pastille", "Move to Dot N, Remove Pastille")
-                    shortcutRow("On a table", "Delete Table")
+                GroupBox {
+                    DisclosureGroup("Right-Click") {
+                        VStack(alignment: .leading, spacing: 4) {
+                            shortcutRow("On dot", "Rename, Color, Detach, Copy...")
+                            shortcutRow("On pastille", "Move to Dot N, Remove")
+                            shortcutRow("On table", "Delete Table")
+                        }
+                        .padding(.top, 4)
+                    }
                 }
-                .padding(8)
             }
 
             GroupBox("Bulk Operations") {
@@ -176,7 +186,11 @@ struct SettingsView: View {
                 .padding(8)
             }
 
-            Spacer()
+                }
+                .padding(24)
+            } // ScrollView
+
+            Divider()
 
             HStack {
                 Button("Quit Retot") {
@@ -189,9 +203,9 @@ struct SettingsView: View {
                 Button("Done") { onDone() }
                     .keyboardShortcut(.defaultAction)
             }
-        }
-        .padding(24)
-        } // ScrollView
+            .padding(.horizontal, 24)
+            .padding(.vertical, 12)
+        } // outer VStack
         .onAppear {
             noteCount = Double(appState.notes.count)
             updateRAMUsage()
@@ -204,7 +218,7 @@ struct SettingsView: View {
             Text(shortcut)
                 .font(.system(size: 12, weight: .medium, design: .monospaced))
                 .foregroundColor(.primary)
-                .frame(width: 180, alignment: .leading)
+                .frame(width: 100, alignment: .leading)
             Text(description)
                 .font(.system(size: 12))
                 .foregroundColor(.secondary)
