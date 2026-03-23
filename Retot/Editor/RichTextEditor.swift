@@ -314,6 +314,118 @@ class RetotTextView: NSTextView {
 
     // MARK: - Table Helpers
 
+    func tableBlock(at charIndex: Int) -> NSTextTableBlock? {
+        guard let textStorage = self.textStorage,
+              charIndex >= 0, charIndex < textStorage.length,
+              let paraStyle = textStorage.attribute(
+                  .paragraphStyle, at: charIndex, effectiveRange: nil
+              ) as? NSParagraphStyle else { return nil }
+        return paraStyle.textBlocks.compactMap { $0 as? NSTextTableBlock }.first
+    }
+
+    func parseTable(at charIndex: Int) -> (table: NSTextTable, cells: [[NSAttributedString]], tableRange: NSRange)? {
+        guard let textStorage = self.textStorage,
+              let range = tableRange(at: charIndex) else { return nil }
+
+        var table: NSTextTable?
+        var cellMap: [(row: Int, col: Int, content: NSAttributedString)] = []
+        let string = textStorage.string as NSString
+        var loc = range.location
+
+        while loc < NSMaxRange(range) {
+            let paraRange = string.paragraphRange(for: NSRange(location: loc, length: 0))
+            if let block = tableBlock(at: loc) {
+                if table == nil { table = block.table }
+                // Extract cell content without trailing newline
+                var contentRange = paraRange
+                let paraText = string.substring(with: paraRange)
+                if paraText.hasSuffix("\n") {
+                    contentRange.length -= 1
+                }
+                let content = textStorage.attributedSubstring(from: contentRange)
+                cellMap.append((row: block.startingRow, col: block.startingColumn, content: content))
+            }
+            loc = NSMaxRange(paraRange)
+        }
+
+        guard let foundTable = table else { return nil }
+
+        let maxRow = cellMap.map(\.row).max() ?? 0
+        let maxCol = cellMap.map(\.col).max() ?? 0
+        var grid: [[NSAttributedString]] = Array(
+            repeating: Array(repeating: NSAttributedString(string: " "), count: maxCol + 1),
+            count: maxRow + 1
+        )
+        for cell in cellMap {
+            if cell.row <= maxRow, cell.col <= maxCol {
+                grid[cell.row][cell.col] = cell.content
+            }
+        }
+
+        return (table: foundTable, cells: grid, tableRange: range)
+    }
+
+    func buildTable(rows: [[NSAttributedString]], headerRow: Bool = true) -> NSAttributedString {
+        let rowCount = rows.count
+        let colCount = rows.map(\.count).max() ?? 1
+
+        let table = NSTextTable()
+        table.numberOfColumns = colCount
+        table.collapsesBorders = true
+        table.hidesEmptyCells = false
+
+        let result = NSMutableAttributedString()
+
+        for (rowIndex, row) in rows.enumerated() {
+            for colIndex in 0..<colCount {
+                let block = NSTextTableBlock(
+                    table: table,
+                    startingRow: rowIndex,
+                    rowSpan: 1,
+                    startingColumn: colIndex,
+                    columnSpan: 1
+                )
+
+                block.setWidth(1.0, type: .absoluteValueType, for: .border)
+                block.setBorderColor(.separatorColor)
+                block.setWidth(6.0, type: .absoluteValueType, for: .padding)
+                block.setContentWidth(100.0 / CGFloat(colCount), type: .percentageValueType)
+
+                let isHeader = headerRow && rowIndex == 0
+                if isHeader {
+                    block.backgroundColor = NSColor.controlAccentColor.withAlphaComponent(0.08)
+                }
+
+                let paragraphStyle = NSMutableParagraphStyle()
+                paragraphStyle.textBlocks = [block]
+
+                let font = isHeader
+                    ? NSFont.systemFont(ofSize: 13, weight: .semibold)
+                    : NSFont.systemFont(ofSize: 13)
+
+                let cellContent: NSAttributedString
+                if colIndex < row.count {
+                    cellContent = row[colIndex]
+                } else {
+                    cellContent = NSAttributedString(string: " ")
+                }
+
+                // Build cell: use content text but apply table paragraph style
+                let cellString = NSMutableAttributedString(
+                    string: cellContent.string + "\n",
+                    attributes: [
+                        .paragraphStyle: paragraphStyle,
+                        .font: font,
+                        .foregroundColor: NSColor.textColor
+                    ]
+                )
+                result.append(cellString)
+            }
+        }
+
+        return result
+    }
+
     func isTable(at charIndex: Int) -> Bool {
         guard let textStorage = self.textStorage,
               charIndex >= 0, charIndex < textStorage.length else { return false }
@@ -362,6 +474,16 @@ class RetotTextView: NSTextView {
         let point = convert(event.locationInWindow, from: nil)
         let charIndex = characterIndexForInsertion(at: point)
 
+        // Reset colors item (always available)
+        let resetColorsItem = NSMenuItem(
+            title: "Reset Text Colors",
+            action: #selector(resetTextColorsAction(_:)),
+            keyEquivalent: ""
+        )
+        resetColorsItem.target = self
+        menu.insertItem(resetColorsItem, at: 0)
+        menu.insertItem(.separator(), at: 1)
+
         // Table context menu
         if isTable(at: charIndex) {
             menu.insertItem(.separator(), at: 0)
@@ -374,6 +496,62 @@ class RetotTextView: NSTextView {
             deleteTableItem.representedObject = charIndex
             deleteTableItem.target = self
             menu.insertItem(deleteTableItem, at: 0)
+
+            let deleteColItem = NSMenuItem(
+                title: "Delete Column",
+                action: #selector(deleteColumnAction(_:)),
+                keyEquivalent: ""
+            )
+            deleteColItem.representedObject = charIndex
+            deleteColItem.target = self
+            menu.insertItem(deleteColItem, at: 0)
+
+            let deleteRowItem = NSMenuItem(
+                title: "Delete Row",
+                action: #selector(deleteRowAction(_:)),
+                keyEquivalent: ""
+            )
+            deleteRowItem.representedObject = charIndex
+            deleteRowItem.target = self
+            menu.insertItem(deleteRowItem, at: 0)
+
+            menu.insertItem(.separator(), at: 0)
+
+            let addColRightItem = NSMenuItem(
+                title: "Add Column Right",
+                action: #selector(addColumnRightAction(_:)),
+                keyEquivalent: ""
+            )
+            addColRightItem.representedObject = charIndex
+            addColRightItem.target = self
+            menu.insertItem(addColRightItem, at: 0)
+
+            let addColLeftItem = NSMenuItem(
+                title: "Add Column Left",
+                action: #selector(addColumnLeftAction(_:)),
+                keyEquivalent: ""
+            )
+            addColLeftItem.representedObject = charIndex
+            addColLeftItem.target = self
+            menu.insertItem(addColLeftItem, at: 0)
+
+            let addRowBelowItem = NSMenuItem(
+                title: "Add Row Below",
+                action: #selector(addRowBelowAction(_:)),
+                keyEquivalent: ""
+            )
+            addRowBelowItem.representedObject = charIndex
+            addRowBelowItem.target = self
+            menu.insertItem(addRowBelowItem, at: 0)
+
+            let addRowAboveItem = NSMenuItem(
+                title: "Add Row Above",
+                action: #selector(addRowAboveAction(_:)),
+                keyEquivalent: ""
+            )
+            addRowAboveItem.representedObject = charIndex
+            addRowAboveItem.target = self
+            menu.insertItem(addRowAboveItem, at: 0)
         }
 
         // Pastille context menu
@@ -506,6 +684,126 @@ class RetotTextView: NSTextView {
         didChangeText()
     }
 
+    @objc private func addRowAboveAction(_ sender: NSMenuItem) {
+        guard let charIndex = sender.representedObject as? Int,
+              let block = tableBlock(at: charIndex),
+              var parsed = parseTable(at: charIndex),
+              let textStorage = self.textStorage else { return }
+
+        let rowIndex = block.startingRow
+        let emptyRow = Array(repeating: NSAttributedString(string: " "), count: parsed.cells[0].count)
+        parsed.cells.insert(emptyRow, at: rowIndex)
+
+        replaceTable(range: parsed.tableRange, with: parsed.cells, in: textStorage)
+    }
+
+    @objc private func addRowBelowAction(_ sender: NSMenuItem) {
+        guard let charIndex = sender.representedObject as? Int,
+              let block = tableBlock(at: charIndex),
+              var parsed = parseTable(at: charIndex),
+              let textStorage = self.textStorage else { return }
+
+        let rowIndex = block.startingRow
+        let emptyRow = Array(repeating: NSAttributedString(string: " "), count: parsed.cells[0].count)
+        parsed.cells.insert(emptyRow, at: rowIndex + 1)
+
+        replaceTable(range: parsed.tableRange, with: parsed.cells, in: textStorage)
+    }
+
+    @objc private func addColumnLeftAction(_ sender: NSMenuItem) {
+        guard let charIndex = sender.representedObject as? Int,
+              let block = tableBlock(at: charIndex),
+              var parsed = parseTable(at: charIndex),
+              let textStorage = self.textStorage else { return }
+
+        let colIndex = block.startingColumn
+        let emptyCell = NSAttributedString(string: " ")
+        for rowIdx in 0..<parsed.cells.count {
+            parsed.cells[rowIdx].insert(emptyCell, at: colIndex)
+        }
+
+        replaceTable(range: parsed.tableRange, with: parsed.cells, in: textStorage)
+    }
+
+    @objc private func addColumnRightAction(_ sender: NSMenuItem) {
+        guard let charIndex = sender.representedObject as? Int,
+              let block = tableBlock(at: charIndex),
+              var parsed = parseTable(at: charIndex),
+              let textStorage = self.textStorage else { return }
+
+        let colIndex = block.startingColumn
+        let emptyCell = NSAttributedString(string: " ")
+        for rowIdx in 0..<parsed.cells.count {
+            parsed.cells[rowIdx].insert(emptyCell, at: colIndex + 1)
+        }
+
+        replaceTable(range: parsed.tableRange, with: parsed.cells, in: textStorage)
+    }
+
+    @objc private func deleteRowAction(_ sender: NSMenuItem) {
+        guard let charIndex = sender.representedObject as? Int,
+              let block = tableBlock(at: charIndex),
+              var parsed = parseTable(at: charIndex),
+              let textStorage = self.textStorage else { return }
+
+        // Don't delete if only one row
+        guard parsed.cells.count > 1 else { return }
+
+        let rowIndex = block.startingRow
+        parsed.cells.remove(at: rowIndex)
+
+        replaceTable(range: parsed.tableRange, with: parsed.cells, in: textStorage)
+    }
+
+    @objc private func deleteColumnAction(_ sender: NSMenuItem) {
+        guard let charIndex = sender.representedObject as? Int,
+              let block = tableBlock(at: charIndex),
+              var parsed = parseTable(at: charIndex),
+              let textStorage = self.textStorage else { return }
+
+        // Don't delete if only one column
+        guard (parsed.cells.first?.count ?? 0) > 1 else { return }
+
+        let colIndex = block.startingColumn
+        for rowIdx in 0..<parsed.cells.count {
+            if colIndex < parsed.cells[rowIdx].count {
+                parsed.cells[rowIdx].remove(at: colIndex)
+            }
+        }
+
+        replaceTable(range: parsed.tableRange, with: parsed.cells, in: textStorage)
+    }
+
+    private func replaceTable(range: NSRange, with cells: [[NSAttributedString]], in textStorage: NSTextStorage) {
+        let newTable = buildTable(rows: cells, headerRow: true)
+        textStorage.beginEditing()
+        textStorage.replaceCharacters(in: range, with: newTable)
+        textStorage.endEditing()
+        didChangeText()
+    }
+
+    @objc private func resetTextColorsAction(_ sender: NSMenuItem) {
+        guard let textStorage = self.textStorage else { return }
+        let range: NSRange
+        if selectedRange().length > 0 {
+            range = selectedRange()
+        } else {
+            range = NSRange(location: 0, length: textStorage.length)
+        }
+        guard range.length > 0 else { return }
+
+        textStorage.beginEditing()
+        textStorage.removeAttribute(.foregroundColor, range: range)
+        textStorage.endEditing()
+
+        // Also clear note-level font color
+        if let state = appState {
+            state.updateNoteFontColor(state.selectedNoteIndex, hex: nil)
+        }
+        self.textColor = .textColor
+        didChangeText()
+    }
+
     @objc private func removePastilleAction(_ sender: NSMenuItem) {
         guard let charIndex = sender.representedObject as? Int,
               let range = pastilleRange(at: charIndex) else { return }
@@ -581,6 +879,10 @@ struct RichTextEditor: NSViewRepresentable {
 
         // Set default font
         textView.font = NSFont.systemFont(ofSize: 14)
+
+        if #available(macOS 15.0, *) {
+            textView.writingToolsBehavior = .complete
+        }
 
         scrollView.documentView = textView
 

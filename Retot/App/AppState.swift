@@ -1,6 +1,9 @@
 import AppKit
 import Combine
 import Foundation
+#if canImport(FoundationModels)
+import FoundationModels
+#endif
 
 final class AppState: ObservableObject {
     @Published var notes: [Note]
@@ -14,6 +17,9 @@ final class AppState: ObservableObject {
     private let saveSubject = PassthroughSubject<Void, Never>()
     private var previousNoteIndex: Int?
 
+    private let autoTagSubject = PassthroughSubject<Void, Never>()
+    private var autoTagSubscription: AnyCancellable?
+
     init() {
         storage.ensureDirectoryStructure()
         notes = storage.loadMetadata()
@@ -25,6 +31,7 @@ final class AppState: ObservableObject {
         }
         currentAttributedText = storage.loadNoteContent(for: notes[0].id)
         setupAutoSave()
+        setupAutoTag()
         setupTerminationObserver()
         setupSearchShortcut()
     }
@@ -151,6 +158,7 @@ final class AppState: ObservableObject {
 
     func notifyTextChanged() {
         saveSubject.send()
+        autoTagSubject.send()
     }
 
     func saveCurrentNoteContent() {
@@ -477,6 +485,84 @@ final class AppState: ObservableObject {
         storage.saveNoteContent(finalContent, for: notes[0].id)
     }
 
+    // MARK: - AI Features
+
+    @Published var showAIPopover = false
+    @Published var showTranslation = false
+    @Published var textForTranslation = ""
+    @Published var translationHadSelection = false
+
+    // Foundation Models AI
+    @Published var aiProcessing = false
+    @Published var aiResult: String? = nil
+    @Published var showAIResult = false
+    @Published var aiResultLabel: String = ""
+    @Published var aiHadSelection = false
+
+    func processWithAI(label: String, instruction: String, text: String) {
+        guard !text.isEmpty else { return }
+        let selected = hasTextSelection
+        aiProcessing = true
+        aiResult = nil
+        aiResultLabel = label
+        aiHadSelection = selected
+        showAIResult = true
+
+        if #available(macOS 26.0, *) {
+            #if canImport(FoundationModels)
+            Task { @MainActor in
+                do {
+                    let session = LanguageModelSession(instructions: AIInstructions.system)
+                    let stream = session.streamResponse(to: "\(instruction):\n\n\(text)")
+                    for try await partial in stream {
+                        aiResult = partial.content
+                    }
+                    aiProcessing = false
+                } catch {
+                    aiProcessing = false
+                    aiResult = nil
+                }
+            }
+            #else
+            aiProcessing = false
+            aiResult = nil
+            #endif
+        } else {
+            aiProcessing = false
+            aiResult = nil
+        }
+    }
+
+    var hasTextSelection: Bool {
+        guard let textView = currentTextView else { return false }
+        return textView.selectedRange().length > 0
+    }
+
+    func getSelectedText() -> String {
+        guard let textView = currentTextView,
+              let textStorage = textView.textStorage else { return "" }
+        let range = textView.selectedRange()
+        guard range.length > 0 else { return "" }
+        return textStorage.attributedSubstring(from: range).string
+    }
+
+    func getFullText() -> String {
+        guard let textView = currentTextView,
+              let textStorage = textView.textStorage else { return "" }
+        return textStorage.string
+    }
+
+    func replaceSelection(with text: String) {
+        guard let textView = currentTextView,
+              let textStorage = textView.textStorage else { return }
+        let range = textView.selectedRange()
+        guard range.length > 0 else { return }
+        textStorage.beginEditing()
+        textStorage.replaceCharacters(in: range, with: text)
+        textStorage.endEditing()
+        textView.didChangeText()
+    }
+
     // MARK: - Private
 
     private func setupAutoSave() {
@@ -485,6 +571,38 @@ final class AppState: ObservableObject {
             .sink { [weak self] in
                 self?.saveCurrentNoteContent()
             }
+    }
+
+    private func setupAutoTag() {
+        autoTagSubscription = autoTagSubject
+            .debounce(for: .seconds(10), scheduler: RunLoop.main)
+            .sink { [weak self] in
+                self?.triggerAutoTag()
+            }
+    }
+
+    private func triggerAutoTag() {
+        guard IntelligenceAvailability.supportsFoundationModels else { return }
+        let text = currentAttributedText.string
+        guard text.count > 50 else { return }
+        let noteIndex = selectedNoteIndex
+        let existingTags = notes[noteIndex].tags
+
+        if #available(macOS 26.0, *) {
+            #if canImport(FoundationModels)
+            Task { @MainActor in
+                let newTags = await AutoTagger.generateTags(for: text)
+                guard !newTags.isEmpty else { return }
+                // Only update if tags actually changed
+                let sorted = newTags.sorted()
+                let existingSorted = existingTags.sorted()
+                guard sorted != existingSorted else { return }
+                // Only update if still on the same note
+                guard self.selectedNoteIndex == noteIndex else { return }
+                self.updateNoteTags(noteIndex, tags: newTags)
+            }
+            #endif
+        }
     }
 
     private func setupSearchShortcut() {

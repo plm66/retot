@@ -79,6 +79,19 @@ struct EditorToolbar: View {
             }
             .onAppear { updateFontSizeText() }
 
+            Divider()
+                .frame(height: 16)
+
+            toolbarButton("AI Assistant", systemImage: "sparkles") {
+                appState.showAIPopover.toggle()
+            }
+            .popover(isPresented: $appState.showAIPopover) {
+                AIPopoverView()
+                    .environmentObject(appState)
+            }
+            .disabled(!IntelligenceAvailability.supportsTranslation)
+            .opacity(IntelligenceAvailability.supportsTranslation ? 1.0 : 0.5)
+
             Spacer()
 
             Button(action: { createPastille() }) {
@@ -104,6 +117,10 @@ struct EditorToolbar: View {
             .cornerRadius(6)
 
             Spacer()
+
+            toolbarButton("Reset text colors", systemImage: "paintbrush") {
+                resetTextColors()
+            }
 
             toolbarButton(appState.isPinnedOnTop ? "Unpin window" : "Pin on top", systemImage: appState.isPinnedOnTop ? "pin.fill" : "pin") {
                 appState.togglePinOnTop()
@@ -385,6 +402,29 @@ struct EditorToolbar: View {
             textStorage.addAttribute(.font, value: newFont, range: attrRange)
         }
         textStorage.endEditing()
+    }
+
+    private func resetTextColors() {
+        guard let textView = appState.currentTextView,
+              let textStorage = textView.textStorage else { return }
+
+        let range: NSRange
+        if textView.selectedRange().length > 0 {
+            range = textView.selectedRange()
+        } else {
+            range = NSRange(location: 0, length: textStorage.length)
+        }
+        guard range.length > 0 else { return }
+
+        // Clear inline foreground colors
+        textStorage.beginEditing()
+        textStorage.removeAttribute(.foregroundColor, range: range)
+        textStorage.endEditing()
+
+        // Also clear note-level font color so applyNoteColors doesn't re-apply
+        appState.updateNoteFontColor(appState.selectedNoteIndex, hex: nil)
+        textView.textColor = .textColor
+        textView.didChangeText()
     }
 
     private func applyBulletList() {

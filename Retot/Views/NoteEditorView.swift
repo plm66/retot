@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import Translation
 
 struct NoteEditorView: View {
     @EnvironmentObject var appState: AppState
@@ -36,6 +37,17 @@ struct NoteEditorView: View {
             // Footer
             Divider()
             NoteFooterView()
+        }
+        .translationPresentation(
+            isPresented: $appState.showTranslation,
+            text: appState.textForTranslation,
+            replacementAction: appState.translationHadSelection ? { translatedText in
+                appState.replaceSelection(with: translatedText)
+            } : nil
+        )
+        .sheet(isPresented: $appState.showAIResult) {
+            AIResultView()
+                .environmentObject(appState)
         }
     }
 
