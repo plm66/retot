@@ -32,3 +32,10 @@ Package.resolved
 
 # Externals
 externals/
+
+# Understand Anything
+.understand-anything/
+
+# Scratch files
+*-last.txt
+explains.md
