@@ -34,6 +34,7 @@ final class AppState: ObservableObject {
         setupAutoTag()
         setupTerminationObserver()
         setupSearchShortcut()
+        prewarmFoundationModels()
     }
 
     // MARK: - Note Selection
@@ -181,6 +182,12 @@ final class AppState: ObservableObject {
         let excerpt: String
         let matchRange: Range<String.Index>
     }
+
+    // MARK: - Format Painter
+    @Published var formatPainterActive = false
+    var capturedAttributes: [NSAttributedString.Key: Any]? = nil
+
+    var lastSelectedRange: NSRange = NSRange(location: 0, length: 0)
 
     @Published var isPinnedOnTop = false
     @Published var savedIndicator = false
@@ -398,6 +405,42 @@ final class AppState: ObservableObject {
         }
     }
 
+    // MARK: - Format Painter Actions
+
+    func captureFormat() {
+        guard let textView = currentTextView,
+              let textStorage = textView.textStorage else { return }
+        let index = textView.selectedRange().location
+        guard index < textStorage.length else { return }
+        capturedAttributes = textStorage.attributes(at: index, effectiveRange: nil)
+        formatPainterActive = true
+    }
+
+    func applyFormat() {
+        guard let textView = currentTextView,
+              let textStorage = textView.textStorage,
+              let attrs = capturedAttributes else { return }
+        let range = textView.selectedRange()
+        guard range.length > 0 else { return }
+
+        let formattingKeys: [NSAttributedString.Key] = [
+            .font, .foregroundColor, .backgroundColor,
+            .underlineStyle, .strikethroughStyle
+        ]
+
+        textStorage.beginEditing()
+        for key in formattingKeys {
+            if let value = attrs[key] {
+                textStorage.addAttribute(key, value: value, range: range)
+            }
+        }
+        textStorage.endEditing()
+        textView.didChangeText()
+
+        formatPainterActive = false
+        capturedAttributes = nil
+    }
+
     // MARK: - Wiki Link Navigation
 
     func navigateToNote(named label: String) {
@@ -499,6 +542,16 @@ final class AppState: ObservableObject {
     @Published var aiResultLabel: String = ""
     @Published var aiHadSelection = false
 
+    // AI Assistant (Tool Calling)
+    @Published var showAIAssistant = false
+    @Published var assistantMessages: [(role: String, content: String)] = []
+    @Published var assistantProcessing = false
+
+    // Entity Extraction
+    @Published var showExtraction = false
+    @Published var extractionProcessing = false
+    @Published var extractedEntitiesRaw: Any? = nil
+
     func processWithAI(label: String, instruction: String, text: String) {
         guard !text.isEmpty else { return }
         let selected = hasTextSelection
@@ -561,6 +614,171 @@ final class AppState: ObservableObject {
         textStorage.replaceCharacters(in: range, with: text)
         textStorage.endEditing()
         textView.didChangeText()
+    }
+
+    // MARK: - Prewarm
+
+    private func prewarmFoundationModels() {
+        if #available(macOS 26.0, *) {
+            #if canImport(FoundationModels)
+            Task {
+                // Access the model to trigger loading/caching
+                let _ = SystemLanguageModel.default
+            }
+            #endif
+        }
+    }
+
+    // MARK: - AI Assistant (Tool Calling)
+
+    func sendAssistantMessage(_ text: String) {
+        assistantMessages.append((role: "user", content: text))
+        assistantProcessing = true
+
+        if #available(macOS 26.0, *) {
+            #if canImport(FoundationModels)
+            Task { @MainActor in
+                do {
+                    let response = try await performAssistantQuery(text)
+                    assistantMessages.append((role: "assistant", content: response))
+                } catch {
+                    assistantMessages.append(
+                        (role: "assistant", content: "Desole, une erreur est survenue: \(error.localizedDescription)")
+                    )
+                }
+                assistantProcessing = false
+            }
+            #else
+            assistantMessages.append(
+                (role: "assistant", content: "Foundation Models n'est pas disponible sur cette machine.")
+            )
+            assistantProcessing = false
+            #endif
+        } else {
+            assistantMessages.append(
+                (role: "assistant", content: "Foundation Models necessite macOS 26.0 ou plus recent.")
+            )
+            assistantProcessing = false
+        }
+    }
+
+    #if canImport(FoundationModels)
+    @available(macOS 26.0, *)
+    private func performAssistantQuery(_ text: String) async throws -> String {
+        // Snapshot data for Sendable closures
+        let noteSnapshot = buildNoteSnapshot()
+
+        let searchTool = SearchNotesTool(searchHandler: { query in
+            Self.searchNotesInSnapshot(noteSnapshot, query: query)
+        })
+
+        let listTool = ListNotesTool(listHandler: {
+            Self.listNotesInSnapshot(noteSnapshot)
+        })
+
+        let readTool = ReadNoteTool(readHandler: { noteId in
+            Self.readNoteInSnapshot(noteSnapshot, noteId: noteId)
+        })
+
+        let session = LanguageModelSession(
+            tools: [searchTool, listTool, readTool],
+            instructions: """
+            \(AIInstructions.system)
+            Tu as acces a des outils pour interagir avec les notes de l'utilisateur.
+            Utilise-les quand c'est pertinent pour repondre aux questions.
+            """
+        )
+
+        let response = try await session.respond(to: text)
+        return response.content
+    }
+    #endif
+
+    private struct NoteSnapshotEntry: Sendable {
+        let id: Int
+        let label: String
+        let tags: [String]
+        let content: String
+    }
+
+    private func buildNoteSnapshot() -> [NoteSnapshotEntry] {
+        let storage = StorageManager()
+        return notes.enumerated().map { index, note in
+            let content: String
+            if index == selectedNoteIndex {
+                content = currentAttributedText.string
+            } else {
+                content = storage.loadNoteContent(for: note.id).string
+            }
+            return NoteSnapshotEntry(id: note.id, label: note.label, tags: note.tags, content: content)
+        }
+    }
+
+    private static func searchNotesInSnapshot(_ snapshot: [NoteSnapshotEntry], query: String) -> String {
+        let trimmed = query.trimmingCharacters(in: .whitespaces).lowercased()
+        guard trimmed.count >= 2 else { return "Query too short (minimum 2 characters)" }
+
+        var results: [String] = []
+        for note in snapshot {
+            let lower = note.content.lowercased()
+            if let range = lower.range(of: trimmed) {
+                let content = note.content
+                let start = content.index(
+                    range.lowerBound,
+                    offsetBy: -min(40, content.distance(from: content.startIndex, to: range.lowerBound)),
+                    limitedBy: content.startIndex
+                ) ?? content.startIndex
+                let end = content.index(
+                    range.upperBound,
+                    offsetBy: min(100, content.distance(from: range.upperBound, to: content.endIndex)),
+                    limitedBy: content.endIndex
+                ) ?? content.endIndex
+                let excerpt = String(content[start..<end]).replacingOccurrences(of: "\n", with: " ")
+                results.append("- Note \(note.id) (\(note.label)): ...\(excerpt)...")
+            }
+        }
+        if results.isEmpty { return "No results found for '\(query)'" }
+        return results.joined(separator: "\n")
+    }
+
+    private static func listNotesInSnapshot(_ snapshot: [NoteSnapshotEntry]) -> String {
+        return snapshot.map { note in
+            let tagsStr = note.tags.isEmpty ? "" : " [tags: \(note.tags.joined(separator: ", "))]"
+            return "- Note \(note.id): \(note.label)\(tagsStr)"
+        }.joined(separator: "\n")
+    }
+
+    private static func readNoteInSnapshot(_ snapshot: [NoteSnapshotEntry], noteId: Int) -> String {
+        guard let note = snapshot.first(where: { $0.id == noteId }) else {
+            return "Note with ID \(noteId) not found"
+        }
+        let truncated = note.content.count > 2000
+            ? String(note.content.prefix(2000)) + "... (truncated)"
+            : note.content
+        return "Note \(noteId) (\(note.label)):\n\(truncated)"
+    }
+
+    // MARK: - Entity Extraction
+
+    func extractEntities(from text: String) {
+        guard !text.isEmpty else { return }
+        extractionProcessing = true
+        showExtraction = true
+
+        if #available(macOS 26.0, *) {
+            #if canImport(FoundationModels)
+            extractedEntitiesRaw = nil
+            Task { @MainActor in
+                let result = await EntityExtractor.extract(from: text)
+                extractedEntitiesRaw = result
+                extractionProcessing = false
+            }
+            #else
+            extractionProcessing = false
+            #endif
+        } else {
+            extractionProcessing = false
+        }
     }
 
     // MARK: - Private

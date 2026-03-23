@@ -18,6 +18,18 @@ struct AIPopoverView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
+            // Assistant (Tool Calling)
+            Button(action: triggerAssistant) {
+                Label("Assistant", systemImage: "bubble.left.and.text.bubble.right")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .buttonStyle(.borderless)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .disabled(!hasFoundationModels)
+
+            Divider()
+
             // Translation - available now
             Button(action: triggerTranslation) {
                 Label("Traduire", systemImage: "globe")
@@ -59,10 +71,37 @@ struct AIPopoverView: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 6)
             .disabled(!hasFoundationModels || selectedOrFullText.isEmpty)
+
+            Divider()
+
+            // Extraire
+            Button(action: triggerExtraire) {
+                Label("Extraire", systemImage: "text.magnifyingglass")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .buttonStyle(.borderless)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .disabled(!hasFoundationModels || selectedOrFullText.isEmpty)
         }
         .padding(.vertical, 6)
         .frame(width: 180)
         .font(.system(size: 13))
+    }
+
+    private func triggerAssistant() {
+        appState.showAIPopover = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            appState.showAIAssistant = true
+        }
+    }
+
+    private func triggerExtraire() {
+        let text = selectedOrFullText
+        appState.showAIPopover = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            appState.extractEntities(from: text)
+        }
     }
 
     private func triggerTranslation() {

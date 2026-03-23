@@ -49,6 +49,14 @@ struct NoteEditorView: View {
             AIResultView()
                 .environmentObject(appState)
         }
+        .sheet(isPresented: $appState.showAIAssistant) {
+            AIAssistantView()
+                .environmentObject(appState)
+        }
+        .sheet(isPresented: $appState.showExtraction) {
+            ExtractionResultView()
+                .environmentObject(appState)
+        }
     }
 
     private func exportCurrentNote() {
