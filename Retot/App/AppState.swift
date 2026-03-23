@@ -192,6 +192,10 @@ final class AppState: ObservableObject {
     @Published var isPinnedOnTop = false
     @Published var savedIndicator = false
     @Published var detachNoteIndex: Int? = nil
+
+    // MARK: - macOS Service
+    @Published var receivedServiceText: String? = nil
+    @Published var showNotePicker = false
     @Published var isSearching = false
     @Published var searchQuery = ""
     @Published var searchResults: [SearchResult] = []
@@ -390,6 +394,58 @@ final class AppState: ObservableObject {
 
         // Save target note
         storage.saveNoteContent(combined, for: notes[targetIndex].id)
+    }
+
+    // MARK: - Service Text Insertion
+
+    func appendTextToNote(at index: Int, text: String) {
+        guard index >= 0, index < notes.count else { return }
+
+        let noteId = notes[index].id
+        let existingContent = storage.loadNoteContent(for: noteId)
+
+        let combined = NSMutableAttributedString()
+        combined.append(existingContent)
+
+        // Add separator newline if existing content doesn't end with one
+        if existingContent.length > 0, !existingContent.string.hasSuffix("\n") {
+            combined.append(NSAttributedString(string: "\n"))
+        }
+
+        // Add a visual separator
+        let separatorAttrs: [NSAttributedString.Key: Any] = [
+            .font: NSFont.systemFont(ofSize: 12),
+            .foregroundColor: NSColor.secondaryLabelColor
+        ]
+        let timestamp = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)
+        combined.append(NSAttributedString(
+            string: "--- Received via Service (\(timestamp)) ---\n",
+            attributes: separatorAttrs
+        ))
+
+        // Append the received text with default font
+        let textAttrs: [NSAttributedString.Key: Any] = [
+            .font: NSFont.systemFont(ofSize: 14),
+            .foregroundColor: NSColor.textColor
+        ]
+        combined.append(NSAttributedString(string: text, attributes: textAttrs))
+        combined.append(NSAttributedString(string: "\n", attributes: textAttrs))
+
+        // Save
+        storage.saveNoteContent(combined, for: noteId)
+
+        // Update modification date
+        let updated = notes[index].withModifiedNow()
+        notes = notes.enumerated().map { i, note in
+            i == index ? updated : note
+        }
+        storage.saveMetadata(notes)
+
+        // If this note is currently displayed, reload it
+        if index == selectedNoteIndex {
+            currentAttributedText = combined
+            currentTextView?.textStorage?.setAttributedString(combined)
+        }
     }
 
     // MARK: - Memory Management

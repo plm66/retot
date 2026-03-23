@@ -30,6 +30,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         // Menu bar app: hide from Dock by default
         NSApp.setActivationPolicy(.accessory)
+
+        // Register as macOS Services provider
+        NSApp.servicesProvider = self
+        NSUpdateDynamicServices()
+    }
+
+    // MARK: - macOS Service
+
+    @objc func receiveTextFromService(
+        _ pboard: NSPasteboard,
+        userData: String?,
+        error: AutoreleasingUnsafeMutablePointer<NSString?>
+    ) {
+        guard let text = pboard.string(forType: .string), !text.isEmpty else { return }
+
+        appState.receivedServiceText = text
+        appState.showNotePicker = true
+
+        // Bring app to front and show main window
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
 
     // MARK: - Status Item (Menu Bar Icon)

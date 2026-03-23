@@ -34,6 +34,10 @@ struct ContentView: View {
         }
         .frame(minWidth: 480, minHeight: 400)
         .background(SearchShortcutHandler())
+        .sheet(isPresented: $appState.showNotePicker) {
+            NotePickerView()
+                .environmentObject(appState)
+        }
     }
 }
 

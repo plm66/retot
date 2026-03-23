@@ -33,6 +33,13 @@ targets:
         LSUIElement: true
         CFBundleDisplayName: Retot
         CFBundleName: Retot
+        NSServices:
+          - NSMessage: receiveTextFromService
+            NSSendTypes:
+              - NSStringPboardType
+            NSMenuItem:
+              default: "Send to Retot"
+            NSPortName: Retot
 
   RetotTests:
     type: bundle.unit-test
