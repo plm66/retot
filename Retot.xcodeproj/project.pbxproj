@@ -75,6 +75,12 @@
 		ED682D51B37F203CC725188B /* DocumentSerializerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F4814E32D5A1A92613BD7 /* DocumentSerializerTests.swift */; };
 		F2CF395DD8DC68B7F267B7B4 /* iOSRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EE1687087DF07951EC0F38 /* iOSRootView.swift */; };
 		F51B85D3FD684B4C28EF8B6B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE828D035D2B456D47A4C54E /* AppState.swift */; };
+		B131A0B033B25053A7967746 /* RichTextEditor_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221112002116B8404490F239 /* RichTextEditor_iOS.swift */; };
+		947DA3006BB9357151426418 /* RichTextCoordinator_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A5A689577957F1F1682A741 /* RichTextCoordinator_iOS.swift */; };
+		B51826C630055D025B257D0E /* EditorToolbar_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 688A37A28E4179738B545B96 /* EditorToolbar_iOS.swift */; };
+		88856948274A415679F147A4 /* DotBar_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7932C0DA3974F003766358 /* DotBar_iOS.swift */; };
+		CE7FDB8B2250B271559D106F /* NoteEditorView_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B0558BBCEF02BA77286014 /* NoteEditorView_iOS.swift */; };
+		4B548D9F4E6117F6C54A98CF /* SettingsView_iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7688F28D1E294380E42B51F7 /* SettingsView_iOS.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -143,6 +149,12 @@
 		CE828D035D2B456D47A4C54E /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		CF8064B92020144E6C30CDDA /* AIAssistantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIAssistantView.swift; sourceTree = "<group>"; };
 		E6796766F27435FDF4855015 /* AIResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIResultView.swift; sourceTree = "<group>"; };
+		221112002116B8404490F239 /* RichTextEditor_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextEditor_iOS.swift; sourceTree = "<group>"; };
+		3A5A689577957F1F1682A741 /* RichTextCoordinator_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextCoordinator_iOS.swift; sourceTree = "<group>"; };
+		688A37A28E4179738B545B96 /* EditorToolbar_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorToolbar_iOS.swift; sourceTree = "<group>"; };
+		2A7932C0DA3974F003766358 /* DotBar_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotBar_iOS.swift; sourceTree = "<group>"; };
+		73B0558BBCEF02BA77286014 /* NoteEditorView_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteEditorView_iOS.swift; sourceTree = "<group>"; };
+		7688F28D1E294380E42B51F7 /* SettingsView_iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView_iOS.swift; sourceTree = "<group>"; };
 		ECB96D6BB10D27371F79D088 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		ECC50F002DB0C1083A386DBD /* macOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = macOSApp.swift; sourceTree = "<group>"; };
 		F0AC1878073E94FD28BAE58D /* AutoTagger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTagger.swift; sourceTree = "<group>"; };
@@ -238,9 +250,22 @@
 		7771A28848935B58F06765D6 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				2A7932C0DA3974F003766358 /* DotBar_iOS.swift */,
 				88EE1687087DF07951EC0F38 /* iOSRootView.swift */,
+				73B0558BBCEF02BA77286014 /* NoteEditorView_iOS.swift */,
+				7688F28D1E294380E42B51F7 /* SettingsView_iOS.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		AA11BB22CC33DD44EE55FF66 /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				688A37A28E4179738B545B96 /* EditorToolbar_iOS.swift */,
+				3A5A689577957F1F1682A741 /* RichTextCoordinator_iOS.swift */,
+				221112002116B8404490F239 /* RichTextEditor_iOS.swift */,
+			);
+			path = Editor;
 			sourceTree = "<group>";
 		};
 		79F56C2E9318D81F8AEA60B2 /* Shared */ = {
@@ -347,6 +372,7 @@
 			children = (
 				AFFF17A2151AD62562C976D7 /* RetotiOS.entitlements */,
 				37D88EB636148237179E9249 /* App */,
+				AA11BB22CC33DD44EE55FF66 /* Editor */,
 				7771A28848935B58F06765D6 /* Views */,
 			);
 			name = iOS;
@@ -562,6 +588,12 @@
 				B301E02F3AB40E6A6B7A3E64 /* StorageManager.swift in Sources */,
 				50529AE0B028220F4FD4D43C /* iOSApp.swift in Sources */,
 				F2CF395DD8DC68B7F267B7B4 /* iOSRootView.swift in Sources */,
+				B131A0B033B25053A7967746 /* RichTextEditor_iOS.swift in Sources */,
+				947DA3006BB9357151426418 /* RichTextCoordinator_iOS.swift in Sources */,
+				B51826C630055D025B257D0E /* EditorToolbar_iOS.swift in Sources */,
+				88856948274A415679F147A4 /* DotBar_iOS.swift in Sources */,
+				CE7FDB8B2250B271559D106F /* NoteEditorView_iOS.swift in Sources */,
+				4B548D9F4E6117F6C54A98CF /* SettingsView_iOS.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

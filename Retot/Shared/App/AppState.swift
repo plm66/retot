@@ -16,6 +16,8 @@ final class AppState: ObservableObject {
 
     #if os(macOS)
     weak var currentTextView: NSTextView?
+    #else
+    weak var currentTextView_iOS: UITextView?
     #endif
 
     let cloudSync = CloudSyncManager()
@@ -358,6 +360,8 @@ final class AppState: ObservableObject {
             #if os(macOS)
             // Also clear the NSTextView directly to prevent auto-save restoring old content
             currentTextView?.textStorage?.setAttributedString(empty)
+            #else
+            currentTextView_iOS?.attributedText = empty
             #endif
         }
     }
@@ -520,6 +524,8 @@ final class AppState: ObservableObject {
             currentAttributedText = combined
             #if os(macOS)
             currentTextView?.textStorage?.setAttributedString(combined)
+            #else
+            currentTextView_iOS?.attributedText = combined
             #endif
         }
     }
@@ -530,6 +536,8 @@ final class AppState: ObservableObject {
         currentAttributedText = NSAttributedString(string: "")
         #if os(macOS)
         currentTextView = nil
+        #else
+        currentTextView_iOS = nil
         #endif
     }
 
@@ -549,6 +557,8 @@ final class AppState: ObservableObject {
             currentAttributedText = storage.loadNoteContent(for: notes[selectedNoteIndex].id)
             #if os(macOS)
             currentTextView?.textStorage?.setAttributedString(currentAttributedText)
+            #else
+            currentTextView_iOS?.attributedText = currentAttributedText
             #endif
         }
     }
@@ -596,6 +606,95 @@ final class AppState: ObservableObject {
 
     func applyFormat() {
         // iOS: TODO - implement format painter
+    }
+
+    // MARK: - iOS Text Formatting
+
+    func applyBold_iOS() {
+        guard let textView = currentTextView_iOS else { return }
+        let range = textView.selectedRange
+        guard range.length > 0,
+              range.location + range.length <= textView.textStorage.length else { return }
+
+        textView.textStorage.beginEditing()
+        textView.textStorage.enumerateAttribute(.font, in: range) { value, attrRange, _ in
+            guard let font = value as? UIFont else { return }
+            var traits = font.fontDescriptor.symbolicTraits
+            if traits.contains(.traitBold) {
+                traits.remove(.traitBold)
+            } else {
+                traits.insert(.traitBold)
+            }
+            if let descriptor = font.fontDescriptor.withSymbolicTraits(traits) {
+                let newFont = UIFont(descriptor: descriptor, size: font.pointSize)
+                textView.textStorage.addAttribute(.font, value: newFont, range: attrRange)
+            }
+        }
+        textView.textStorage.endEditing()
+    }
+
+    func applyItalic_iOS() {
+        guard let textView = currentTextView_iOS else { return }
+        let range = textView.selectedRange
+        guard range.length > 0,
+              range.location + range.length <= textView.textStorage.length else { return }
+
+        textView.textStorage.beginEditing()
+        textView.textStorage.enumerateAttribute(.font, in: range) { value, attrRange, _ in
+            guard let font = value as? UIFont else { return }
+            var traits = font.fontDescriptor.symbolicTraits
+            if traits.contains(.traitItalic) {
+                traits.remove(.traitItalic)
+            } else {
+                traits.insert(.traitItalic)
+            }
+            if let descriptor = font.fontDescriptor.withSymbolicTraits(traits) {
+                let newFont = UIFont(descriptor: descriptor, size: font.pointSize)
+                textView.textStorage.addAttribute(.font, value: newFont, range: attrRange)
+            }
+        }
+        textView.textStorage.endEditing()
+    }
+
+    func applyUnderline_iOS() {
+        guard let textView = currentTextView_iOS else { return }
+        let range = textView.selectedRange
+        guard range.length > 0,
+              range.location + range.length <= textView.textStorage.length else { return }
+
+        let current = textView.textStorage.attribute(
+            .underlineStyle, at: range.location, effectiveRange: nil
+        ) as? Int ?? 0
+
+        textView.textStorage.beginEditing()
+        if current != 0 {
+            textView.textStorage.removeAttribute(.underlineStyle, range: range)
+        } else {
+            textView.textStorage.addAttribute(
+                .underlineStyle,
+                value: NSUnderlineStyle.single.rawValue,
+                range: range
+            )
+        }
+        textView.textStorage.endEditing()
+    }
+
+    func applyHeading_iOS() {
+        guard let textView = currentTextView_iOS else { return }
+        let range = textView.selectedRange
+        guard range.length > 0,
+              range.location + range.length <= textView.textStorage.length else { return }
+
+        let currentFont = textView.textStorage.attribute(
+            .font, at: range.location, effectiveRange: nil
+        ) as? UIFont ?? UIFont.systemFont(ofSize: 16)
+
+        let newSize: CGFloat = currentFont.pointSize >= 20 ? 16 : 24
+        let newFont = UIFont.systemFont(ofSize: newSize, weight: newSize >= 20 ? .bold : .regular)
+
+        textView.textStorage.beginEditing()
+        textView.textStorage.addAttribute(.font, value: newFont, range: range)
+        textView.textStorage.endEditing()
     }
     #endif
 
@@ -758,7 +857,8 @@ final class AppState: ObservableObject {
         guard let textView = currentTextView else { return false }
         return textView.selectedRange().length > 0
         #else
-        return false
+        guard let textView = currentTextView_iOS else { return false }
+        return textView.selectedRange.length > 0
         #endif
     }
 
@@ -770,7 +870,11 @@ final class AppState: ObservableObject {
         guard range.length > 0 else { return "" }
         return textStorage.attributedSubstring(from: range).string
         #else
-        return ""
+        guard let textView = currentTextView_iOS else { return "" }
+        let range = textView.selectedRange
+        guard range.length > 0,
+              range.location + range.length <= textView.textStorage.length else { return "" }
+        return textView.textStorage.attributedSubstring(from: range).string
         #endif
     }
 
@@ -780,6 +884,9 @@ final class AppState: ObservableObject {
               let textStorage = textView.textStorage else { return "" }
         return textStorage.string
         #else
+        if let textView = currentTextView_iOS {
+            return textView.textStorage.string
+        }
         return currentAttributedText.string
         #endif
     }
@@ -794,6 +901,15 @@ final class AppState: ObservableObject {
         textStorage.replaceCharacters(in: range, with: text)
         textStorage.endEditing()
         textView.didChangeText()
+        #else
+        guard let textView = currentTextView_iOS else { return }
+        let range = textView.selectedRange
+        guard range.length > 0,
+              range.location + range.length <= textView.textStorage.length else { return }
+        textView.textStorage.beginEditing()
+        textView.textStorage.replaceCharacters(in: range, with: text)
+        textView.textStorage.endEditing()
+        currentAttributedText = NSAttributedString(attributedString: textView.attributedText)
         #endif
     }
 
