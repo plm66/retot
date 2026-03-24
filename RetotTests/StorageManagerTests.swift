@@ -269,6 +269,88 @@ final class StorageManagerTests: XCTestCase {
         XCTAssertEqual(migratedAgain, 0, "Should not re-migrate already migrated notes")
     }
 
+    // MARK: - Custom Directory Storage
+
+    func testCustomDirectoryStorage() {
+        // Create a separate custom directory
+        let customDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RetotCustom-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: customDir) }
+
+        let customStorage = StorageManager(baseDirectory: customDir)
+        customStorage.ensureDirectoryStructure()
+
+        let content = NSAttributedString(
+            string: "Custom dir note",
+            attributes: [.font: NSFont.systemFont(ofSize: 14)]
+        )
+        customStorage.saveNoteContent(content, for: 1)
+
+        // Verify file was written to custom path
+        let jsonURL = customStorage.jsonURLForMigration(for: 1)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: jsonURL.path),
+                       "Note should be saved in custom directory")
+
+        // Verify content loads back
+        let loaded = customStorage.loadNoteContent(for: 1)
+        XCTAssertTrue(loaded.string.contains("Custom dir note"))
+    }
+
+    func testCustomDirectoryFallback() {
+        // When baseDirectory is nil, StorageManager uses StorageConstants.activeDirectory
+        let defaultStorage = StorageManager(baseDirectory: nil)
+        // baseDirectory should resolve to some valid path (not crash)
+        XCTAssertFalse(defaultStorage.baseDirectory.path.isEmpty,
+                        "Default storage should have a valid base directory")
+    }
+
+    func testSwitchStorageLocation() {
+        storage.ensureDirectoryStructure()
+
+        // Save notes in original location
+        storage.saveNoteContent(NSAttributedString(string: "Note A"), for: 1)
+        storage.saveNoteContent(NSAttributedString(string: "Note B"), for: 2)
+        storage.saveMetadata(Note.defaults())
+
+        // Create new destination
+        let newDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RetotSwitch-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: newDir) }
+
+        let fm = FileManager.default
+        let newNotesDir = newDir.appendingPathComponent("notes", isDirectory: true)
+        try? fm.createDirectory(at: newNotesDir, withIntermediateDirectories: true)
+
+        // Copy metadata
+        let srcMeta = tempDir.appendingPathComponent("metadata.json")
+        let dstMeta = newDir.appendingPathComponent("metadata.json")
+        if fm.fileExists(atPath: srcMeta.path) {
+            try? fm.copyItem(at: srcMeta, to: dstMeta)
+        }
+
+        // Copy notes
+        let srcNotes = tempDir.appendingPathComponent("notes", isDirectory: true)
+        if let files = try? fm.contentsOfDirectory(at: srcNotes, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles]) {
+            for file in files {
+                let dest = newNotesDir.appendingPathComponent(file.lastPathComponent)
+                if !fm.fileExists(atPath: dest.path) {
+                    try? fm.copyItem(at: file, to: dest)
+                }
+            }
+        }
+
+        // Create storage at new location and verify notes are accessible
+        let newStorage = StorageManager(baseDirectory: newDir)
+        let loadedA = newStorage.loadNoteContent(for: 1)
+        let loadedB = newStorage.loadNoteContent(for: 2)
+        XCTAssertTrue(loadedA.string.contains("Note A"), "Note A should be accessible after switch")
+        XCTAssertTrue(loadedB.string.contains("Note B"), "Note B should be accessible after switch")
+
+        // Verify metadata was copied
+        let loadedMeta = newStorage.loadMetadata()
+        XCTAssertEqual(loadedMeta.count, 10)
+    }
+
     func testVersionRotationCreatesJSONVersions() {
         storage.ensureDirectoryStructure()
 

@@ -479,6 +479,208 @@ final class DocumentSerializerTests: XCTestCase {
         XCTAssertTrue(traits.contains(.boldFontMask))
     }
 
+    // MARK: - Multiple Tables in One Note
+
+    func testSerializeMultipleTablesInOneNote() {
+        let original = NSMutableAttributedString()
+
+        // First table (2x1)
+        let table1 = NSTextTable()
+        table1.numberOfColumns = 2
+        table1.collapsesBorders = true
+        for col in 0..<2 {
+            let block = NSTextTableBlock(
+                table: table1, startingRow: 0, rowSpan: 1,
+                startingColumn: col, columnSpan: 1
+            )
+            block.setWidth(1.0, type: .absoluteValueType, for: .border)
+            block.setContentWidth(50.0, type: .percentageValueType)
+            let style = NSMutableParagraphStyle()
+            style.textBlocks = [block]
+            original.append(NSAttributedString(
+                string: "T1C\(col)\n",
+                attributes: [.paragraphStyle: style, .font: NSFont.systemFont(ofSize: 13)]
+            ))
+        }
+
+        // Text between tables
+        original.append(NSAttributedString(
+            string: "Between tables\n",
+            attributes: [.font: NSFont.systemFont(ofSize: 14)]
+        ))
+
+        // Second table (2x1)
+        let table2 = NSTextTable()
+        table2.numberOfColumns = 2
+        table2.collapsesBorders = true
+        for col in 0..<2 {
+            let block = NSTextTableBlock(
+                table: table2, startingRow: 0, rowSpan: 1,
+                startingColumn: col, columnSpan: 1
+            )
+            block.setWidth(1.0, type: .absoluteValueType, for: .border)
+            block.setContentWidth(50.0, type: .percentageValueType)
+            let style = NSMutableParagraphStyle()
+            style.textBlocks = [block]
+            original.append(NSAttributedString(
+                string: "T2C\(col)\n",
+                attributes: [.paragraphStyle: style, .font: NSFont.systemFont(ofSize: 13)]
+            ))
+        }
+
+        let document = DocumentSerializer.serialize(original)
+
+        // Should have: table1, paragraph, table2
+        XCTAssertEqual(document.elements.count, 3)
+        if case .table = document.elements[0] {} else { XCTFail("Expected first table") }
+        if case .paragraph = document.elements[1] {} else { XCTFail("Expected paragraph between tables") }
+        if case .table = document.elements[2] {} else { XCTFail("Expected second table") }
+    }
+
+    // MARK: - Empty Table
+
+    func testSerializeEmptyTable() {
+        let table = NSTextTable()
+        table.numberOfColumns = 2
+        table.collapsesBorders = true
+
+        let original = NSMutableAttributedString()
+        for row in 0..<2 {
+            for col in 0..<2 {
+                let block = NSTextTableBlock(
+                    table: table, startingRow: row, rowSpan: 1,
+                    startingColumn: col, columnSpan: 1
+                )
+                block.setWidth(1.0, type: .absoluteValueType, for: .border)
+                block.setContentWidth(50.0, type: .percentageValueType)
+                let style = NSMutableParagraphStyle()
+                style.textBlocks = [block]
+                // Empty cell content (just newline)
+                original.append(NSAttributedString(
+                    string: "\n",
+                    attributes: [.paragraphStyle: style, .font: NSFont.systemFont(ofSize: 13)]
+                ))
+            }
+        }
+
+        let document = DocumentSerializer.serialize(original)
+
+        // Should still produce a table element
+        XCTAssertEqual(document.elements.count, 1)
+        if case .table(let t) = document.elements[0] {
+            XCTAssertEqual(t.columns, 2)
+            XCTAssertEqual(t.rows.count, 2)
+        } else {
+            XCTFail("Expected table element for empty table")
+        }
+
+        // Round-trip should not crash
+        let restored = DocumentSerializer.deserialize(document)
+        XCTAssertGreaterThan(restored.length, 0)
+    }
+
+    // MARK: - Large Document
+
+    func testSerializeLargeDocument() {
+        let original = NSMutableAttributedString()
+        // Create a document with many paragraphs totaling 1000+ characters
+        for i in 0..<50 {
+            let text = "Paragraph \(i) with some content to fill space quickly. "
+            original.append(NSAttributedString(
+                string: text + "\n",
+                attributes: [.font: NSFont.systemFont(ofSize: 14)]
+            ))
+        }
+        XCTAssertGreaterThan(original.length, 1000)
+
+        let document = DocumentSerializer.serialize(original)
+        XCTAssertEqual(document.elements.count, 50)
+
+        let restored = DocumentSerializer.deserialize(document)
+        // All paragraphs should survive
+        XCTAssertTrue(restored.string.contains("Paragraph 0"))
+        XCTAssertTrue(restored.string.contains("Paragraph 49"))
+        // Length should be approximately the same (within formatting tolerance)
+        XCTAssertGreaterThan(restored.length, 900)
+    }
+
+    // MARK: - Special Characters
+
+    func testSerializeSpecialCharacters() {
+        let specialTexts = [
+            "Emojis: \u{1F680}\u{2764}\u{FE0F}\u{1F4A1}\n",
+            "Accents: cafe\u{0301} re\u{0301}sume\u{0301}\n",
+            "CJK: \u{4F60}\u{597D}\u{4E16}\u{754C}\n",
+            "Embedded newlines: line1\nline2\n"
+        ]
+
+        let original = NSMutableAttributedString()
+        for text in specialTexts {
+            original.append(NSAttributedString(
+                string: text,
+                attributes: [.font: NSFont.systemFont(ofSize: 14)]
+            ))
+        }
+
+        let document = DocumentSerializer.serialize(original)
+        let restored = DocumentSerializer.deserialize(document)
+
+        XCTAssertTrue(restored.string.contains("\u{1F680}"), "Emoji should survive round-trip")
+        XCTAssertTrue(restored.string.contains("\u{4F60}\u{597D}"), "CJK should survive round-trip")
+        XCTAssertTrue(restored.string.contains("caf"), "Accented text should survive round-trip")
+    }
+
+    // MARK: - JSON Encoding/Decoding of NoteDocument
+
+    func testJSONEncodingDecoding() throws {
+        let doc = NoteDocument(
+            elements: [
+                .paragraph(Paragraph(runs: [
+                    TextRun(text: "Hello", attributes: TextAttributes(fontSize: 16, isBold: true)),
+                    TextRun(text: " world", attributes: TextAttributes(isItalic: true))
+                ])),
+                .paragraph(Paragraph(runs: [
+                    TextRun(text: "Second paragraph", attributes: TextAttributes(
+                        isUnderline: true,
+                        foregroundColorHex: "#FF0000"
+                    ))
+                ]))
+            ],
+            images: [
+                ImageReference(id: "img-1", filename: "img-1.png", data: Data([0x89, 0x50, 0x4E, 0x47]))
+            ]
+        )
+
+        let data = try DocumentSerializer.encode(doc)
+        let decoded = try DocumentSerializer.decode(from: data)
+
+        XCTAssertEqual(decoded.version, doc.version)
+        XCTAssertEqual(decoded.elements.count, 2)
+        XCTAssertEqual(decoded.images.count, 1)
+        XCTAssertEqual(decoded.images[0].id, "img-1")
+        XCTAssertEqual(decoded.images[0].filename, "img-1.png")
+
+        // Verify first paragraph
+        if case .paragraph(let p) = decoded.elements[0] {
+            XCTAssertEqual(p.runs.count, 2)
+            XCTAssertEqual(p.runs[0].text, "Hello")
+            XCTAssertTrue(p.runs[0].attributes.isBold)
+            XCTAssertEqual(p.runs[0].attributes.fontSize, 16)
+            XCTAssertEqual(p.runs[1].text, " world")
+            XCTAssertTrue(p.runs[1].attributes.isItalic)
+        } else {
+            XCTFail("Expected paragraph")
+        }
+
+        // Verify second paragraph
+        if case .paragraph(let p) = decoded.elements[1] {
+            XCTAssertTrue(p.runs[0].attributes.isUnderline)
+            XCTAssertEqual(p.runs[0].attributes.foregroundColorHex, "#FF0000")
+        } else {
+            XCTFail("Expected paragraph")
+        }
+    }
+
     // MARK: - Font Size Preservation
 
     func testFontSizePreservation() {
