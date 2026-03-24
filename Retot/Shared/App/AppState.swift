@@ -755,6 +755,31 @@ final class AppState: ObservableObject {
         textView.textStorage.addAttribute(.font, value: newFont, range: range)
         textView.textStorage.endEditing()
     }
+
+    // MARK: - iOS Import / Export
+
+    func exportNotesToTempDirectory() -> URL? {
+        let tempDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("RetotExport-\(UUID().uuidString)", isDirectory: true)
+        let fm = FileManager.default
+        do {
+            try fm.createDirectory(at: tempDir, withIntermediateDirectories: true)
+        } catch {
+            return nil
+        }
+
+        // Export markdown notes + metadata via existing exportAllNotes
+        exportAllNotes(to: tempDir)
+
+        return tempDir
+    }
+
+    func importNotesFromFolder(_ url: URL) {
+        guard url.startAccessingSecurityScopedResource() else { return }
+        defer { url.stopAccessingSecurityScopedResource() }
+
+        importAllNotes(from: url)
+    }
     #endif
 
     // MARK: - Wiki Link Navigation
