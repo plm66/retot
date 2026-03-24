@@ -7,13 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A1B2C3D4E5F6A7B8C9D0E1F2 /* NoteDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7A8B9C0D1E2F /* NoteDocument.swift */; };
-		B2C3D4E5F6A7B8C9D0E1F2A3 /* NoteDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7A8B9C0D1E2F /* NoteDocument.swift */; };
-		C3D4E5F6A7B8C9D0E1F2A3B4 /* DocumentSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3C4D5E6F7A8B9C0D1E2F3A /* DocumentSerializer.swift */; };
-		D4E5F6A7B8C9D0E1F2A3B4C5 /* DocumentSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3C4D5E6F7A8B9C0D1E2F3A /* DocumentSerializer.swift */; };
-		F1A2B3C4D5E6F7A8B9C0D1E2 /* RTFDMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5E6F7A8B9C0D1E2F3A4B5C /* RTFDMigrator.swift */; };
-		A2B3C4D5E6F7A8B9C0D1E2F3 /* RTFDMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5E6F7A8B9C0D1E2F3A4B5C /* RTFDMigrator.swift */; };
-		E5F6A7B8C9D0E1F2A3B4C5D6 /* DocumentSerializerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C4D5E6F7A8B9C0D1E2F3A4B /* DocumentSerializerTests.swift */; };
 		0157DF9ED727064224E5B774 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE828D035D2B456D47A4C54E /* AppState.swift */; };
 		0284BF5F5C100DE1AD3A4DA9 /* ExtractionResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252CD77CA73EBE301D8250D6 /* ExtractionResultView.swift */; };
 		08DCBE3ECEE9783CC44CED6B /* RichTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B3AA66C33F66F439B8BA03 /* RichTextEditor.swift */; };
@@ -36,10 +29,14 @@
 		4F8985386F6DEA41C0610F0C /* MarkdownExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 926CC4CDD36936BB446CFD24 /* MarkdownExporter.swift */; };
 		50529AE0B028220F4FD4D43C /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FADF3E382B41D4433340E81 /* iOSApp.swift */; };
 		5676EC186EDB3492F6E3EC0C /* AIResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6796766F27435FDF4855015 /* AIResultView.swift */; };
+		56A012726EE225089D8053C0 /* RTFDMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B1624486C1199EC1BE9D98 /* RTFDMigrator.swift */; };
 		5796BF66C57FC4BF32D20963 /* AIAssistantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8064B92020144E6C30CDDA /* AIAssistantView.swift */; };
+		5815BB274AA482CC2EEF3F1A /* RTFDMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B1624486C1199EC1BE9D98 /* RTFDMigrator.swift */; };
 		5C4668916A1C8018B909259B /* MarkdownExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 926CC4CDD36936BB446CFD24 /* MarkdownExporter.swift */; };
 		5DD010A93F855E06051614CC /* ColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59AFA5085C4A1960E2F2B26D /* ColorExtensions.swift */; };
 		5EA6CD7089BBBE5BED7A19ED /* MarkdownExporterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C620FDE8B06EF37B2EBA397C /* MarkdownExporterTests.swift */; };
+		65452B68D57613BFB03E9947 /* DocumentSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0BFDE87DBE07BCF77E9B12 /* DocumentSerializer.swift */; };
+		65D6D63ECAF7B2CB06071DBB /* CloudSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEFE4A5509C39359354F2C7 /* CloudSyncManager.swift */; };
 		669980CF46BC4104C0F1B2CC /* WikiLinkProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43071A915C8335DE4928FE71 /* WikiLinkProcessor.swift */; };
 		69E723AEE79346A1CF0CC3B5 /* NoteColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5B30E84A80F465B748109A /* NoteColor.swift */; };
 		6BB4093854E39C16F804686F /* NoteMetadataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A6A8F562EA15DB69DC7BF8 /* NoteMetadataTests.swift */; };
@@ -48,6 +45,7 @@
 		8A1723775D8DED3CB2C90284 /* IntelligenceAvailability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961CF22A97A88FC9256CDE7E /* IntelligenceAvailability.swift */; };
 		8B8D54A15C21AC01B71326D7 /* RetotUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C27592E38E8295E985C9A93E /* RetotUITestsLaunchTests.swift */; };
 		91DCD821920D56EAC9BC42FF /* StorageConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5878E60F0E3BCB33C2AAD8E3 /* StorageConstants.swift */; };
+		9226F92D11F2AE6F6182EE9C /* CloudSyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CEFE4A5509C39359354F2C7 /* CloudSyncManager.swift */; };
 		9AD55A40AAC8003E5844F30F /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46FD27D7F85DF298A2E3A95A /* Note.swift */; };
 		9BDC81C838D17520A38DC118 /* NoteMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D37803F859285CD77C5E92 /* NoteMetadata.swift */; };
 		9C9B1021427F4D77AC14D276 /* DotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 385768F5820263AB49959B8C /* DotView.swift */; };
@@ -59,18 +57,22 @@
 		B301E02F3AB40E6A6B7A3E64 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53044843A00078D7A79B9D21 /* StorageManager.swift */; };
 		B4C28FF4D2F1C28B379B7B6A /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53044843A00078D7A79B9D21 /* StorageManager.swift */; };
 		B6062EC75DA6431C384349E4 /* AIInstructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675F993F2E3D255F551ED4CB /* AIInstructions.swift */; };
+		C1180737382D587B7D7F7F7A /* DocumentSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0BFDE87DBE07BCF77E9B12 /* DocumentSerializer.swift */; };
 		C3791C0524F39997D126F333 /* NoteTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9687C02492C48FAD10D66494 /* NoteTools.swift */; };
 		C6D263D055646E8E9B101D82 /* NoteSettingsPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115F5D6120387AA9CB2EAEEC /* NoteSettingsPopover.swift */; };
 		C77A8AAD0A8DC56540F389DD /* DotBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 873F871892354F27FB6D756D /* DotBar.swift */; };
 		D0DFC8975D16D720C3406E4A /* AIAssistantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8064B92020144E6C30CDDA /* AIAssistantView.swift */; };
+		D4A41662AAE759E4F7C80E48 /* NoteDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA67C7313EB2AD12996E644 /* NoteDocument.swift */; };
 		D65CD97DA2775428A99CB70B /* AIInstructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675F993F2E3D255F551ED4CB /* AIInstructions.swift */; };
 		D76054E9053C5A51C05479BC /* macOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC50F002DB0C1083A386DBD /* macOSApp.swift */; };
 		D7AD0EB74DD8D5AD87DB6266 /* NoteEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B82EF44C453CB3AED4BC684 /* NoteEditorView.swift */; };
+		D830EAFF252A31939AEFA34E /* NoteDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA67C7313EB2AD12996E644 /* NoteDocument.swift */; };
 		DAB525EA6B2FB4D78B13E39C /* StorageManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 822633A4DB153CA89C0D22EC /* StorageManagerTests.swift */; };
 		DC8DE16B012C8FA486AB1DF1 /* WikiLinkProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1612BAD658B12CA7E45CA737 /* WikiLinkProcessorTests.swift */; };
 		DF15D03D4AC7B3042C5CB184 /* NoteMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D37803F859285CD77C5E92 /* NoteMetadata.swift */; };
 		E13B978DFACBCF6D93FD8E9A /* EntityExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7F3E2E727817DFEBADBFB6 /* EntityExtractor.swift */; };
 		E6D26103AD1CCB3B370646A3 /* NoteColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5B30E84A80F465B748109A /* NoteColor.swift */; };
+		ED682D51B37F203CC725188B /* DocumentSerializerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894F4814E32D5A1A92613BD7 /* DocumentSerializerTests.swift */; };
 		F2CF395DD8DC68B7F267B7B4 /* iOSRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EE1687087DF07951EC0F38 /* iOSRootView.swift */; };
 		F51B85D3FD684B4C28EF8B6B /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE828D035D2B456D47A4C54E /* AppState.swift */; };
 /* End PBXBuildFile section */
@@ -94,6 +96,7 @@
 
 /* Begin PBXFileReference section */
 		06CFA04109A97EA7AF2B83E1 /* ExportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportManager.swift; sourceTree = "<group>"; };
+		0A0BFDE87DBE07BCF77E9B12 /* DocumentSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSerializer.swift; sourceTree = "<group>"; };
 		115F5D6120387AA9CB2EAEEC /* NoteSettingsPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteSettingsPopover.swift; sourceTree = "<group>"; };
 		1612BAD658B12CA7E45CA737 /* WikiLinkProcessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikiLinkProcessorTests.swift; sourceTree = "<group>"; };
 		17B3AA66C33F66F439B8BA03 /* RichTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextEditor.swift; sourceTree = "<group>"; };
@@ -101,15 +104,18 @@
 		1906BCA911D2E7DE90BCD1C1 /* NoteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteTests.swift; sourceTree = "<group>"; };
 		1F8E7BBA2DF28187501E40C8 /* EditorToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorToolbar.swift; sourceTree = "<group>"; };
 		252CD77CA73EBE301D8250D6 /* ExtractionResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtractionResultView.swift; sourceTree = "<group>"; };
+		2BA67C7313EB2AD12996E644 /* NoteDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDocument.swift; sourceTree = "<group>"; };
 		2E7F3E2E727817DFEBADBFB6 /* EntityExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityExtractor.swift; sourceTree = "<group>"; };
 		33D37803F859285CD77C5E92 /* NoteMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteMetadata.swift; sourceTree = "<group>"; };
 		385768F5820263AB49959B8C /* DotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotView.swift; sourceTree = "<group>"; };
 		3AF124499B8EB5524C2CECFD /* RichTextCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextCoordinator.swift; sourceTree = "<group>"; };
 		3B82EF44C453CB3AED4BC684 /* NoteEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteEditorView.swift; sourceTree = "<group>"; };
+		3CEFE4A5509C39359354F2C7 /* CloudSyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSyncManager.swift; sourceTree = "<group>"; };
 		43071A915C8335DE4928FE71 /* WikiLinkProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WikiLinkProcessor.swift; sourceTree = "<group>"; };
 		46FD27D7F85DF298A2E3A95A /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		53044843A00078D7A79B9D21 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		53A08AD7968741ADCA0B2B5D /* RetotiOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = RetotiOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		53B1624486C1199EC1BE9D98 /* RTFDMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTFDMigrator.swift; sourceTree = "<group>"; };
 		54A6A8F562EA15DB69DC7BF8 /* NoteMetadataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteMetadataTests.swift; sourceTree = "<group>"; };
 		56F328925D02B472967D19CA /* RetotTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RetotTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5878E60F0E3BCB33C2AAD8E3 /* StorageConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageConstants.swift; sourceTree = "<group>"; };
@@ -124,12 +130,14 @@
 		8316D1B283B4BCEF165CEB7C /* NoteColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteColorTests.swift; sourceTree = "<group>"; };
 		873F871892354F27FB6D756D /* DotBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotBar.swift; sourceTree = "<group>"; };
 		88EE1687087DF07951EC0F38 /* iOSRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSRootView.swift; sourceTree = "<group>"; };
+		894F4814E32D5A1A92613BD7 /* DocumentSerializerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSerializerTests.swift; sourceTree = "<group>"; };
 		926CC4CDD36936BB446CFD24 /* MarkdownExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownExporter.swift; sourceTree = "<group>"; };
 		961CF22A97A88FC9256CDE7E /* IntelligenceAvailability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntelligenceAvailability.swift; sourceTree = "<group>"; };
 		9687C02492C48FAD10D66494 /* NoteTools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteTools.swift; sourceTree = "<group>"; };
 		9D5B30E84A80F465B748109A /* NoteColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteColor.swift; sourceTree = "<group>"; };
 		9FADF3E382B41D4433340E81 /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		AA91A00353B11B4BF8606C59 /* PlatformTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformTypes.swift; sourceTree = "<group>"; };
+		AFFF17A2151AD62562C976D7 /* RetotiOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RetotiOS.entitlements; sourceTree = "<group>"; };
 		C27592E38E8295E985C9A93E /* RetotUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetotUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		C620FDE8B06EF37B2EBA397C /* MarkdownExporterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownExporterTests.swift; sourceTree = "<group>"; };
 		CE828D035D2B456D47A4C54E /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
@@ -138,10 +146,6 @@
 		ECB96D6BB10D27371F79D088 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		ECC50F002DB0C1083A386DBD /* macOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = macOSApp.swift; sourceTree = "<group>"; };
 		F0AC1878073E94FD28BAE58D /* AutoTagger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTagger.swift; sourceTree = "<group>"; };
-		1A2B3C4D5E6F7A8B9C0D1E2F /* NoteDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDocument.swift; sourceTree = "<group>"; };
-		4D5E6F7A8B9C0D1E2F3A4B5C /* RTFDMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTFDMigrator.swift; sourceTree = "<group>"; };
-		2B3C4D5E6F7A8B9C0D1E2F3A /* DocumentSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSerializer.swift; sourceTree = "<group>"; };
-		3C4D5E6F7A8B9C0D1E2F3A4B /* DocumentSerializerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSerializerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -220,7 +224,7 @@
 		7334127F6F79B6BE30FCA630 /* RetotTests */ = {
 			isa = PBXGroup;
 			children = (
-				3C4D5E6F7A8B9C0D1E2F3A4B /* DocumentSerializerTests.swift */,
+				894F4814E32D5A1A92613BD7 /* DocumentSerializerTests.swift */,
 				C620FDE8B06EF37B2EBA397C /* MarkdownExporterTests.swift */,
 				8316D1B283B4BCEF165CEB7C /* NoteColorTests.swift */,
 				54A6A8F562EA15DB69DC7BF8 /* NoteMetadataTests.swift */,
@@ -256,9 +260,10 @@
 		81D165AFD76E5D30D1A38E6B /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
-				2B3C4D5E6F7A8B9C0D1E2F3A /* DocumentSerializer.swift */,
-				1A2B3C4D5E6F7A8B9C0D1E2F /* NoteDocument.swift */,
-				4D5E6F7A8B9C0D1E2F3A4B5C /* RTFDMigrator.swift */,
+				3CEFE4A5509C39359354F2C7 /* CloudSyncManager.swift */,
+				0A0BFDE87DBE07BCF77E9B12 /* DocumentSerializer.swift */,
+				2BA67C7313EB2AD12996E644 /* NoteDocument.swift */,
+				53B1624486C1199EC1BE9D98 /* RTFDMigrator.swift */,
 				5878E60F0E3BCB33C2AAD8E3 /* StorageConstants.swift */,
 				53044843A00078D7A79B9D21 /* StorageManager.swift */,
 			);
@@ -340,6 +345,7 @@
 		F38DDA3634B21BFF1F3CA470 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				AFFF17A2151AD62562C976D7 /* RetotiOS.entitlements */,
 				37D88EB636148237179E9249 /* App */,
 				7771A28848935B58F06765D6 /* Views */,
 			);
@@ -467,7 +473,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E5F6A7B8C9D0E1F2A3B4C5D6 /* DocumentSerializerTests.swift in Sources */,
+				ED682D51B37F203CC725188B /* DocumentSerializerTests.swift in Sources */,
 				5EA6CD7089BBBE5BED7A19ED /* MarkdownExporterTests.swift in Sources */,
 				40CB7341470FD686F2108DEC /* NoteColorTests.swift in Sources */,
 				6BB4093854E39C16F804686F /* NoteMetadataTests.swift in Sources */,
@@ -481,16 +487,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C3D4E5F6A7B8C9D0E1F2A3B4 /* DocumentSerializer.swift in Sources */,
-				A1B2C3D4E5F6A7B8C9D0E1F2 /* NoteDocument.swift in Sources */,
 				D0DFC8975D16D720C3406E4A /* AIAssistantView.swift in Sources */,
 				D65CD97DA2775428A99CB70B /* AIInstructions.swift in Sources */,
 				300DB33B785F436F3BC2A184 /* AIPopoverView.swift in Sources */,
 				2955591FECBD8379802C6CB3 /* AIResultView.swift in Sources */,
 				F51B85D3FD684B4C28EF8B6B /* AppState.swift in Sources */,
 				38DBCACBE0C0F361CA0F5667 /* AutoTagger.swift in Sources */,
+				9226F92D11F2AE6F6182EE9C /* CloudSyncManager.swift in Sources */,
 				5DD010A93F855E06051614CC /* ColorExtensions.swift in Sources */,
 				313B6FCDE3A34AC1F17FA034 /* ContentView.swift in Sources */,
+				65452B68D57613BFB03E9947 /* DocumentSerializer.swift in Sources */,
 				C77A8AAD0A8DC56540F389DD /* DotBar.swift in Sources */,
 				9C9B1021427F4D77AC14D276 /* DotView.swift in Sources */,
 				3159F6D3B6C012509F8A3702 /* EditorToolbar.swift in Sources */,
@@ -501,18 +507,19 @@
 				4F8985386F6DEA41C0610F0C /* MarkdownExporter.swift in Sources */,
 				270C2B16A4152F4339EA565E /* Note.swift in Sources */,
 				E6D26103AD1CCB3B370646A3 /* NoteColor.swift in Sources */,
+				D830EAFF252A31939AEFA34E /* NoteDocument.swift in Sources */,
 				D7AD0EB74DD8D5AD87DB6266 /* NoteEditorView.swift in Sources */,
 				DF15D03D4AC7B3042C5CB184 /* NoteMetadata.swift in Sources */,
 				27CF9E4E76214512C0FD9714 /* NotePickerView.swift in Sources */,
 				C6D263D055646E8E9B101D82 /* NoteSettingsPopover.swift in Sources */,
 				C3791C0524F39997D126F333 /* NoteTools.swift in Sources */,
 				3AF66B02F4082E1E3B5597FD /* PlatformTypes.swift in Sources */,
+				56A012726EE225089D8053C0 /* RTFDMigrator.swift in Sources */,
 				719DF0F46DC0E6A9DB9DC895 /* RichTextCoordinator.swift in Sources */,
 				08DCBE3ECEE9783CC44CED6B /* RichTextEditor.swift in Sources */,
 				A0A8225075069D260AF7EE7B /* SettingsView.swift in Sources */,
 				9E996AB71402BF7F89772893 /* StorageConstants.swift in Sources */,
 				B4C28FF4D2F1C28B379B7B6A /* StorageManager.swift in Sources */,
-				F1A2B3C4D5E6F7A8B9C0D1E2 /* RTFDMigrator.swift in Sources */,
 				669980CF46BC4104C0F1B2CC /* WikiLinkProcessor.swift in Sources */,
 				D76054E9053C5A51C05479BC /* macOSApp.swift in Sources */,
 			);
@@ -531,27 +538,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4E5F6A7B8C9D0E1F2A3B4C5 /* DocumentSerializer.swift in Sources */,
-				B2C3D4E5F6A7B8C9D0E1F2A3 /* NoteDocument.swift in Sources */,
 				5796BF66C57FC4BF32D20963 /* AIAssistantView.swift in Sources */,
 				B6062EC75DA6431C384349E4 /* AIInstructions.swift in Sources */,
 				0BAFCCB9B7683415924E7E18 /* AIPopoverView.swift in Sources */,
 				5676EC186EDB3492F6E3EC0C /* AIResultView.swift in Sources */,
 				0157DF9ED727064224E5B774 /* AppState.swift in Sources */,
 				186809F0980FECC50D985D4A /* AutoTagger.swift in Sources */,
+				65D6D63ECAF7B2CB06071DBB /* CloudSyncManager.swift in Sources */,
 				364E2E28D6106F82652B82C4 /* ColorExtensions.swift in Sources */,
+				C1180737382D587B7D7F7F7A /* DocumentSerializer.swift in Sources */,
 				E13B978DFACBCF6D93FD8E9A /* EntityExtractor.swift in Sources */,
 				0284BF5F5C100DE1AD3A4DA9 /* ExtractionResultView.swift in Sources */,
 				8A1723775D8DED3CB2C90284 /* IntelligenceAvailability.swift in Sources */,
 				5C4668916A1C8018B909259B /* MarkdownExporter.swift in Sources */,
 				9AD55A40AAC8003E5844F30F /* Note.swift in Sources */,
 				69E723AEE79346A1CF0CC3B5 /* NoteColor.swift in Sources */,
+				D4A41662AAE759E4F7C80E48 /* NoteDocument.swift in Sources */,
 				9BDC81C838D17520A38DC118 /* NoteMetadata.swift in Sources */,
 				39F3193EBD384CB03271472B /* NoteTools.swift in Sources */,
 				6D792441843FCD9A54FB5474 /* PlatformTypes.swift in Sources */,
+				5815BB274AA482CC2EEF3F1A /* RTFDMigrator.swift in Sources */,
 				91DCD821920D56EAC9BC42FF /* StorageConstants.swift in Sources */,
 				B301E02F3AB40E6A6B7A3E64 /* StorageManager.swift in Sources */,
-				A2B3C4D5E6F7A8B9C0D1E2F3 /* RTFDMigrator.swift in Sources */,
 				50529AE0B028220F4FD4D43C /* iOSApp.swift in Sources */,
 				F2CF395DD8DC68B7F267B7B4 /* iOSRootView.swift in Sources */,
 			);
@@ -656,6 +664,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Retot/iOS/RetotiOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -823,6 +832,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Retot/iOS/RetotiOS.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

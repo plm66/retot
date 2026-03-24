@@ -149,9 +149,14 @@ struct SettingsView: View {
                 VStack(spacing: 12) {
                     HStack {
                         VStack(alignment: .leading) {
-                            Text("Storage Location")
-                                .font(.body)
-                            Text(StorageConstants.appSupportDirectory.path)
+                            HStack(spacing: 6) {
+                                Circle()
+                                    .fill(StorageConstants.isICloudAvailable ? Color.green : Color.gray)
+                                    .frame(width: 8, height: 8)
+                                Text(StorageConstants.isICloudAvailable ? "iCloud: Connected" : "iCloud: Local only")
+                                    .font(.body)
+                            }
+                            Text(StorageConstants.activeDirectory.path)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
@@ -161,7 +166,7 @@ struct SettingsView: View {
                         Button("Reveal") {
                             NSWorkspace.shared.selectFile(
                                 nil,
-                                inFileViewerRootedAtPath: StorageConstants.appSupportDirectory.path
+                                inFileViewerRootedAtPath: StorageConstants.activeDirectory.path
                             )
                         }
                     }

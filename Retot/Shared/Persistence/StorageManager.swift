@@ -12,10 +12,63 @@ final class StorageManager {
     private let metadataURL: URL
 
     init(baseDirectory: URL? = nil) {
-        let base = baseDirectory ?? StorageConstants.appSupportDirectory
+        let base = baseDirectory ?? StorageConstants.activeDirectory
         self.baseDirectory = base
         self.notesDirectory = base.appendingPathComponent("notes", isDirectory: true)
         self.metadataURL = base.appendingPathComponent("metadata.json")
+    }
+
+    // MARK: - File Coordination (iCloud safety)
+
+    private func coordinatedWrite(_ data: Data, to url: URL) throws {
+        if StorageConstants.isICloudAvailable {
+            var coordinatorError: NSError?
+            var writeError: Error?
+            let coordinator = NSFileCoordinator()
+            coordinator.coordinate(writingItemAt: url, options: .forReplacing, error: &coordinatorError) { newURL in
+                do {
+                    try data.write(to: newURL, options: .atomic)
+                } catch {
+                    writeError = error
+                }
+            }
+            if let coordinatorError = coordinatorError {
+                throw coordinatorError
+            }
+            if let writeError = writeError {
+                throw writeError
+            }
+        } else {
+            try data.write(to: url, options: .atomic)
+        }
+    }
+
+    private func coordinatedRead(from url: URL) throws -> Data {
+        if StorageConstants.isICloudAvailable {
+            var coordinatorError: NSError?
+            var result: Result<Data, Error>?
+            let coordinator = NSFileCoordinator()
+            coordinator.coordinate(readingItemAt: url, options: [], error: &coordinatorError) { newURL in
+                do {
+                    result = .success(try Data(contentsOf: newURL))
+                } catch {
+                    result = .failure(error)
+                }
+            }
+            if let coordinatorError = coordinatorError {
+                throw coordinatorError
+            }
+            switch result {
+            case .success(let data):
+                return data
+            case .failure(let error):
+                throw error
+            case .none:
+                throw NSError(domain: "StorageManager", code: -1, userInfo: [NSLocalizedDescriptionKey: "File coordination returned no result"])
+            }
+        } else {
+            return try Data(contentsOf: url)
+        }
     }
 
     func ensureDirectoryStructure() {
@@ -42,7 +95,7 @@ final class StorageManager {
             encoder.dateEncodingStrategy = .iso8601
             encoder.outputFormatting = .prettyPrinted
             let data = try encoder.encode(metadata)
-            try data.write(to: metadataURL, options: .atomic)
+            try coordinatedWrite(data, to: metadataURL)
         } catch {
             print("Failed to save metadata: \(error)")
         }
@@ -54,7 +107,7 @@ final class StorageManager {
             return Note.defaults()
         }
         do {
-            let data = try Data(contentsOf: url)
+            let data = try coordinatedRead(from: url)
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             let metadata = try decoder.decode([NoteMetadata].self, from: data)
@@ -237,7 +290,7 @@ final class StorageManager {
             for imageRef in document.images {
                 if let data = imageRef.data {
                     let imageFileURL = imgDir.appendingPathComponent(imageRef.filename)
-                    try data.write(to: imageFileURL, options: .atomic)
+                    try coordinatedWrite(data, to: imageFileURL)
                 }
             }
 
@@ -252,7 +305,7 @@ final class StorageManager {
             )
 
             let jsonData = try DocumentSerializer.encode(strippedDocument)
-            try jsonData.write(to: url, options: .atomic)
+            try coordinatedWrite(jsonData, to: url)
 
             // Clean up recovery file after successful save
             removeRecoveryFile(for: id)
@@ -331,7 +384,7 @@ final class StorageManager {
         let jsonPath = jsonURL(for: id)
         if fileManager.fileExists(atPath: jsonPath.path) {
             do {
-                let jsonData = try Data(contentsOf: jsonPath)
+                let jsonData = try coordinatedRead(from: jsonPath)
                 var document = try DocumentSerializer.decode(from: jsonData)
                 document = loadImagesIntoDocument(document, for: id)
                 let attributedString = DocumentSerializer.deserialize(document)

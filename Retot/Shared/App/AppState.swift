@@ -18,10 +18,12 @@ final class AppState: ObservableObject {
     weak var currentTextView: NSTextView?
     #endif
 
+    let cloudSync = CloudSyncManager()
     private let storage = StorageManager()
     private var autoSaveSubscription: AnyCancellable?
     private let saveSubject = PassthroughSubject<Void, Never>()
     private var previousNoteIndex: Int?
+    private var cloudObserver: Any?
 
     private let autoTagSubject = PassthroughSubject<Void, Never>()
     private var autoTagSubscription: AnyCancellable?
@@ -45,7 +47,21 @@ final class AppState: ObservableObject {
             print("Migrated \(migrated) notes from RTFD to JSON")
         }
 
+        // If first time with iCloud, copy local notes to cloud
+        if StorageConstants.isICloudAvailable {
+            cloudSync.migrateLocalToCloud()
+        }
+
         currentAttributedText = storage.loadNoteContent(for: notes[0].id)
+
+        // Listen for iCloud file changes from other devices
+        cloudObserver = NotificationCenter.default.addObserver(
+            forName: .retotCloudFilesChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.reloadFromDisk()
+        }
 
         // Check for crash recovery files
         let recovered = storage.checkForRecoveryFiles(noteIds: notes.map(\.id))
@@ -520,6 +536,20 @@ final class AppState: ObservableObject {
     func reloadCurrentNote() {
         if currentAttributedText.length == 0 {
             currentAttributedText = storage.loadNoteContent(for: notes[selectedNoteIndex].id)
+        }
+    }
+
+    /// Reload metadata and current note from disk (for iCloud sync changes)
+    func reloadFromDisk() {
+        let refreshedNotes = storage.loadMetadata()
+        if !refreshedNotes.isEmpty {
+            notes = refreshedNotes
+        }
+        if selectedNoteIndex < notes.count {
+            currentAttributedText = storage.loadNoteContent(for: notes[selectedNoteIndex].id)
+            #if os(macOS)
+            currentTextView?.textStorage?.setAttributedString(currentAttributedText)
+            #endif
         }
     }
 

@@ -9,6 +9,20 @@ enum StorageConstants {
         return appSupport.appendingPathComponent("Retot", isDirectory: true)
     }
 
+    static var iCloudDirectory: URL? {
+        FileManager.default.url(forUbiquityContainerIdentifier: "iCloud.com.erasmus.retot")?
+            .appendingPathComponent("Documents", isDirectory: true)
+    }
+
+    /// Returns iCloud directory if available, otherwise local app support
+    static var activeDirectory: URL {
+        iCloudDirectory ?? appSupportDirectory
+    }
+
+    static var isICloudAvailable: Bool {
+        iCloudDirectory != nil
+    }
+
     static var notesDirectory: URL {
         appSupportDirectory.appendingPathComponent("notes", isDirectory: true)
     }
