@@ -132,4 +132,160 @@ final class StorageManagerTests: XCTestCase {
         XCTAssertEqual(storage.loadNoteContent(for: 1).string.trimmingCharacters(in: .whitespacesAndNewlines), "Note A")
         XCTAssertEqual(storage.loadNoteContent(for: 2).string.trimmingCharacters(in: .whitespacesAndNewlines), "Note B")
     }
+
+    // MARK: - JSON Format
+
+    func testSaveAndLoadNoteAsJSON() {
+        storage.ensureDirectoryStructure()
+
+        let boldFont = NSFontManager.shared.convert(
+            NSFont.systemFont(ofSize: 14),
+            toHaveTrait: .boldFontMask
+        )
+
+        let original = NSMutableAttributedString()
+        original.append(NSAttributedString(
+            string: "Bold heading",
+            attributes: [.font: boldFont]
+        ))
+        original.append(NSAttributedString(
+            string: "\nRegular body text\n",
+            attributes: [.font: NSFont.systemFont(ofSize: 14)]
+        ))
+
+        storage.saveNoteContent(original, for: 42)
+
+        // Verify JSON file exists
+        let jsonURL = storage.jsonURLForMigration(for: 42)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: jsonURL.path), "JSON file should exist after save")
+
+        // Load it back
+        let loaded = storage.loadNoteContent(for: 42)
+
+        // Verify text content
+        XCTAssertTrue(loaded.string.contains("Bold heading"))
+        XCTAssertTrue(loaded.string.contains("Regular body text"))
+
+        // Verify bold attribute survived
+        let loadedFont = loaded.attribute(.font, at: 0, effectiveRange: nil) as? NSFont
+        XCTAssertNotNil(loadedFont)
+        let traits = NSFontManager.shared.traits(of: loadedFont!)
+        XCTAssertTrue(traits.contains(.boldFontMask))
+    }
+
+    func testSaveEmptyNoteRemovesJSON() {
+        storage.ensureDirectoryStructure()
+
+        // Save non-empty first
+        storage.saveNoteContent(NSAttributedString(string: "Content"), for: 50)
+        let jsonURL = storage.jsonURLForMigration(for: 50)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: jsonURL.path))
+
+        // Save empty -> should remove JSON
+        storage.saveNoteContent(NSAttributedString(string: ""), for: 50)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: jsonURL.path))
+    }
+
+    func testJSONSaveWithImage() {
+        storage.ensureDirectoryStructure()
+
+        // Create a small test image
+        let image = NSImage(size: NSSize(width: 10, height: 10))
+        image.lockFocus()
+        NSColor.blue.setFill()
+        NSBezierPath(rect: NSRect(x: 0, y: 0, width: 10, height: 10)).fill()
+        image.unlockFocus()
+
+        let attachment = NSTextAttachment()
+        attachment.image = image
+        attachment.bounds = CGRect(x: 0, y: 0, width: 10, height: 10)
+
+        let original = NSMutableAttributedString(attachment: attachment)
+        original.append(NSAttributedString(string: "\nSome text\n"))
+
+        storage.saveNoteContent(original, for: 60)
+
+        // Verify images directory was created
+        let imgDir = tempDir
+            .appendingPathComponent("notes", isDirectory: true)
+            .appendingPathComponent("images", isDirectory: true)
+            .appendingPathComponent("note-60", isDirectory: true)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: imgDir.path), "Images directory should exist")
+
+        // Verify at least one image file was written
+        let imageFiles = try? FileManager.default.contentsOfDirectory(at: imgDir, includingPropertiesForKeys: nil)
+        XCTAssertNotNil(imageFiles)
+        XCTAssertFalse(imageFiles?.isEmpty ?? true, "Should have at least one image file")
+
+        // Load it back and verify image is present
+        let loaded = storage.loadNoteContent(for: 60)
+        let loadedAttachment = loaded.attribute(.attachment, at: 0, effectiveRange: nil) as? NSTextAttachment
+        XCTAssertNotNil(loadedAttachment, "Image attachment should be present after load")
+        XCTAssertNotNil(loadedAttachment?.image, "Image data should be loaded")
+    }
+
+    // MARK: - RTFD Migration
+
+    func testRTFDMigration() {
+        storage.ensureDirectoryStructure()
+
+        // Manually create an RTFD file (simulating old format)
+        let content = NSAttributedString(
+            string: "Legacy RTFD content",
+            attributes: [.font: NSFont.systemFont(ofSize: 14)]
+        )
+        let rtfdURL = storage.rtfdURLForMigration(for: 70)
+        do {
+            let wrapper = try content.fileWrapper(
+                from: NSRange(location: 0, length: content.length),
+                documentAttributes: [.documentType: NSAttributedString.DocumentType.rtfd]
+            )
+            try wrapper.write(to: rtfdURL, options: .atomic, originalContentsURL: nil)
+        } catch {
+            XCTFail("Failed to create test RTFD: \(error)")
+            return
+        }
+
+        // Verify no JSON exists yet
+        let jsonURL = storage.jsonURLForMigration(for: 70)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: jsonURL.path))
+
+        // Run migration
+        let migrated = RTFDMigrator.migrateIfNeeded(storage: storage, noteIds: [70])
+        XCTAssertEqual(migrated, 1)
+
+        // Verify JSON was created
+        XCTAssertTrue(FileManager.default.fileExists(atPath: jsonURL.path), "JSON should exist after migration")
+
+        // Verify RTFD was NOT deleted
+        XCTAssertTrue(FileManager.default.fileExists(atPath: rtfdURL.path), "RTFD should still exist as backup")
+
+        // Verify content loads correctly
+        let loaded = storage.loadNoteContent(for: 70)
+        XCTAssertTrue(loaded.string.contains("Legacy RTFD content"))
+
+        // Run migration again -- should skip (already migrated)
+        let migratedAgain = RTFDMigrator.migrateIfNeeded(storage: storage, noteIds: [70])
+        XCTAssertEqual(migratedAgain, 0, "Should not re-migrate already migrated notes")
+    }
+
+    func testVersionRotationCreatesJSONVersions() {
+        storage.ensureDirectoryStructure()
+
+        // Save version 1
+        storage.saveNoteContent(NSAttributedString(string: "Version 1"), for: 80)
+
+        // Save version 2 (should rotate v1)
+        storage.saveNoteContent(NSAttributedString(string: "Version 2"), for: 80)
+
+        // Check that a version file was created as JSON
+        let versionsDir = tempDir
+            .appendingPathComponent("versions", isDirectory: true)
+            .appendingPathComponent("note-80", isDirectory: true)
+        let v1JSON = versionsDir.appendingPathComponent("v1.json")
+        XCTAssertTrue(
+            FileManager.default.fileExists(atPath: v1JSON.path),
+            "Version file should be JSON format"
+        )
+    }
 }

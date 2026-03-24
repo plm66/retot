@@ -65,40 +65,46 @@ final class StorageManager {
         }
     }
 
+    // MARK: - Path Helpers (JSON format)
+
+    private func jsonURL(for id: Int) -> URL {
+        notesDirectory.appendingPathComponent("note-\(id).json")
+    }
+
+    private func imagesDirectory(for id: Int) -> URL {
+        notesDirectory.appendingPathComponent("images", isDirectory: true)
+            .appendingPathComponent("note-\(id)", isDirectory: true)
+    }
+
     // MARK: - Crash Recovery
 
     private func recoveryURL(for id: Int) -> URL {
-        baseDirectory.appendingPathComponent(".recovery-\(id).rtfd")
+        baseDirectory.appendingPathComponent(".recovery-\(id).json")
     }
 
-    #if os(macOS)
     func writeRecoveryFile(_ attributedString: NSAttributedString, for id: Int) {
         let url = recoveryURL(for: id)
         guard attributedString.length > 0 else {
             try? fileManager.removeItem(at: url)
             return
         }
+        #if os(macOS)
         do {
-            let wrapper = try attributedString.fileWrapper(
-                from: NSRange(location: 0, length: attributedString.length),
-                documentAttributes: [
-                    .documentType: NSAttributedString.DocumentType.rtfd
-                ]
-            )
-            try? fileManager.removeItem(at: url)
-            try wrapper.write(to: url, options: .atomic, originalContentsURL: nil)
+            let document = DocumentSerializer.serialize(attributedString)
+            let jsonData = try DocumentSerializer.encode(document)
+            try jsonData.write(to: url, options: .atomic)
         } catch {
             // Recovery write failure is non-fatal
         }
+        #endif
     }
-    #else
-    func writeRecoveryFile(_ attributedString: NSAttributedString, for id: Int) {
-        // iOS: TODO - implement recovery using RTF data
-    }
-    #endif
 
     func removeRecoveryFile(for id: Int) {
-        try? fileManager.removeItem(at: recoveryURL(for: id))
+        let jsonRecovery = recoveryURL(for: id)
+        try? fileManager.removeItem(at: jsonRecovery)
+        // Also clean up legacy RTFD recovery files
+        let legacyRecovery = baseDirectory.appendingPathComponent(".recovery-\(id).rtfd")
+        try? fileManager.removeItem(at: legacyRecovery)
     }
 
     func removeAllRecoveryFiles() {
@@ -113,14 +119,13 @@ final class StorageManager {
 
     /// Returns (noteId, recoveredContent) pairs for any recovery files newer than their saved counterparts.
     func checkForRecoveryFiles(noteIds: [Int]) -> [(id: Int, content: NSAttributedString)] {
-        #if os(macOS)
         var recovered: [(id: Int, content: NSAttributedString)] = []
         for id in noteIds {
             let recURL = recoveryURL(for: id)
             guard fileManager.fileExists(atPath: recURL.path) else { continue }
 
-            // Compare modification dates
-            let savedURL = rtfdURL(for: id)
+            // Compare modification dates against JSON (primary) or RTFD (legacy)
+            let savedURL = jsonURL(for: id)
             let recAttrs = try? fileManager.attributesOfItem(atPath: recURL.path)
             let savedAttrs = try? fileManager.attributesOfItem(atPath: savedURL.path)
 
@@ -133,13 +138,12 @@ final class StorageManager {
                 continue
             }
 
-            // Load recovery content
+            // Load recovery content from JSON
             do {
-                let content = try NSAttributedString(
-                    url: recURL,
-                    options: [.documentType: NSAttributedString.DocumentType.rtfd],
-                    documentAttributes: nil
-                )
+                let jsonData = try Data(contentsOf: recURL)
+                var document = try DocumentSerializer.decode(from: jsonData)
+                document = loadImagesIntoDocument(document, for: id)
+                let content = DocumentSerializer.deserialize(document)
                 if content.length > 0 {
                     recovered.append((id: id, content: content))
                 }
@@ -148,10 +152,6 @@ final class StorageManager {
             }
         }
         return recovered
-        #else
-        // iOS: TODO - implement recovery
-        return []
-        #endif
     }
 
     // MARK: - Versioning
@@ -174,36 +174,43 @@ final class StorageManager {
 
         let maxVersions = 5
 
-        // Delete oldest version (v5)
-        let oldest = dir.appendingPathComponent("v\(maxVersions).rtfd")
-        try? fileManager.removeItem(at: oldest)
+        // Delete oldest versions (both JSON and legacy RTFD)
+        let oldestJSON = dir.appendingPathComponent("v\(maxVersions).json")
+        let oldestRTFD = dir.appendingPathComponent("v\(maxVersions).rtfd")
+        try? fileManager.removeItem(at: oldestJSON)
+        try? fileManager.removeItem(at: oldestRTFD)
 
         // Shift versions: v4->v5, v3->v4, v2->v3, v1->v2
         for i in stride(from: maxVersions - 1, through: 1, by: -1) {
-            let src = dir.appendingPathComponent("v\(i).rtfd")
-            let dst = dir.appendingPathComponent("v\(i + 1).rtfd")
-            if fileManager.fileExists(atPath: src.path) {
-                try? fileManager.moveItem(at: src, to: dst)
+            // Shift JSON versions
+            let srcJSON = dir.appendingPathComponent("v\(i).json")
+            let dstJSON = dir.appendingPathComponent("v\(i + 1).json")
+            if fileManager.fileExists(atPath: srcJSON.path) {
+                try? fileManager.moveItem(at: srcJSON, to: dstJSON)
+            }
+            // Shift legacy RTFD versions
+            let srcRTFD = dir.appendingPathComponent("v\(i).rtfd")
+            let dstRTFD = dir.appendingPathComponent("v\(i + 1).rtfd")
+            if fileManager.fileExists(atPath: srcRTFD.path) {
+                try? fileManager.moveItem(at: srcRTFD, to: dstRTFD)
             }
         }
 
-        // Copy current saved note to v1
-        let currentFile = rtfdURL(for: id)
-        let v1 = dir.appendingPathComponent("v1.rtfd")
+        // Copy current saved note to v1 (JSON format)
+        let currentFile = jsonURL(for: id)
+        let v1 = dir.appendingPathComponent("v1.json")
         if fileManager.fileExists(atPath: currentFile.path) {
             try? fileManager.copyItem(at: currentFile, to: v1)
         }
     }
 
-    // MARK: - Note Content (RTFD with HTML fallback)
+    // MARK: - Note Content (JSON with RTFD/HTML fallback)
 
     func saveNoteContent(_ attributedString: NSAttributedString, for id: Int) {
-        #if os(macOS)
-        let url = rtfdURL(for: id)
+        let url = jsonURL(for: id)
         guard attributedString.length > 0 else {
-            // Remove both RTFD and legacy HTML for empty notes
+            // Remove JSON file for empty notes (keep RTFD/HTML as backup)
             try? fileManager.removeItem(at: url)
-            try? fileManager.removeItem(at: htmlURL(for: id))
             return
         }
 
@@ -211,25 +218,47 @@ final class StorageManager {
         rotateVersions(for: id)
 
         do {
-            let wrapper = try attributedString.fileWrapper(
-                from: NSRange(location: 0, length: attributedString.length),
-                documentAttributes: [
-                    .documentType: NSAttributedString.DocumentType.rtfd
-                ]
+            #if os(macOS)
+            let document = DocumentSerializer.serialize(attributedString)
+            #else
+            // iOS: basic serialization — create a simple paragraph document
+            let document = NoteDocument(elements: [
+                .paragraph(Paragraph(runs: [
+                    TextRun(text: attributedString.string, attributes: TextAttributes())
+                ]))
+            ])
+            #endif
+
+            // Save images to disk
+            let imgDir = imagesDirectory(for: id)
+            if !document.images.isEmpty {
+                try fileManager.createDirectory(at: imgDir, withIntermediateDirectories: true)
+            }
+            for imageRef in document.images {
+                if let data = imageRef.data {
+                    let imageFileURL = imgDir.appendingPathComponent(imageRef.filename)
+                    try data.write(to: imageFileURL, options: .atomic)
+                }
+            }
+
+            // Strip binary data from image references before writing JSON
+            let strippedImages = document.images.map { ref in
+                ImageReference(id: ref.id, filename: ref.filename, data: nil)
+            }
+            let strippedDocument = NoteDocument(
+                version: document.version,
+                elements: document.elements,
+                images: strippedImages
             )
-            // Remove old RTFD bundle + legacy HTML
-            try? fileManager.removeItem(at: url)
-            try? fileManager.removeItem(at: htmlURL(for: id))
-            try wrapper.write(to: url, options: .atomic, originalContentsURL: nil)
+
+            let jsonData = try DocumentSerializer.encode(strippedDocument)
+            try jsonData.write(to: url, options: .atomic)
 
             // Clean up recovery file after successful save
             removeRecoveryFile(for: id)
         } catch {
-            print("Failed to save note \(id) as RTFD: \(error)")
+            print("Failed to save note \(id) as JSON: \(error)")
         }
-        #else
-        // iOS: TODO - implement content persistence (plain text or RTF data)
-        #endif
     }
 
     #if os(macOS)
@@ -267,9 +296,57 @@ final class StorageManager {
         notesDirectory.appendingPathComponent("note-\(id).html")
     }
 
+    // MARK: - Migration Helpers (internal access for RTFDMigrator)
+
+    func jsonURLForMigration(for id: Int) -> URL {
+        jsonURL(for: id)
+    }
+
+    func rtfdURLForMigration(for id: Int) -> URL {
+        rtfdURL(for: id)
+    }
+
+    func htmlURLForMigration(for id: Int) -> URL {
+        htmlURL(for: id)
+    }
+
+    /// Load image data from disk into a NoteDocument's image references.
+    private func loadImagesIntoDocument(_ document: NoteDocument, for id: Int) -> NoteDocument {
+        let imgDir = imagesDirectory(for: id)
+        let enrichedImages = document.images.map { ref -> ImageReference in
+            if ref.data != nil { return ref }
+            let imageFileURL = imgDir.appendingPathComponent(ref.filename)
+            let data = try? Data(contentsOf: imageFileURL)
+            return ImageReference(id: ref.id, filename: ref.filename, data: data)
+        }
+        return NoteDocument(
+            version: document.version,
+            elements: document.elements,
+            images: enrichedImages
+        )
+    }
+
     func loadNoteContent(for id: Int) -> NSAttributedString {
+        // Try JSON first (new format, cross-platform)
+        let jsonPath = jsonURL(for: id)
+        if fileManager.fileExists(atPath: jsonPath.path) {
+            do {
+                let jsonData = try Data(contentsOf: jsonPath)
+                var document = try DocumentSerializer.decode(from: jsonData)
+                document = loadImagesIntoDocument(document, for: id)
+                let attributedString = DocumentSerializer.deserialize(document)
+                #if os(macOS)
+                return Self.replaceDefaultTextColors(in: attributedString)
+                #else
+                return attributedString
+                #endif
+            } catch {
+                print("Failed to load JSON for note \(id): \(error)")
+            }
+        }
+
         #if os(macOS)
-        // Try RTFD first (new format, supports images)
+        // Fallback to RTFD (legacy format, macOS only)
         let rtfdPath = rtfdURL(for: id)
         if fileManager.fileExists(atPath: rtfdPath.path) {
             do {
@@ -284,7 +361,7 @@ final class StorageManager {
             }
         }
 
-        // Fallback to HTML (old format, no images)
+        // Fallback to HTML (oldest legacy format, macOS only)
         let htmlPath = htmlURL(for: id)
         guard fileManager.fileExists(atPath: htmlPath.path) else {
             return NSAttributedString(string: "")
@@ -308,7 +385,7 @@ final class StorageManager {
             return NSAttributedString(string: "")
         }
         #else
-        // iOS: TODO - implement content loading
+        // iOS: no legacy formats to fall back to
         return NSAttributedString(string: "")
         #endif
     }

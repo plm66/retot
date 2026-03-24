@@ -11,6 +11,8 @@
 		B2C3D4E5F6A7B8C9D0E1F2A3 /* NoteDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7A8B9C0D1E2F /* NoteDocument.swift */; };
 		C3D4E5F6A7B8C9D0E1F2A3B4 /* DocumentSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3C4D5E6F7A8B9C0D1E2F3A /* DocumentSerializer.swift */; };
 		D4E5F6A7B8C9D0E1F2A3B4C5 /* DocumentSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3C4D5E6F7A8B9C0D1E2F3A /* DocumentSerializer.swift */; };
+		F1A2B3C4D5E6F7A8B9C0D1E2 /* RTFDMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5E6F7A8B9C0D1E2F3A4B5C /* RTFDMigrator.swift */; };
+		A2B3C4D5E6F7A8B9C0D1E2F3 /* RTFDMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5E6F7A8B9C0D1E2F3A4B5C /* RTFDMigrator.swift */; };
 		E5F6A7B8C9D0E1F2A3B4C5D6 /* DocumentSerializerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C4D5E6F7A8B9C0D1E2F3A4B /* DocumentSerializerTests.swift */; };
 		0157DF9ED727064224E5B774 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE828D035D2B456D47A4C54E /* AppState.swift */; };
 		0284BF5F5C100DE1AD3A4DA9 /* ExtractionResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252CD77CA73EBE301D8250D6 /* ExtractionResultView.swift */; };
@@ -137,6 +139,7 @@
 		ECC50F002DB0C1083A386DBD /* macOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = macOSApp.swift; sourceTree = "<group>"; };
 		F0AC1878073E94FD28BAE58D /* AutoTagger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTagger.swift; sourceTree = "<group>"; };
 		1A2B3C4D5E6F7A8B9C0D1E2F /* NoteDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDocument.swift; sourceTree = "<group>"; };
+		4D5E6F7A8B9C0D1E2F3A4B5C /* RTFDMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTFDMigrator.swift; sourceTree = "<group>"; };
 		2B3C4D5E6F7A8B9C0D1E2F3A /* DocumentSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSerializer.swift; sourceTree = "<group>"; };
 		3C4D5E6F7A8B9C0D1E2F3A4B /* DocumentSerializerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSerializerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -255,6 +258,7 @@
 			children = (
 				2B3C4D5E6F7A8B9C0D1E2F3A /* DocumentSerializer.swift */,
 				1A2B3C4D5E6F7A8B9C0D1E2F /* NoteDocument.swift */,
+				4D5E6F7A8B9C0D1E2F3A4B5C /* RTFDMigrator.swift */,
 				5878E60F0E3BCB33C2AAD8E3 /* StorageConstants.swift */,
 				53044843A00078D7A79B9D21 /* StorageManager.swift */,
 			);
@@ -508,6 +512,7 @@
 				A0A8225075069D260AF7EE7B /* SettingsView.swift in Sources */,
 				9E996AB71402BF7F89772893 /* StorageConstants.swift in Sources */,
 				B4C28FF4D2F1C28B379B7B6A /* StorageManager.swift in Sources */,
+				F1A2B3C4D5E6F7A8B9C0D1E2 /* RTFDMigrator.swift in Sources */,
 				669980CF46BC4104C0F1B2CC /* WikiLinkProcessor.swift in Sources */,
 				D76054E9053C5A51C05479BC /* macOSApp.swift in Sources */,
 			);
@@ -546,6 +551,7 @@
 				6D792441843FCD9A54FB5474 /* PlatformTypes.swift in Sources */,
 				91DCD821920D56EAC9BC42FF /* StorageConstants.swift in Sources */,
 				B301E02F3AB40E6A6B7A3E64 /* StorageManager.swift in Sources */,
+				A2B3C4D5E6F7A8B9C0D1E2F3 /* RTFDMigrator.swift in Sources */,
 				50529AE0B028220F4FD4D43C /* iOSApp.swift in Sources */,
 				F2CF395DD8DC68B7F267B7B4 /* iOSRootView.swift in Sources */,
 			);

@@ -37,6 +37,14 @@ final class AppState: ObservableObject {
             storage.saveMetadata(notes)
             createOnboardingContent()
         }
+
+        // One-time migration from RTFD/HTML to JSON
+        let noteIds = notes.map(\.id)
+        let migrated = RTFDMigrator.migrateIfNeeded(storage: storage, noteIds: noteIds)
+        if migrated > 0 {
+            print("Migrated \(migrated) notes from RTFD to JSON")
+        }
+
         currentAttributedText = storage.loadNoteContent(for: notes[0].id)
 
         // Check for crash recovery files
