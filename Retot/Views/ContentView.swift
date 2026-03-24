@@ -29,6 +29,9 @@ struct ContentView: View {
                     )
                 } else {
                     NoteEditorView()
+                        .id(appState.selectedNoteIndex)
+                        .transition(.opacity)
+                        .animation(.easeInOut(duration: 0.15), value: appState.selectedNoteIndex)
                 }
             }
         }

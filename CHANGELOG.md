@@ -1,5 +1,46 @@
 # Changelog
 
+## v0.6 — Apple Intelligence & Formatting Tools (2026-03-24)
+
+### Apple Intelligence Integration
+- **AI Toolbar button (✨)** — Sparkles button with popover for all AI actions
+- **Translation** — Select text → Traduire → Apple native translation sheet (on-device, via Translation framework)
+- **Résumer** — Summarize selected text or full note via Foundation Models (streaming)
+- **Reformuler** — Rephrase selected text with improved style (streaming)
+- **Corriger** — Grammar and spelling correction (streaming)
+- **AI Assistant** — Chat interface with tool calling: the LLM can search, list, and read your notes
+- **Entity extraction** — Extract TODOs, dates, names, and topics from note content (@Generable structured output)
+- **Auto-tagging** — Notes are automatically tagged by topic after 10s of inactivity (Foundation Models + @Generable)
+- **System instructions** — Centralized French-first persona for all AI interactions
+- **Writing Tools** — macOS native Writing Tools enabled via right-click context menu (TextKit 1 panel mode)
+- **Model prewarm** — Foundation Models preloaded at app launch for faster first response
+
+### Formatting Tools
+- **Text color picker** — Button with color grid popover, applies foreground color to selected text
+- **Format Painter** — Capture formatting from one selection, apply to another (one-shot mode with visual indicator)
+- **Clear formatting** — New icon (textformat.alt), clears inline colors and note-level font color
+
+### Table Enhancements
+- **Add Row Above / Below** — Right-click in a table cell
+- **Add Column Left / Right** — Right-click in a table cell
+- **Delete Row / Column** — Right-click (protected: can't delete last row or column)
+
+### System Integration
+- **macOS Service** — "Send to Retot" in system Services menu: select text in any app → send to a specific note via dot picker dialog
+- **Reset text colors** — Available in toolbar and right-click context menu
+
+### UX Improvements
+- **Settings compact layout** — Reference sections in 2×2 DisclosureGroup grid, Done/Quit as sticky footer
+- **Deployment target** bumped to macOS 15.0 (enables Writing Tools + Translation)
+
+### Fixes
+- **applyNoteColors** no longer overwrites per-range foreground colors (was using textView.textColor, now uses typingAttributes)
+- **Translation sheet** moved from popover to NoteEditorView for reliable presentation
+
+### Architecture
+- New `Retot/AI/` directory with: AIPopoverView, AIResultView, AIAssistantView, AIInstructions, AutoTagger, EntityExtractor, ExtractionResultView, NoteTools, IntelligenceAvailability
+- Foundation Models usage wrapped in `#if canImport(FoundationModels)` + `@available(macOS 26.0, *)`
+
 ## v0.5 — Floating Notes & Print (2026-03-19)
 
 ### Features

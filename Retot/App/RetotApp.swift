@@ -104,9 +104,32 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         // Cmd+1 through Cmd+9 for dots 1-9, Cmd+0 for dot 10
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard event.modifierFlags.contains(.command),
-                  !event.modifierFlags.contains(.shift),
                   let chars = event.charactersIgnoringModifiers,
                   let self = self else { return event }
+
+            // Cmd+Shift shortcuts
+            if event.modifierFlags.contains(.shift) {
+                switch chars {
+                case "f", "F":
+                    self.appState.isSearching.toggle()
+                    if !self.appState.isSearching {
+                        self.appState.searchQuery = ""
+                        self.appState.searchResults = []
+                    }
+                    return nil
+                case "a", "A":
+                    self.appState.showAIPopover.toggle()
+                    return nil
+                default:
+                    return event
+                }
+            }
+
+            // Cmd+` toggle between last two notes
+            if chars == "`" {
+                self.appState.togglePreviousNote()
+                return nil
+            }
 
             switch chars {
             case "1": self.appState.selectNote(0); return nil
@@ -138,16 +161,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
                     self.appState.selectNote(emptyIndex)
                 }
                 return nil
-            case "f":
-                if event.modifierFlags.contains(.shift) {
-                    self.appState.isSearching.toggle()
-                    if !self.appState.isSearching {
-                        self.appState.searchQuery = ""
-                        self.appState.searchResults = []
-                    }
-                    return nil
-                }
-                return event
             default: return event
             }
         }

@@ -39,8 +39,14 @@ struct DotView: View {
                         .foregroundColor(.white)
                 }
 
-                // Green dot = free slot
-                if !hasContent {
+                // Small badge: white dot for notes with content, green dot for empty slots
+                if hasContent {
+                    Circle()
+                        .fill(Color.white)
+                        .frame(width: 5, height: 5)
+                        .shadow(color: .black.opacity(0.3), radius: 1)
+                        .offset(x: 10, y: 0)
+                } else {
                     Circle()
                         .fill(Color.green)
                         .frame(width: 7, height: 7)

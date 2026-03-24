@@ -19,6 +19,8 @@ final class AppState: ObservableObject {
 
     private let autoTagSubject = PassthroughSubject<Void, Never>()
     private var autoTagSubscription: AnyCancellable?
+    private var recoveryTimer: Timer?
+    @Published var pendingRecovery: [(id: Int, content: NSAttributedString)] = []
 
     init() {
         storage.ensureDirectoryStructure()
@@ -30,8 +32,27 @@ final class AppState: ObservableObject {
             createOnboardingContent()
         }
         currentAttributedText = storage.loadNoteContent(for: notes[0].id)
+
+        // Check for crash recovery files
+        let recovered = storage.checkForRecoveryFiles(noteIds: notes.map(\.id))
+        if !recovered.isEmpty {
+            pendingRecovery = recovered
+            // Auto-restore: apply recovered content for each note
+            for item in recovered {
+                if let index = notes.firstIndex(where: { $0.id == item.id }) {
+                    storage.saveNoteContent(item.content, for: item.id)
+                    if index == selectedNoteIndex {
+                        currentAttributedText = item.content
+                    }
+                }
+            }
+            storage.removeAllRecoveryFiles()
+            pendingRecovery = []
+        }
+
         setupAutoSave()
         setupAutoTag()
+        setupRecoveryTimer()
         setupTerminationObserver()
         setupSearchShortcut()
         prewarmFoundationModels()
@@ -45,6 +66,12 @@ final class AppState: ObservableObject {
         previousNoteIndex = selectedNoteIndex
         selectedNoteIndex = index
         currentAttributedText = storage.loadNoteContent(for: notes[index].id)
+    }
+
+    func togglePreviousNote() {
+        if let prev = previousNoteIndex {
+            selectNote(prev)
+        }
     }
 
     // MARK: - Note Updates (Immutable)
@@ -838,6 +865,17 @@ final class AppState: ObservableObject {
     }
 
     // MARK: - Private
+
+    private func setupRecoveryTimer() {
+        recoveryTimer = Timer.scheduledTimer(withTimeInterval: 5.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            let noteId = self.notes[self.selectedNoteIndex].id
+            let content = self.currentAttributedText
+            DispatchQueue.global(qos: .utility).async {
+                self.storage.writeRecoveryFile(content, for: noteId)
+            }
+        }
+    }
 
     private func setupAutoSave() {
         autoSaveSubscription = saveSubject
