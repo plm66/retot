@@ -1,4 +1,8 @@
+#if os(macOS)
 import AppKit
+#else
+import UIKit
+#endif
 import SwiftUI
 
 struct AIResultView: View {
@@ -67,9 +71,13 @@ struct AIResultView: View {
                 if appState.aiResult != nil {
                     Button("Copier") {
                         if let result = appState.aiResult {
+                            #if os(macOS)
                             let pasteboard = NSPasteboard.general
                             pasteboard.clearContents()
                             pasteboard.setString(result, forType: .string)
+                            #else
+                            UIPasteboard.general.string = result
+                            #endif
                         }
                     }
                 }

@@ -1,4 +1,8 @@
+#if os(macOS)
 import AppKit
+#else
+import UIKit
+#endif
 import Foundation
 
 enum MarkdownExporter {
@@ -19,10 +23,15 @@ enum MarkdownExporter {
             var segment = text
 
             // Detect font traits
-            let font = attributes[.font] as? NSFont ?? NSFont.systemFont(ofSize: 14)
+            let font = attributes[.font] as? PlatformFont ?? PlatformFont.systemFont(ofSize: 14)
             let traits = font.fontDescriptor.symbolicTraits
+            #if os(macOS)
             let isBold = traits.contains(.bold)
             let isItalic = traits.contains(.italic)
+            #else
+            let isBold = traits.contains(.traitBold)
+            let isItalic = traits.contains(.traitItalic)
+            #endif
 
             // Detect heading by font size
             if font.pointSize >= 24 {
@@ -52,10 +61,10 @@ enum MarkdownExporter {
                 segment = "~~\(segment)~~"
             }
 
-            // Links (skip wiki links — preserve as-is)
+            // Links (skip wiki links - preserve as-is)
             if let url = attributes[.link] as? URL {
                 if url.scheme == "retot" {
-                    // Wiki link — already in [[]] format in the text
+                    // Wiki link - already in [[]] format in the text
                 } else {
                     segment = "[\(text)](\(url.absoluteString))"
                 }

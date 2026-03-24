@@ -1,4 +1,8 @@
+#if os(macOS)
 import AppKit
+#else
+import UIKit
+#endif
 import Foundation
 
 final class StorageManager {
@@ -67,6 +71,7 @@ final class StorageManager {
         baseDirectory.appendingPathComponent(".recovery-\(id).rtfd")
     }
 
+    #if os(macOS)
     func writeRecoveryFile(_ attributedString: NSAttributedString, for id: Int) {
         let url = recoveryURL(for: id)
         guard attributedString.length > 0 else {
@@ -86,6 +91,11 @@ final class StorageManager {
             // Recovery write failure is non-fatal
         }
     }
+    #else
+    func writeRecoveryFile(_ attributedString: NSAttributedString, for id: Int) {
+        // iOS: TODO - implement recovery using RTF data
+    }
+    #endif
 
     func removeRecoveryFile(for id: Int) {
         try? fileManager.removeItem(at: recoveryURL(for: id))
@@ -103,6 +113,7 @@ final class StorageManager {
 
     /// Returns (noteId, recoveredContent) pairs for any recovery files newer than their saved counterparts.
     func checkForRecoveryFiles(noteIds: [Int]) -> [(id: Int, content: NSAttributedString)] {
+        #if os(macOS)
         var recovered: [(id: Int, content: NSAttributedString)] = []
         for id in noteIds {
             let recURL = recoveryURL(for: id)
@@ -137,6 +148,10 @@ final class StorageManager {
             }
         }
         return recovered
+        #else
+        // iOS: TODO - implement recovery
+        return []
+        #endif
     }
 
     // MARK: - Versioning
@@ -183,6 +198,7 @@ final class StorageManager {
     // MARK: - Note Content (RTFD with HTML fallback)
 
     func saveNoteContent(_ attributedString: NSAttributedString, for id: Int) {
+        #if os(macOS)
         let url = rtfdURL(for: id)
         guard attributedString.length > 0 else {
             // Remove both RTFD and legacy HTML for empty notes
@@ -211,8 +227,12 @@ final class StorageManager {
         } catch {
             print("Failed to save note \(id) as RTFD: \(error)")
         }
+        #else
+        // iOS: TODO - implement content persistence (plain text or RTF data)
+        #endif
     }
 
+    #if os(macOS)
     /// Replace hardcoded black/white text colors with the system dynamic color.
     /// This ensures text stays readable when switching between Light and Dark mode.
     private static func replaceDefaultTextColors(in attributedString: NSAttributedString) -> NSAttributedString {
@@ -221,7 +241,7 @@ final class StorageManager {
 
         mutable.enumerateAttribute(.foregroundColor, in: fullRange) { value, range, _ in
             guard let color = value as? NSColor else {
-                // No explicit color → set to system textColor
+                // No explicit color -> set to system textColor
                 mutable.addAttribute(.foregroundColor, value: NSColor.textColor, range: range)
                 return
             }
@@ -237,6 +257,7 @@ final class StorageManager {
 
         return NSAttributedString(attributedString: mutable)
     }
+    #endif
 
     private func rtfdURL(for id: Int) -> URL {
         notesDirectory.appendingPathComponent("note-\(id).rtfd")
@@ -247,6 +268,7 @@ final class StorageManager {
     }
 
     func loadNoteContent(for id: Int) -> NSAttributedString {
+        #if os(macOS)
         // Try RTFD first (new format, supports images)
         let rtfdPath = rtfdURL(for: id)
         if fileManager.fileExists(atPath: rtfdPath.path) {
@@ -285,5 +307,9 @@ final class StorageManager {
             print("Failed to load HTML for note \(id): \(error)")
             return NSAttributedString(string: "")
         }
+        #else
+        // iOS: TODO - implement content loading
+        return NSAttributedString(string: "")
+        #endif
     }
 }

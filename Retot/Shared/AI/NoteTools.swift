@@ -4,7 +4,7 @@ import FoundationModels
 
 // MARK: - Search Notes Tool
 
-@available(macOS 26.0, *)
+@available(macOS 26.0, iOS 26.0, *)
 struct SearchNotesTool: Tool {
     let name = "searchNotes"
     let description = "Search across all notes for a query string. Returns matching note names and excerpts."
@@ -26,7 +26,7 @@ struct SearchNotesTool: Tool {
 
 // MARK: - List Notes Tool
 
-@available(macOS 26.0, *)
+@available(macOS 26.0, iOS 26.0, *)
 struct ListNotesTool: Tool {
     let name = "listNotes"
     let description = "List all available notes with their names, IDs, and tags."
@@ -48,7 +48,7 @@ struct ListNotesTool: Tool {
 
 // MARK: - Read Note Tool
 
-@available(macOS 26.0, *)
+@available(macOS 26.0, iOS 26.0, *)
 struct ReadNoteTool: Tool {
     let name = "readNote"
     let description = "Read the full content of a specific note by its ID number."

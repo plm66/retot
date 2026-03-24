@@ -19,7 +19,7 @@ struct ExtractionResultView: View {
 
     private var entities: DisplayEntities? {
         #if canImport(FoundationModels)
-        if #available(macOS 26.0, *) {
+        if #available(macOS 26.0, iOS 26.0, *) {
             if let raw = appState.extractedEntitiesRaw as? EntityExtractor.ExtractedEntities {
                 return DisplayEntities(
                     todos: raw.todos,

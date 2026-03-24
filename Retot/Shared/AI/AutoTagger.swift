@@ -3,7 +3,7 @@ import Foundation
 import FoundationModels
 #endif
 
-@available(macOS 26.0, *)
+@available(macOS 26.0, iOS 26.0, *)
 struct AutoTagger {
     #if canImport(FoundationModels)
     @Generable

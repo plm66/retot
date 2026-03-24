@@ -1,9 +1,13 @@
+#if os(macOS)
 import AppKit
+#else
+import UIKit
+#endif
 import SwiftUI
 
-extension NSColor {
+extension PlatformColor {
 
-    static func fromHex(_ hex: String) -> NSColor? {
+    static func fromHex(_ hex: String) -> PlatformColor? {
         let cleaned = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         guard cleaned.count == 6 else { return nil }
 
@@ -14,16 +18,28 @@ extension NSColor {
         let g = CGFloat((rgb >> 8) & 0xFF) / 255.0
         let b = CGFloat(rgb & 0xFF) / 255.0
 
-        return NSColor(srgbRed: r, green: g, blue: b, alpha: 1.0)
+        #if os(macOS)
+        return PlatformColor(srgbRed: r, green: g, blue: b, alpha: 1.0)
+        #else
+        return PlatformColor(red: r, green: g, blue: b, alpha: 1.0)
+        #endif
     }
 
     func toHex() -> String {
+        #if os(macOS)
         let converted = usingColorSpace(.sRGB) ?? self
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
         var a: CGFloat = 0
         converted.getRed(&r, green: &g, blue: &b, alpha: &a)
+        #else
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        getRed(&r, green: &g, blue: &b, alpha: &a)
+        #endif
 
         let ri = Int(round(r * 255))
         let gi = Int(round(g * 255))
@@ -36,8 +52,12 @@ extension NSColor {
 extension Color {
 
     init?(hex: String) {
-        guard let nsColor = NSColor.fromHex(hex) else { return nil }
-        self.init(nsColor: nsColor)
+        guard let color = PlatformColor.fromHex(hex) else { return nil }
+        #if os(macOS)
+        self.init(nsColor: color)
+        #else
+        self.init(uiColor: color)
+        #endif
     }
 }
 

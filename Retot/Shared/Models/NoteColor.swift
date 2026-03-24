@@ -1,3 +1,8 @@
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
 import SwiftUI
 
 enum NoteColor: String, Codable, CaseIterable, Identifiable {
@@ -29,7 +34,8 @@ enum NoteColor: String, Codable, CaseIterable, Identifiable {
         }
     }
 
-    var nsColor: NSColor {
+    var platformColor: PlatformColor {
+        #if os(macOS)
         switch self {
         case .red: return .systemRed
         case .orange: return .systemOrange
@@ -42,7 +48,25 @@ enum NoteColor: String, Codable, CaseIterable, Identifiable {
         case .pink: return .systemPink
         case .brown: return .systemBrown
         }
+        #else
+        switch self {
+        case .red: return .systemRed
+        case .orange: return .systemOrange
+        case .yellow: return .systemYellow
+        case .green: return .systemGreen
+        case .teal: return .systemTeal
+        case .blue: return .systemBlue
+        case .indigo: return .systemIndigo
+        case .purple: return .systemPurple
+        case .pink: return .systemPink
+        case .brown: return .systemBrown
+        }
+        #endif
     }
+
+    #if os(macOS)
+    var nsColor: NSColor { platformColor }
+    #endif
 
     static let defaultPalette: [NoteColor] = [
         .red, .orange, .yellow, .green, .teal,

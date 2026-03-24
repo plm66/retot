@@ -2,7 +2,7 @@ import Foundation
 #if canImport(FoundationModels)
 import FoundationModels
 
-@available(macOS 26.0, *)
+@available(macOS 26.0, iOS 26.0, *)
 struct EntityExtractor {
     @Generable
     struct ExtractedEntities {

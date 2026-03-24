@@ -1,4 +1,8 @@
+#if os(macOS)
 import AppKit
+#else
+import UIKit
+#endif
 import Combine
 import Foundation
 #if canImport(FoundationModels)
@@ -10,7 +14,9 @@ final class AppState: ObservableObject {
     @Published var selectedNoteIndex: Int = 0
     @Published var currentAttributedText: NSAttributedString = NSAttributedString(string: "")
 
+    #if os(macOS)
     weak var currentTextView: NSTextView?
+    #endif
 
     private let storage = StorageManager()
     private var autoSaveSubscription: AnyCancellable?
@@ -173,7 +179,7 @@ final class AppState: ObservableObject {
             if let markdown = try? String(contentsOf: fileURL, encoding: .utf8) {
                 let attributed = NSAttributedString(
                     string: markdown,
-                    attributes: [.font: NSFont.systemFont(ofSize: 14)]
+                    attributes: [.font: PlatformFont.systemFont(ofSize: 14)]
                 )
                 storage.saveNoteContent(attributed, for: note.id)
             }
@@ -325,8 +331,10 @@ final class AppState: ObservableObject {
         storage.saveNoteContent(empty, for: notes[index].id)
         if index == selectedNoteIndex {
             currentAttributedText = empty
+            #if os(macOS)
             // Also clear the NSTextView directly to prevent auto-save restoring old content
             currentTextView?.textStorage?.setAttributedString(empty)
+            #endif
         }
     }
 
@@ -360,6 +368,7 @@ final class AppState: ObservableObject {
 
     // MARK: - Copy Note
 
+    #if os(macOS)
     func copyNoteContent(_ index: Int) {
         guard index >= 0, index < notes.count else { return }
         let content: NSAttributedString
@@ -372,11 +381,24 @@ final class AppState: ObservableObject {
         pasteboard.clearContents()
         pasteboard.writeObjects([content])
     }
+    #else
+    func copyNoteContent(_ index: Int) {
+        guard index >= 0, index < notes.count else { return }
+        let content: NSAttributedString
+        if index == selectedNoteIndex {
+            content = currentAttributedText
+        } else {
+            content = storage.loadNoteContent(for: notes[index].id)
+        }
+        UIPasteboard.general.string = content.string
+    }
+    #endif
 
     // MARK: - Pin on Top
 
     func togglePinOnTop() {
         isPinnedOnTop.toggle()
+        #if os(macOS)
         if let window = NSApp.windows.first(where: { $0.title.hasPrefix("Retot") }) {
             if isPinnedOnTop {
                 window.level = .floating
@@ -388,6 +410,7 @@ final class AppState: ObservableObject {
                 window.collectionBehavior.remove(.canJoinAllSpaces)
             }
         }
+        #endif
     }
 
     // MARK: - Content Check
@@ -441,8 +464,8 @@ final class AppState: ObservableObject {
 
         // Add a visual separator
         let separatorAttrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 12),
-            .foregroundColor: NSColor.secondaryLabelColor
+            .font: PlatformFont.systemFont(ofSize: 12),
+            .foregroundColor: PlatformColor.platformSecondaryLabel
         ]
         let timestamp = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)
         combined.append(NSAttributedString(
@@ -452,8 +475,8 @@ final class AppState: ObservableObject {
 
         // Append the received text with default font
         let textAttrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 14),
-            .foregroundColor: NSColor.textColor
+            .font: PlatformFont.systemFont(ofSize: 14),
+            .foregroundColor: PlatformColor.platformLabel
         ]
         combined.append(NSAttributedString(string: text, attributes: textAttrs))
         combined.append(NSAttributedString(string: "\n", attributes: textAttrs))
@@ -471,7 +494,9 @@ final class AppState: ObservableObject {
         // If this note is currently displayed, reload it
         if index == selectedNoteIndex {
             currentAttributedText = combined
+            #if os(macOS)
             currentTextView?.textStorage?.setAttributedString(combined)
+            #endif
         }
     }
 
@@ -479,7 +504,9 @@ final class AppState: ObservableObject {
 
     func releaseMemory() {
         currentAttributedText = NSAttributedString(string: "")
+        #if os(macOS)
         currentTextView = nil
+        #endif
     }
 
     func reloadCurrentNote() {
@@ -490,6 +517,7 @@ final class AppState: ObservableObject {
 
     // MARK: - Format Painter Actions
 
+    #if os(macOS)
     func captureFormat() {
         guard let textView = currentTextView,
               let textStorage = textView.textStorage else { return }
@@ -523,6 +551,15 @@ final class AppState: ObservableObject {
         formatPainterActive = false
         capturedAttributes = nil
     }
+    #else
+    func captureFormat() {
+        // iOS: TODO - implement format painter
+    }
+
+    func applyFormat() {
+        // iOS: TODO - implement format painter
+    }
+    #endif
 
     // MARK: - Wiki Link Navigation
 
@@ -538,6 +575,7 @@ final class AppState: ObservableObject {
     // MARK: - Onboarding
 
     private func createOnboardingContent() {
+        #if os(macOS)
         let html = """
         <!DOCTYPE html>
         <html><head>
@@ -573,8 +611,8 @@ final class AppState: ObservableObject {
         <p>&#8226; Use <b>[[Note Name]]</b> to create wiki links between notes</p>
         <p>&#8226; Each note has its own font color and background color (in Note Settings)</p>
         <p>&#8226; Your notes are saved automatically as you type</p>
-        <p>&#8226; Close the window with the red button — the app stays in the menu bar</p>
-        <p>&#8226; This note is yours — edit or delete it anytime!</p>
+        <p>&#8226; Close the window with the red button -- the app stays in the menu bar</p>
+        <p>&#8226; This note is yours -- edit or delete it anytime!</p>
         </body></html>
         """
 
@@ -609,6 +647,14 @@ final class AppState: ObservableObject {
 
         finalContent.append(attributed)
         storage.saveNoteContent(finalContent, for: notes[0].id)
+        #else
+        // iOS: Simple text onboarding
+        let onboarding = NSAttributedString(
+            string: "Welcome to Retot\n\nYour scratch pad for ideas, snippets, and everything in between.",
+            attributes: [.font: PlatformFont.systemFont(ofSize: 16)]
+        )
+        storage.saveNoteContent(onboarding, for: notes[0].id)
+        #endif
     }
 
     // MARK: - AI Features
@@ -644,7 +690,7 @@ final class AppState: ObservableObject {
         aiHadSelection = selected
         showAIResult = true
 
-        if #available(macOS 26.0, *) {
+        if #available(macOS 26.0, iOS 26.0, *) {
             #if canImport(FoundationModels)
             Task { @MainActor in
                 do {
@@ -670,25 +716,38 @@ final class AppState: ObservableObject {
     }
 
     var hasTextSelection: Bool {
+        #if os(macOS)
         guard let textView = currentTextView else { return false }
         return textView.selectedRange().length > 0
+        #else
+        return false
+        #endif
     }
 
     func getSelectedText() -> String {
+        #if os(macOS)
         guard let textView = currentTextView,
               let textStorage = textView.textStorage else { return "" }
         let range = textView.selectedRange()
         guard range.length > 0 else { return "" }
         return textStorage.attributedSubstring(from: range).string
+        #else
+        return ""
+        #endif
     }
 
     func getFullText() -> String {
+        #if os(macOS)
         guard let textView = currentTextView,
               let textStorage = textView.textStorage else { return "" }
         return textStorage.string
+        #else
+        return currentAttributedText.string
+        #endif
     }
 
     func replaceSelection(with text: String) {
+        #if os(macOS)
         guard let textView = currentTextView,
               let textStorage = textView.textStorage else { return }
         let range = textView.selectedRange()
@@ -697,12 +756,13 @@ final class AppState: ObservableObject {
         textStorage.replaceCharacters(in: range, with: text)
         textStorage.endEditing()
         textView.didChangeText()
+        #endif
     }
 
     // MARK: - Prewarm
 
     private func prewarmFoundationModels() {
-        if #available(macOS 26.0, *) {
+        if #available(macOS 26.0, iOS 26.0, *) {
             #if canImport(FoundationModels)
             Task {
                 // Access the model to trigger loading/caching
@@ -718,7 +778,7 @@ final class AppState: ObservableObject {
         assistantMessages.append((role: "user", content: text))
         assistantProcessing = true
 
-        if #available(macOS 26.0, *) {
+        if #available(macOS 26.0, iOS 26.0, *) {
             #if canImport(FoundationModels)
             Task { @MainActor in
                 do {
@@ -746,7 +806,7 @@ final class AppState: ObservableObject {
     }
 
     #if canImport(FoundationModels)
-    @available(macOS 26.0, *)
+    @available(macOS 26.0, iOS 26.0, *)
     private func performAssistantQuery(_ text: String) async throws -> String {
         // Snapshot data for Sendable closures
         let noteSnapshot = buildNoteSnapshot()
@@ -848,7 +908,7 @@ final class AppState: ObservableObject {
         extractionProcessing = true
         showExtraction = true
 
-        if #available(macOS 26.0, *) {
+        if #available(macOS 26.0, iOS 26.0, *) {
             #if canImport(FoundationModels)
             extractedEntitiesRaw = nil
             Task { @MainActor in
@@ -900,7 +960,7 @@ final class AppState: ObservableObject {
         let noteIndex = selectedNoteIndex
         let existingTags = notes[noteIndex].tags
 
-        if #available(macOS 26.0, *) {
+        if #available(macOS 26.0, iOS 26.0, *) {
             #if canImport(FoundationModels)
             Task { @MainActor in
                 let newTags = await AutoTagger.generateTags(for: text)
@@ -918,6 +978,7 @@ final class AppState: ObservableObject {
     }
 
     private func setupSearchShortcut() {
+        #if os(macOS)
         NotificationCenter.default.addObserver(
             forName: .retotToggleSearch,
             object: nil,
@@ -929,9 +990,11 @@ final class AppState: ObservableObject {
                 self?.searchResults = []
             }
         }
+        #endif
     }
 
     private func setupTerminationObserver() {
+        #if os(macOS)
         NotificationCenter.default.addObserver(
             forName: NSApplication.willTerminateNotification,
             object: nil,
@@ -939,5 +1002,14 @@ final class AppState: ObservableObject {
         ) { [weak self] _ in
             self?.saveCurrentNoteContent()
         }
+        #else
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.willTerminateNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.saveCurrentNoteContent()
+        }
+        #endif
     }
 }
