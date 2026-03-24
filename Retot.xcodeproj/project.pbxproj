@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A1B2C3D4E5F6A7B8C9D0E1F2 /* NoteDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7A8B9C0D1E2F /* NoteDocument.swift */; };
+		B2C3D4E5F6A7B8C9D0E1F2A3 /* NoteDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2B3C4D5E6F7A8B9C0D1E2F /* NoteDocument.swift */; };
+		C3D4E5F6A7B8C9D0E1F2A3B4 /* DocumentSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3C4D5E6F7A8B9C0D1E2F3A /* DocumentSerializer.swift */; };
+		D4E5F6A7B8C9D0E1F2A3B4C5 /* DocumentSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3C4D5E6F7A8B9C0D1E2F3A /* DocumentSerializer.swift */; };
+		E5F6A7B8C9D0E1F2A3B4C5D6 /* DocumentSerializerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C4D5E6F7A8B9C0D1E2F3A4B /* DocumentSerializerTests.swift */; };
 		0157DF9ED727064224E5B774 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE828D035D2B456D47A4C54E /* AppState.swift */; };
 		0284BF5F5C100DE1AD3A4DA9 /* ExtractionResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252CD77CA73EBE301D8250D6 /* ExtractionResultView.swift */; };
 		08DCBE3ECEE9783CC44CED6B /* RichTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17B3AA66C33F66F439B8BA03 /* RichTextEditor.swift */; };
@@ -131,6 +136,9 @@
 		ECB96D6BB10D27371F79D088 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		ECC50F002DB0C1083A386DBD /* macOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = macOSApp.swift; sourceTree = "<group>"; };
 		F0AC1878073E94FD28BAE58D /* AutoTagger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTagger.swift; sourceTree = "<group>"; };
+		1A2B3C4D5E6F7A8B9C0D1E2F /* NoteDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDocument.swift; sourceTree = "<group>"; };
+		2B3C4D5E6F7A8B9C0D1E2F3A /* DocumentSerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSerializer.swift; sourceTree = "<group>"; };
+		3C4D5E6F7A8B9C0D1E2F3A4B /* DocumentSerializerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentSerializerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -209,6 +217,7 @@
 		7334127F6F79B6BE30FCA630 /* RetotTests */ = {
 			isa = PBXGroup;
 			children = (
+				3C4D5E6F7A8B9C0D1E2F3A4B /* DocumentSerializerTests.swift */,
 				C620FDE8B06EF37B2EBA397C /* MarkdownExporterTests.swift */,
 				8316D1B283B4BCEF165CEB7C /* NoteColorTests.swift */,
 				54A6A8F562EA15DB69DC7BF8 /* NoteMetadataTests.swift */,
@@ -244,6 +253,8 @@
 		81D165AFD76E5D30D1A38E6B /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
+				2B3C4D5E6F7A8B9C0D1E2F3A /* DocumentSerializer.swift */,
+				1A2B3C4D5E6F7A8B9C0D1E2F /* NoteDocument.swift */,
 				5878E60F0E3BCB33C2AAD8E3 /* StorageConstants.swift */,
 				53044843A00078D7A79B9D21 /* StorageManager.swift */,
 			);
@@ -452,6 +463,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5F6A7B8C9D0E1F2A3B4C5D6 /* DocumentSerializerTests.swift in Sources */,
 				5EA6CD7089BBBE5BED7A19ED /* MarkdownExporterTests.swift in Sources */,
 				40CB7341470FD686F2108DEC /* NoteColorTests.swift in Sources */,
 				6BB4093854E39C16F804686F /* NoteMetadataTests.swift in Sources */,
@@ -465,6 +477,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3D4E5F6A7B8C9D0E1F2A3B4 /* DocumentSerializer.swift in Sources */,
+				A1B2C3D4E5F6A7B8C9D0E1F2 /* NoteDocument.swift in Sources */,
 				D0DFC8975D16D720C3406E4A /* AIAssistantView.swift in Sources */,
 				D65CD97DA2775428A99CB70B /* AIInstructions.swift in Sources */,
 				300DB33B785F436F3BC2A184 /* AIPopoverView.swift in Sources */,
@@ -512,6 +526,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4E5F6A7B8C9D0E1F2A3B4C5 /* DocumentSerializer.swift in Sources */,
+				B2C3D4E5F6A7B8C9D0E1F2A3 /* NoteDocument.swift in Sources */,
 				5796BF66C57FC4BF32D20963 /* AIAssistantView.swift in Sources */,
 				B6062EC75DA6431C384349E4 /* AIInstructions.swift in Sources */,
 				0BAFCCB9B7683415924E7E18 /* AIPopoverView.swift in Sources */,
