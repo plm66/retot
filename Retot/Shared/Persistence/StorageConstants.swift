@@ -14,9 +14,34 @@ enum StorageConstants {
             .appendingPathComponent("Documents", isDirectory: true)
     }
 
-    /// Returns iCloud directory if available, otherwise local app support
+    /// User-configured custom storage directory (Dropbox, OneDrive, etc.)
+    static var customDirectory: URL? {
+        get {
+            guard let path = UserDefaults.standard.string(forKey: "retotCustomStoragePath") else { return nil }
+            return URL(fileURLWithPath: path)
+        }
+        set {
+            if let url = newValue {
+                UserDefaults.standard.set(url.path, forKey: "retotCustomStoragePath")
+            } else {
+                UserDefaults.standard.removeObject(forKey: "retotCustomStoragePath")
+            }
+        }
+    }
+
+    /// Returns custom folder > iCloud > local app support (in priority order)
     static var activeDirectory: URL {
-        iCloudDirectory ?? appSupportDirectory
+        if let custom = customDirectory, FileManager.default.fileExists(atPath: custom.path) {
+            return custom
+        }
+        return iCloudDirectory ?? appSupportDirectory
+    }
+
+    static var isUsingCustomDirectory: Bool {
+        if let custom = customDirectory, FileManager.default.fileExists(atPath: custom.path) {
+            return true
+        }
+        return false
     }
 
     static var isICloudAvailable: Bool {

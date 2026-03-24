@@ -7,7 +7,7 @@ import Foundation
 
 final class StorageManager {
     private let fileManager = FileManager.default
-    private let baseDirectory: URL
+    let baseDirectory: URL
     private let notesDirectory: URL
     private let metadataURL: URL
 

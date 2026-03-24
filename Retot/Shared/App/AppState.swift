@@ -21,7 +21,7 @@ final class AppState: ObservableObject {
     #endif
 
     let cloudSync = CloudSyncManager()
-    private let storage = StorageManager()
+    private(set) var storage = StorageManager()
     private var autoSaveSubscription: AnyCancellable?
     private let saveSubject = PassthroughSubject<Void, Never>()
     private var previousNoteIndex: Int?
@@ -88,6 +88,65 @@ final class AppState: ObservableObject {
         setupTerminationObserver()
         setupSearchShortcut()
         prewarmFoundationModels()
+    }
+
+    // MARK: - Storage Location
+
+    /// Switches storage to a new directory, copying all existing data.
+    func switchStorageLocation(to newPath: URL) {
+        // Save current note before switching
+        saveCurrentNoteContent()
+
+        let fm = FileManager.default
+        let currentBase = storage.baseDirectory
+
+        // Create destination structure
+        let newNotesDir = newPath.appendingPathComponent("notes", isDirectory: true)
+        let newImagesDir = newNotesDir.appendingPathComponent("images", isDirectory: true)
+        try? fm.createDirectory(at: newNotesDir, withIntermediateDirectories: true)
+        try? fm.createDirectory(at: newImagesDir, withIntermediateDirectories: true)
+
+        // Copy metadata
+        let srcMeta = currentBase.appendingPathComponent("metadata.json")
+        let dstMeta = newPath.appendingPathComponent("metadata.json")
+        if fm.fileExists(atPath: srcMeta.path), !fm.fileExists(atPath: dstMeta.path) {
+            try? fm.copyItem(at: srcMeta, to: dstMeta)
+        }
+
+        // Copy all notes and images
+        let srcNotes = currentBase.appendingPathComponent("notes", isDirectory: true)
+        if let files = try? fm.contentsOfDirectory(at: srcNotes, includingPropertiesForKeys: nil, options: [.skipsHiddenFiles]) {
+            for file in files {
+                let dest = newNotesDir.appendingPathComponent(file.lastPathComponent)
+                if !fm.fileExists(atPath: dest.path) {
+                    try? fm.copyItem(at: file, to: dest)
+                }
+            }
+        }
+
+        // Save custom path and reinitialize storage
+        StorageConstants.customDirectory = newPath
+        storage = StorageManager(baseDirectory: newPath)
+        storage.ensureDirectoryStructure()
+
+        // Reload current note content
+        currentAttributedText = storage.loadNoteContent(for: notes[selectedNoteIndex].id)
+        #if os(macOS)
+        currentTextView?.textStorage?.setAttributedString(currentAttributedText)
+        #endif
+    }
+
+    /// Resets storage to the default location (iCloud or local).
+    func resetStorageToDefault() {
+        saveCurrentNoteContent()
+        StorageConstants.customDirectory = nil
+        storage = StorageManager()
+        storage.ensureDirectoryStructure()
+        notes = storage.loadMetadata()
+        currentAttributedText = storage.loadNoteContent(for: notes[selectedNoteIndex].id)
+        #if os(macOS)
+        currentTextView?.textStorage?.setAttributedString(currentAttributedText)
+        #endif
     }
 
     // MARK: - Note Selection

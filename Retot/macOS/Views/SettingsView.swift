@@ -7,6 +7,7 @@ struct SettingsView: View {
     @State private var ramUsage: String = "..."
     @AppStorage("retotAppearance") private var appearance: String = "system"
     @State private var noteCount: Double = 10
+    @State private var showStorageChangeAlert = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -151,9 +152,9 @@ struct SettingsView: View {
                         VStack(alignment: .leading) {
                             HStack(spacing: 6) {
                                 Circle()
-                                    .fill(StorageConstants.isICloudAvailable ? Color.green : Color.gray)
+                                    .fill(storageStatusColor)
                                     .frame(width: 8, height: 8)
-                                Text(StorageConstants.isICloudAvailable ? "iCloud: Connected" : "iCloud: Local only")
+                                Text(storageStatusLabel)
                                     .font(.body)
                             }
                             Text(StorageConstants.activeDirectory.path)
@@ -163,15 +164,27 @@ struct SettingsView: View {
                                 .truncationMode(.middle)
                         }
                         Spacer()
+                    }
+
+                    HStack(spacing: 8) {
                         Button("Reveal") {
                             NSWorkspace.shared.selectFile(
                                 nil,
                                 inFileViewerRootedAtPath: StorageConstants.activeDirectory.path
                             )
                         }
+                        Button("Change...") { changeStorageLocation() }
+                        if StorageConstants.isUsingCustomDirectory {
+                            Button("Reset to Default") { resetStorageLocation() }
+                        }
                     }
                 }
                 .padding(8)
+            }
+            .alert("Storage location changed", isPresented: $showStorageChangeAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text("Notes have been copied to the new location and Retot is now using it.")
             }
 
             GroupBox("System") {
@@ -216,6 +229,44 @@ struct SettingsView: View {
             updateRAMUsage()
             applyAppearance(appearance)
         }
+    }
+
+    private var storageStatusColor: Color {
+        if StorageConstants.isUsingCustomDirectory {
+            return .blue
+        } else if StorageConstants.isICloudAvailable {
+            return .green
+        }
+        return .gray
+    }
+
+    private var storageStatusLabel: String {
+        if StorageConstants.isUsingCustomDirectory {
+            return "Custom Location"
+        } else if StorageConstants.isICloudAvailable {
+            return "iCloud: Connected"
+        }
+        return "iCloud: Local only"
+    }
+
+    private func changeStorageLocation() {
+        NSApp.activate(ignoringOtherApps: true)
+        let panel = NSOpenPanel()
+        panel.canChooseDirectories = true
+        panel.canChooseFiles = false
+        panel.canCreateDirectories = true
+        panel.prompt = "Use This Folder"
+        panel.message = "Choose a folder for Retot note storage (e.g. Dropbox, OneDrive)"
+
+        let response = panel.runModal()
+        guard response == .OK, let url = panel.url else { return }
+        appState.switchStorageLocation(to: url)
+        showStorageChangeAlert = true
+    }
+
+    private func resetStorageLocation() {
+        appState.resetStorageToDefault()
+        showStorageChangeAlert = true
     }
 
     private func shortcutRow(_ shortcut: String, _ description: String) -> some View {
